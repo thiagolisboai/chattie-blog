@@ -9,65 +9,69 @@ export function BlogFooter({ lang = 'pt-BR' }: BlogFooterProps) {
   const year = new Date().getFullYear()
 
   return (
-    <footer style={{ background: '#000', color: '#fff', padding: '3.5rem 1.5rem 0', overflow: 'hidden', position: 'relative' }}>
+    <footer style={{
+      background: '#000',
+      color: '#fff',
+      padding: '3.5rem 1.5rem 2rem',
+      overflow: 'hidden',
+      position: 'relative',
+    }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
 
-      {/* Inner grid — logo + 4 columns */}
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        {/* Inner: logo + 4 columns — identical to main site */}
         <div className="footer-inner-grid">
 
           {/* Logo */}
-          <a href="https://trychattie.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://trychattie.com" target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
             <img
               src="/brand/chattie-wordmark.png"
               alt="Chattie"
-              style={{ height: 34, filter: 'invert(1)' }}
+              style={{ height: 34, filter: 'invert(1)', display: 'block' }}
             />
           </a>
 
-          {/* Columns */}
+          {/* 4 columns */}
           <div className="footer-cols">
-            {/* Product */}
+
             <div>
-              <h4 style={colHeadStyle}>{isPtBr ? 'Produto' : 'Product'}</h4>
-              <div style={colLinksStyle}>
-                <a href="https://trychattie.com/#como-funciona" target="_blank" rel="noopener noreferrer" style={linkStyle} className="footer-link">{isPtBr ? 'Como funciona' : 'How it works'}</a>
-                <a href="https://trychattie.com/#sandbox" target="_blank" rel="noopener noreferrer" style={linkStyle} className="footer-link">Sandbox</a>
-                <a href="https://trychattie.com/#pricing" target="_blank" rel="noopener noreferrer" style={linkStyle} className="footer-link">{isPtBr ? 'Preços' : 'Pricing'}</a>
-                <a href="https://trychattie.com/#changelog" target="_blank" rel="noopener noreferrer" style={linkStyle} className="footer-link">Changelog</a>
-              </div>
+              <h4 style={colHead}>{isPtBr ? 'Produto' : 'Product'}</h4>
+              <Col links={[
+                { label: isPtBr ? 'Como funciona' : 'How it works', href: 'https://trychattie.com/#como-funciona', external: true },
+                { label: 'Sandbox', href: 'https://trychattie.com/#sandbox', external: true },
+                { label: isPtBr ? 'Preços' : 'Pricing', href: 'https://trychattie.com/#pricing', external: true },
+                { label: 'Changelog', href: 'https://trychattie.com', external: true },
+              ]} />
             </div>
 
-            {/* Company */}
             <div>
-              <h4 style={colHeadStyle}>{isPtBr ? 'Empresa' : 'Company'}</h4>
-              <div style={colLinksStyle}>
-                <a href="https://trychattie.com" target="_blank" rel="noopener noreferrer" style={linkStyle} className="footer-link">{isPtBr ? 'Sobre nós' : 'About us'}</a>
-                <Link href={isPtBr ? '/pt-br/blog' : '/blog'} style={linkStyle} className="footer-link">Blog</Link>
-                <a href="https://www.linkedin.com/company/trychattie" target="_blank" rel="noopener noreferrer" style={linkStyle} className="footer-link">LinkedIn</a>
-              </div>
+              <h4 style={colHead}>{isPtBr ? 'Empresa' : 'Company'}</h4>
+              <Col links={[
+                { label: isPtBr ? 'Sobre nós' : 'About us', href: 'https://trychattie.com', external: true },
+                { label: 'Blog', href: isPtBr ? '/pt-br/blog' : '/blog', external: false },
+                { label: 'LinkedIn', href: 'https://www.linkedin.com/company/trychattie', external: true },
+              ]} />
             </div>
 
-            {/* Blog */}
             <div>
-              <h4 style={colHeadStyle}>Blog</h4>
-              <div style={colLinksStyle}>
-                <Link href="/pt-br/blog" style={linkStyle} className="footer-link">PT-BR</Link>
-                <Link href="/blog" style={linkStyle} className="footer-link">EN</Link>
-                <Link href="/pt-br/blog?cat=linkedin" style={linkStyle} className="footer-link">LinkedIn</Link>
-                <Link href="/pt-br/blog?cat=social-selling" style={linkStyle} className="footer-link">Social Selling</Link>
-              </div>
+              <h4 style={colHead}>{isPtBr ? 'Recursos' : 'Resources'}</h4>
+              <Col links={[
+                { label: isPtBr ? 'Artigos PT-BR' : 'PT-BR Articles', href: '/pt-br/blog', external: false },
+                { label: isPtBr ? 'Artigos EN' : 'EN Articles', href: '/blog', external: false },
+                { label: 'LinkedIn', href: '/pt-br/blog/categoria/linkedin', external: false },
+                { label: 'Social Selling', href: '/pt-br/blog/categoria/social-selling', external: false },
+              ]} />
             </div>
 
-            {/* Legal */}
             <div>
-              <h4 style={colHeadStyle}>Legal</h4>
-              <div style={colLinksStyle}>
-                <a href="https://trychattie.com/privacy" target="_blank" rel="noopener noreferrer" style={linkStyle} className="footer-link">{isPtBr ? 'Privacidade' : 'Privacy'}</a>
-                <a href="https://trychattie.com/terms" target="_blank" rel="noopener noreferrer" style={linkStyle} className="footer-link">{isPtBr ? 'Termos' : 'Terms'}</a>
-              </div>
+              <h4 style={colHead}>Legal</h4>
+              <Col links={[
+                { label: isPtBr ? 'Privacidade' : 'Privacy', href: 'https://trychattie.com/privacy', external: true },
+                { label: isPtBr ? 'Termos' : 'Terms', href: 'https://trychattie.com/terms', external: true },
+                { label: 'Cookies', href: 'https://trychattie.com/cookies', external: true },
+              ]} />
             </div>
+
           </div>
-
         </div>
 
         {/* Bottom bar */}
@@ -92,7 +96,7 @@ export function BlogFooter({ lang = 'pt-BR' }: BlogFooterProps) {
         </div>
       </div>
 
-      {/* Decorative wordmark — identical to website */}
+      {/* Decorative wordmark — fills bottom, same as main site */}
       <div
         aria-hidden="true"
         style={{
@@ -102,6 +106,7 @@ export function BlogFooter({ lang = 'pt-BR' }: BlogFooterProps) {
           marginBottom: '-7rem',
           pointerEvents: 'none',
           userSelect: 'none',
+          display: 'block',
           WebkitMaskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)',
           maskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)',
         }}
@@ -124,7 +129,8 @@ export function BlogFooter({ lang = 'pt-BR' }: BlogFooterProps) {
           grid-template-columns: repeat(4, 1fr);
           gap: 2rem;
         }
-        .footer-link:hover { color: #fff !important; text-decoration: underline; }
+        .footer-col-link { color: #ccc; text-decoration: none; font-size: 0.875rem; display: block; margin-bottom: 0.5rem; transition: color 0.15s; }
+        .footer-col-link:hover { color: #fff; text-decoration: underline; }
         @media (max-width: 900px) {
           .footer-inner-grid { grid-template-columns: 1fr !important; }
           .footer-cols { grid-template-columns: repeat(2, 1fr) !important; }
@@ -137,25 +143,29 @@ export function BlogFooter({ lang = 'pt-BR' }: BlogFooterProps) {
   )
 }
 
-const colHeadStyle: React.CSSProperties = {
+function Col({ links }: { links: { label: string; href: string; external: boolean }[] }) {
+  return (
+    <div>
+      {links.map((l) =>
+        l.external ? (
+          <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className="footer-col-link">
+            {l.label}
+          </a>
+        ) : (
+          <Link key={l.href} href={l.href} className="footer-col-link">
+            {l.label}
+          </Link>
+        )
+      )}
+    </div>
+  )
+}
+
+const colHead: React.CSSProperties = {
   fontSize: '0.72rem',
   fontWeight: 700,
   textTransform: 'uppercase',
   letterSpacing: '0.1em',
   color: '#555',
   marginBottom: '1rem',
-}
-
-const colLinksStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.5rem',
-}
-
-const linkStyle: React.CSSProperties = {
-  fontSize: '0.875rem',
-  color: '#ccc',
-  textDecoration: 'none',
-  display: 'block',
-  transition: 'color 0.15s',
 }

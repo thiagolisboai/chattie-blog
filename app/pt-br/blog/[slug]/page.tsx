@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { MDXRemote } from 'next-mdx-remote/rsc'
-import { getAllSlugsPt, getPostBySlugPt } from '@/lib/posts-pt'
+import { getAllSlugsPt, getPostBySlugPt, getAllPostsPt } from '@/lib/posts-pt'
 import { getMdxComponents } from '@/components/mdx-components'
 import { ArticleJsonLd } from '@/components/json-ld'
 import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { ReadingProgressBar, ScrollToTopButton } from '@/components/post-ui'
+import { RelatedPosts } from '@/components/related-posts'
 import { getAuthor } from '@/lib/authors'
 import Link from 'next/link'
 
@@ -61,6 +62,7 @@ export default async function BlogPostPt({ params }: Props) {
   if (!post) notFound()
 
   const author = getAuthor(post.author || 'Thiago Lisboa')
+  const allPosts = getAllPostsPt()
 
   return (
     <>
@@ -69,7 +71,7 @@ export default async function BlogPostPt({ params }: Props) {
       <ArticleJsonLd post={post} lang="pt-BR" />
       <BlogNav lang="pt-BR" />
 
-      <main style={{ maxWidth: 760, margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>
+      <main id="main-content" style={{ maxWidth: 760, margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>
         {/* Back */}
         <div style={{ marginBottom: '2rem' }}>
           <Link
@@ -186,10 +188,20 @@ export default async function BlogPostPt({ params }: Props) {
             </div>
           )}
 
+          {/* Related posts */}
+          <RelatedPosts
+            currentSlug={post.slug}
+            currentCategory={post.category}
+            currentTags={post.tags || []}
+            allPosts={allPosts}
+            basePath="/pt-br/blog"
+            lang="pt-BR"
+          />
+
           {/* CTA */}
           <div
             className="card-brutalist"
-            style={{ background: '#E57B33', color: '#FAFBF3', padding: '2rem' }}
+            style={{ background: '#E57B33', color: '#FAFBF3', padding: '2rem', marginTop: '2rem' }}
           >
             <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 900, fontSize: '1.3rem', marginBottom: '0.5rem' }}>
               Quer vender mais pelo LinkedIn?

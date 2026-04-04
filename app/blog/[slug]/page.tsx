@@ -1,13 +1,15 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { MDXRemote } from 'next-mdx-remote/rsc'
-import { getAllSlugsEn, getPostBySlugEn } from '@/lib/posts-en'
+import { getAllSlugsEn, getPostBySlugEn, getAllPostsEn } from '@/lib/posts-en'
 import { getMdxComponents } from '@/components/mdx-components'
 import { ArticleJsonLd } from '@/components/json-ld'
 import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { ReadingProgressBar, ScrollToTopButton } from '@/components/post-ui'
+import { RelatedPosts } from '@/components/related-posts'
 import { getAuthor } from '@/lib/authors'
+import type { PostFrontmatter } from '@/lib/posts-pt'
 import Link from 'next/link'
 
 interface Props {
@@ -61,6 +63,7 @@ export default async function BlogPostEn({ params }: Props) {
   if (!post) notFound()
 
   const author = getAuthor(post.author || 'Thiago Lisboa')
+  const allPosts = getAllPostsEn()
 
   return (
     <>
@@ -69,7 +72,7 @@ export default async function BlogPostEn({ params }: Props) {
       <ArticleJsonLd post={post} lang="en" />
       <BlogNav lang="en" />
 
-      <main style={{ maxWidth: 760, margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>
+      <main id="main-content" style={{ maxWidth: 760, margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>
         {/* Back */}
         <div style={{ marginBottom: '2rem' }}>
           <Link
@@ -194,10 +197,20 @@ export default async function BlogPostEn({ params }: Props) {
             </div>
           )}
 
+          {/* Related posts */}
+          <RelatedPosts
+            currentSlug={post.slug}
+            currentCategory={post.category}
+            currentTags={post.tags || []}
+            allPosts={allPosts as unknown as PostFrontmatter[]}
+            basePath="/blog"
+            lang="en"
+          />
+
           {/* CTA */}
           <div
             className="card-brutalist"
-            style={{ background: '#E57B33', color: '#FAFBF3', padding: '2rem' }}
+            style={{ background: '#E57B33', color: '#FAFBF3', padding: '2rem', marginTop: '2rem' }}
           >
             <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 900, fontSize: '1.3rem', marginBottom: '0.5rem' }}>
               Want to sell more on LinkedIn?

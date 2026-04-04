@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
+import { SkipLink } from '@/components/skip-link'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -9,6 +10,11 @@ export const metadata: Metadata = {
     template: '%s | Chattie Blog',
   },
   description: 'Insights sobre social selling, LinkedIn B2B e IA para vendas — pelo time do Chattie.',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/apple-touch-icon.png',
+    shortcut: '/favicon.png',
+  },
   openGraph: {
     siteName: 'Chattie Blog',
     type: 'website',
@@ -26,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-screen bg-cream text-chattie-black">
+        <SkipLink />
         <div className="grain-overlay" aria-hidden="true" />
         {children}
         <Script
