@@ -136,7 +136,7 @@ export function NewsletterCta({ lang = 'pt-BR' }: NewsletterCtaProps) {
               fontSize: '0.9rem',
               background: '#fff',
               outline: 'none',
-              fontFamily: "'Barlow', sans-serif",
+              fontFamily: "var(--font-barlow, 'Barlow'), sans-serif",
             }}
           />
           <button

@@ -153,13 +153,26 @@ export default async function BlogPostPt({ params }: Props) {
           )}
         </header>
 
-        {/* Table of Contents */}
-        <TableOfContents />
+        {/* Content + TOC sidebar layout */}
+        <div className="post-layout">
+          {/* Main content column */}
+          <div>
+            {/* Inline TOC (visible on mobile/tablet, hidden on desktop) */}
+            <div className="post-toc-inline">
+              <TableOfContents />
+            </div>
 
-        {/* Article */}
-        <article className="prose">
-          <MDXRemote source={post.content} components={getMdxComponents()} />
-        </article>
+            {/* Article */}
+            <article className="prose">
+              <MDXRemote source={post.content} components={getMdxComponents()} />
+            </article>
+          </div>
+
+          {/* Sticky TOC sidebar (desktop only) */}
+          <aside className="post-toc-sidebar" aria-label="Índice do artigo">
+            <TableOfContents compact />
+          </aside>
+        </div>
 
         {/* Footer */}
         <footer style={{ marginTop: '4rem', borderTop: '2px solid #000', paddingTop: '2rem' }}>

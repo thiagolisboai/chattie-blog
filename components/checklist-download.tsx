@@ -91,7 +91,7 @@ export function ChecklistDownload({ lang = 'pt-BR' }: ChecklistDownloadProps) {
               border: '2px solid #000',
               padding: '0.6rem 0.85rem',
               fontSize: '0.875rem',
-              fontFamily: "'Barlow', sans-serif",
+              fontFamily: "var(--font-barlow, 'Barlow'), sans-serif",
               outline: 'none',
               background: '#fff',
             }}

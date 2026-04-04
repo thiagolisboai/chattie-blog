@@ -61,17 +61,21 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
       >
         <div className="max-w-6xl mx-auto px-5 flex items-center justify-between" style={{ height: 64 }}>
 
-          {/* Logo */}
-          <Link href={isPtBr ? ptListingHref : enListingHref} className="flex items-center gap-2" style={{ flexShrink: 0 }}>
+          {/* Logo — fullmark (symbol + wordmark) */}
+          <Link href={isPtBr ? ptListingHref : enListingHref} className="flex items-center gap-2.5" style={{ flexShrink: 0 }}>
             <img
-              src="/brand/chattie-wordmark.png"
+              src="/brand/chattie-fullmark.png"
               alt="Chattie"
-              style={{ height: 26 }}
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+              style={{ height: 30, width: 'auto', maxWidth: 140 }}
+              onError={(e) => {
+                const img = e.target as HTMLImageElement
+                img.src = '/brand/chattie-wordmark.png'
+                img.onerror = () => { img.style.display = 'none' }
+              }}
             />
             <span
               className="text-xs font-bold border-2 border-black px-2 py-0.5"
-              style={{ background: '#E4C1F9', letterSpacing: '0.05em' }}
+              style={{ background: '#E4C1F9', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}
             >
               Blog
             </span>

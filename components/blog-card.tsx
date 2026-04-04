@@ -27,12 +27,9 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
   if (featured) {
     return (
       <Link href={`${basePath}/${post.slug}`} className="block group col-span-full">
-        <article
-          className="card-brutalist bg-white overflow-hidden blog-featured-card"
-          style={{ display: 'grid', gridTemplateColumns: '55% 45%' }}
-        >
+        <article className="card-brutalist bg-white overflow-hidden blog-featured-card">
           {post.image && (
-            <div className="card-img-wrap" style={{ borderRight: '2px solid #000', borderBottom: 'none', aspectRatio: '16/9' }}>
+            <div className="card-img-wrap blog-featured-img" style={{ borderRight: '2px solid #000', borderBottom: 'none', aspectRatio: '16/9' }}>
               <img
                 src={post.image}
                 alt={post.title}
@@ -46,7 +43,7 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
               />
             </div>
           )}
-          <div style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', justifyContent: 'center' }}>
+          <div className="blog-featured-content" style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', justifyContent: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
               <span
                 style={{ background: catStyle.bg, color: catStyle.color, fontSize: '0.7rem', fontWeight: 700, padding: '0.2rem 0.6rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}

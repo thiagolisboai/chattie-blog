@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 import { getAllPostsPt } from '@/lib/posts-pt'
 
-const PT_CATEGORIES = ['linkedin', 'social-selling', 'chattie', 'b2b', 'ia-para-vendas']
+const PT_CATEGORIES = ['linkedin', 'social-selling', 'chattie', 'b2b', 'ia-para-vendas', 'comparativos']
 
 export default function sitemapPt(): MetadataRoute.Sitemap {
   const posts = getAllPostsPt()
@@ -25,6 +25,13 @@ export default function sitemapPt(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly' as const,
       priority: 0.75,
     })),
+    // Resource pages
+    {
+      url: 'https://trychattie.com/pt-br/recursos/checklist-prospeccao-linkedin',
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
     // Individual posts
     ...posts.map((post) => ({
       url: `https://trychattie.com/pt-br/blog/${post.slug}`,

@@ -8,7 +8,11 @@ interface Heading {
   level: 2 | 3
 }
 
-export function TableOfContents() {
+interface TableOfContentsProps {
+  compact?: boolean
+}
+
+export function TableOfContents({ compact = false }: TableOfContentsProps) {
   const [headings, setHeadings] = useState<Heading[]>([])
   const [active, setActive] = useState<string>('')
 
@@ -64,9 +68,9 @@ export function TableOfContents() {
       aria-label="Índice do artigo"
       style={{
         border: '2px solid #000',
-        boxShadow: '4px 4px 0 #000',
-        padding: '1.25rem 1.5rem',
-        marginBottom: '2.5rem',
+        boxShadow: compact ? 'none' : '4px 4px 0 #000',
+        padding: compact ? '1rem 1.25rem' : '1.25rem 1.5rem',
+        marginBottom: compact ? '0' : '2.5rem',
         background: '#FAFBF3',
       }}
     >
