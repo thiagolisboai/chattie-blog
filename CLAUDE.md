@@ -54,26 +54,56 @@ Adaptar (não traduzir): substituir exemplos BR por globais, ajustar tom, verifi
 - Começar cada H2 com a resposta direta antes de desenvolver
 - Usar linguagem que define conceitos claramente (LLMs adoram definições precisas)
 
+## Imagens de capa via Pexels
+
+Toda imagem de capa deve ser buscada no Pexels antes de salvar o post.
+
+**Como buscar:**
+
+```http
+GET https://api.pexels.com/v1/search?query={keyword}&per_page=5&orientation=landscape
+Authorization: {PEXELS_API_KEY}
+```
+
+**Regras:**
+
+- Usar keywords em inglês (mesmo para posts PT-BR) — resultados muito melhores
+- Escolher a foto mais relevante e profissional do resultado (não necessariamente a primeira)
+- Usar o campo `photos[n].src.large2x` como valor do campo `image` no frontmatter
+- Keywords devem refletir o tema do post: ex. post sobre LinkedIn → "linkedin business professional"
+- Evitar imagens genéricas de "business meeting" — preferir imagens que remetam ao conceito do post
+- A API key fica na variável de ambiente `PEXELS_API_KEY` (não hardcodar)
+
+**Imagens dentro do conteúdo MDX:**
+
+- Usar a mesma lógica: buscar no Pexels, referenciar como `![alt descritivo](url)`
+- Inserir no máximo 2-3 imagens por post, em pontos que ilustram conceitos complexos
+- O alt text deve descrever a imagem E o contexto do post (ex: "profissional de vendas B2B organizando leads no LinkedIn")
+
 ## Ferramentas MCP disponíveis
 
 - `brave-search`: pesquisar SERP antes de criar cada post (PT-BR e EN)
 - `filesystem`: ler/escrever arquivos em `/content/blog/` e `/content/blog-en/`
 
-## Workflow diário PT-BR (15-20 min)
+## Workflow diário PT-BR (20-25 min)
 
 1. Pesquisar SERP com Brave Search (keyword em PT-BR)
 2. Analisar top 5 resultados: word count, H2s, gaps
-3. Gerar post com mín 1800 palavras + frontmatter completo
-4. Salvar em `/content/blog/[slug].mdx`
-5. git add + commit + push → Vercel deploya automaticamente
+3. Gerar post com mín 1800 palavras + frontmatter completo (sem `image` ainda)
+4. Buscar imagem de capa no Pexels com keyword do post em inglês
+5. Preencher campo `image` no frontmatter com URL `large2x` escolhida
+6. Salvar em `/content/blog/[slug].mdx`
+7. git add + commit + push → Vercel deploya automaticamente
 
-## Workflow diário EN (15-20 min)
+## Workflow diário EN (20-25 min)
 
 1. Pesquisar SERP com Brave Search (keyword in English)
 2. Analisar top 5 resultados: word count, H2s, gaps
-3. Gerar post com mín 1800 palavras + frontmatter completo
-4. Salvar em `/content/blog-en/[slug].mdx`
-5. git add + commit + push → Vercel deploya automaticamente
+3. Gerar post com mín 1800 palavras + frontmatter completo (sem `image` ainda)
+4. Buscar imagem de capa no Pexels com keyword do post
+5. Preencher campo `image` no frontmatter com URL `large2x` escolhida
+6. Salvar em `/content/blog-en/[slug].mdx`
+7. git add + commit + push → Vercel deploya automaticamente
 
 ## Proibido
 
@@ -83,3 +113,5 @@ Adaptar (não traduzir): substituir exemplos BR por globais, ajustar tom, verifi
 - Nunca usar `lang: "pt-BR"` em posts salvos em `/content/blog-en/`
 - Nunca publicar post com menos de 1800 palavras
 - Nunca usar tradução automática como conteúdo final EN
+- Nunca usar imagem sem buscar no Pexels (proibido URLs de outras fontes sem licença clara)
+- Nunca hardcodar a PEXELS_API_KEY no código ou no MDX
