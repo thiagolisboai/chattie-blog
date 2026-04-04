@@ -5,6 +5,7 @@ import { getAllSlugsEn, getPostBySlugEn } from '@/lib/posts-en'
 import { getMdxComponents } from '@/components/mdx-components'
 import { ArticleJsonLd } from '@/components/json-ld'
 import { BlogNav } from '@/components/blog-nav'
+import { getAuthor } from '@/lib/authors'
 import Link from 'next/link'
 
 interface Props {
@@ -56,6 +57,8 @@ export default async function BlogPostEn({ params }: Props) {
   const { slug } = await params
   const post = getPostBySlugEn(slug)
   if (!post) notFound()
+
+  const author = getAuthor(post.author || 'Thiago Lisboa')
 
   return (
     <>
@@ -110,6 +113,30 @@ export default async function BlogPostEn({ params }: Props) {
               </span>
             ))}
           </div>
+
+          {author && (
+            <div className="flex items-start gap-4 border-2 border-black shadow-[4px_4px_0_black] p-5 mb-8 bg-cream">
+              <img
+                src={author.photo}
+                alt={author.name}
+                className="w-16 h-16 rounded-full border-2 border-black object-cover shrink-0"
+              />
+              <div>
+                <p className="font-black text-base">{author.name}</p>
+                <p className="text-sm text-gray-600 mb-1">{author.role}</p>
+                <p className="text-sm text-gray-700 leading-relaxed">{author.bio}</p>
+                <a
+                  href={author.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-2 text-xs font-bold text-teal hover:text-rust"
+                >
+                  LinkedIn →
+                </a>
+              </div>
+            </div>
+          )}
+
           <div className="card-brutalist bg-rust text-cream p-6">
             <p className="font-black text-lg mb-2">Want to sell more on LinkedIn?</p>
             <p className="mb-4 text-cream/90">

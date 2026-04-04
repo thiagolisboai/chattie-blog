@@ -1,3 +1,5 @@
+import { getAuthor } from '@/lib/authors'
+
 interface ArticleJsonLdProps {
   post: {
     title: string
@@ -14,6 +16,22 @@ interface ArticleJsonLdProps {
 }
 
 export function ArticleJsonLd({ post, lang = 'pt-BR' }: ArticleJsonLdProps) {
+  const author = getAuthor(post.author || 'Thiago Lisboa')
+
+  const authorSchema = author
+    ? {
+        '@type': 'Person',
+        name: author.name,
+        url: author.url,
+        image: `https://trychattie.com${author.photo}`,
+        sameAs: [author.linkedin, ...(author.twitter ? [author.twitter] : [])],
+      }
+    : {
+        '@type': 'Person',
+        name: post.author || 'Thiago Lisboa',
+        url: 'https://trychattie.com',
+      }
+
   const schema = {
     '@context': 'https://schema.org',
     '@type': post.structuredData === 'faq' ? 'FAQPage' : 'Article',
@@ -22,18 +40,14 @@ export function ArticleJsonLd({ post, lang = 'pt-BR' }: ArticleJsonLdProps) {
     inLanguage: lang,
     datePublished: post.publishedAt,
     dateModified: post.date,
-    author: {
-      '@type': 'Person',
-      name: post.author || 'Thiago Lisboa',
-      url: 'https://trychattie.com',
-    },
+    author: authorSchema,
     publisher: {
       '@type': 'Organization',
       name: 'Chattie',
       url: 'https://trychattie.com',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://trychattie.com/brand_assets/Black Chattie - Face Symbol.png',
+        url: 'https://trychattie.com/brand_assets/Black%20Chattie%20-%20Face%20Symbol.png',
       },
     },
     image: {
