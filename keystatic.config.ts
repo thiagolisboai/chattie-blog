@@ -1,19 +1,13 @@
 import { config, collection, fields } from '@keystatic/core'
 
-// Use NEXT_PUBLIC_ so the client-side bundle also sees this flag
-// Set NEXT_PUBLIC_KEYSTATIC_GITHUB_ENABLED=true in Vercel env vars
-const useGitHub = process.env.NEXT_PUBLIC_KEYSTATIC_GITHUB_ENABLED === 'true'
-
 export default config({
-  storage: useGitHub
-    ? {
-        kind: 'github',
-        repo: {
-          owner: 'thiagolisboai',
-          name: 'chattie-blog',
-        },
-      }
-    : { kind: 'local' },
+  storage: {
+    kind: 'github',
+    repo: {
+      owner: 'thiagolisboai',
+      name: 'chattie-blog',
+    },
+  },
 
   ui: {
     brand: {
