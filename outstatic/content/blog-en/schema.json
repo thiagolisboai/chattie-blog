@@ -2,37 +2,5 @@
   "title": "Blog-EN",
   "slug": "blog-en",
   "type": "object",
-  "properties": {
-    "description": {
-      "type": "string"
-    },
-    "excerpt": {
-      "type": "string"
-    },
-    "category": {
-      "type": "string"
-    },
-    "tags": {
-      "type": "array",
-      "items": { "type": "string" }
-    },
-    "coverImage": {
-      "type": "string"
-    },
-    "readTime": {
-      "type": "string"
-    },
-    "lang": {
-      "type": "string"
-    },
-    "geoOptimized": {
-      "type": "boolean"
-    },
-    "structuredData": {
-      "type": "string"
-    },
-    "ptSlug": {
-      "type": "string"
-    }
-  }
+  "properties": {}
 }

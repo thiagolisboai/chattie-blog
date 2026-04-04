@@ -4,5 +4,11 @@
     "slug": "blog-ptbr",
     "path": "outstatic/content/blog-ptbr",
     "children": []
+  },
+  {
+    "title": "Blog-EN",
+    "slug": "blog-en",
+    "path": "outstatic/content/blog-en",
+    "children": []
   }
 ]
