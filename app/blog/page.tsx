@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { getAllPostsEn } from '@/lib/posts-en'
 import { BlogCard } from '@/components/blog-card'
 import { BlogNav } from '@/components/blog-nav'
+import { BlogFooter } from '@/components/blog-footer'
+import { RevealObserver } from '@/components/reveal-observer'
 import type { PostFrontmatter } from '@/lib/posts-pt'
 
 export const metadata: Metadata = {
@@ -23,42 +25,84 @@ export const metadata: Metadata = {
 
 export default function BlogListEn() {
   const posts = getAllPostsEn()
+  const [featured, ...rest] = posts
 
   return (
     <>
       <BlogNav lang="en" />
-      <main className="max-w-5xl mx-auto px-6 py-16">
-        <header className="mb-16">
-          <p className="text-xs font-bold uppercase tracking-widest text-teal mb-3">Blog EN</p>
-          <h1 className="text-5xl font-black leading-tight mb-4">
+      <RevealObserver />
+
+      {/* Hero header */}
+      <div
+        style={{
+          background: `#FAFBF3 url('/brand/orange-gradient-bg.png') no-repeat top right / 45%`,
+          borderBottom: '2px solid #000',
+          padding: '5rem 1.5rem 4rem',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <div className="grain-overlay" />
+        <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          <p className="eyebrow" style={{ color: '#2F6451' }}>Blog EN</p>
+          <h1
+            style={{
+              fontFamily: "'Sherika', sans-serif",
+              fontWeight: 900,
+              fontSize: 'clamp(2.5rem, 5vw, 4rem)',
+              lineHeight: 1.05,
+              letterSpacing: '-0.03em',
+              marginBottom: '1rem',
+              maxWidth: 700,
+            }}
+          >
             Social selling, B2B LinkedIn<br />and AI for sales.
           </h1>
-          <p className="text-lg text-gray-700 max-w-xl">
+          <p style={{ fontSize: '1.05rem', color: '#444', lineHeight: 1.7, maxWidth: 520, marginBottom: '1rem' }}>
             For founders, consultants and B2B operators who sell on LinkedIn.
           </p>
-          <div className="mt-4">
-            <Link href="/pt-br/blog" className="text-sm text-teal underline font-semibold">
-              🇧🇷 Ler em Português →
-            </Link>
-          </div>
-        </header>
+          <Link href="/pt-br/blog" style={{ fontSize: '0.875rem', color: '#2F6451', textDecoration: 'underline', fontWeight: 600 }}>
+            🇧🇷 Ler em Português →
+          </Link>
+        </div>
+      </div>
 
+      <main style={{ maxWidth: 1200, margin: '0 auto', padding: '3.5rem 1.5rem 5rem' }}>
         {posts.length === 0 ? (
-          <div className="border-2 border-black p-12 text-center shadow-[4px_4px_0_black]">
-            <p className="text-2xl font-black mb-2">Coming soon.</p>
-            <p className="text-gray-600 mb-4">The first English posts are on their way.</p>
-            <Link href="/pt-br/blog" className="inline-block border-2 border-black px-5 py-2 font-bold hover:bg-orange-400 transition-colors text-sm">
+          <div className="card-brutalist" style={{ padding: '3rem', textAlign: 'center' }}>
+            <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 900, fontSize: '1.5rem', marginBottom: '0.5rem' }}>Coming soon.</p>
+            <p style={{ color: '#666', marginBottom: '1.5rem' }}>The first English posts are on their way.</p>
+            <Link
+              href="/pt-br/blog"
+              style={{ display: 'inline-block', border: '2px solid #000', padding: '0.5rem 1.5rem', fontWeight: 700, fontSize: '0.875rem', background: '#F4B13F' }}
+            >
               Read in Portuguese →
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <BlogCard key={post.slug} post={post as unknown as PostFrontmatter} basePath="/blog" />
-            ))}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            {featured && (
+              <BlogCard post={featured as unknown as PostFrontmatter} basePath="/blog" featured lang="en" />
+            )}
+            {rest.length > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '0.5rem 0' }}>
+                <div style={{ flex: 1, height: 2, background: '#000' }} />
+                <p className="eyebrow" style={{ marginBottom: 0 }}>All articles</p>
+                <div style={{ flex: 1, height: 2, background: '#000' }} />
+              </div>
+            )}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+              {rest.map((post, i) => (
+                <div key={post.slug} style={{ transitionDelay: `${(i % 3) * 60}ms` }}>
+                  <BlogCard post={post as unknown as PostFrontmatter} basePath="/blog" lang="en" />
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </main>
+
+      <BlogFooter lang="en" />
     </>
   )
 }

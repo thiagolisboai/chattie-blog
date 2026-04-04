@@ -26,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
       </head>
       <body className="min-h-screen bg-cream text-chattie-black">
+        <div className="grain-overlay" aria-hidden="true" />
         {children}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-8JMPF0BR2R"

@@ -5,6 +5,7 @@ import { getAllSlugsPt, getPostBySlugPt } from '@/lib/posts-pt'
 import { getMdxComponents } from '@/components/mdx-components'
 import { ArticleJsonLd } from '@/components/json-ld'
 import { BlogNav } from '@/components/blog-nav'
+import { BlogFooter } from '@/components/blog-footer'
 import { getAuthor } from '@/lib/authors'
 import Link from 'next/link'
 
@@ -64,20 +65,37 @@ export default async function BlogPostPt({ params }: Props) {
     <>
       <ArticleJsonLd post={post} lang="pt-BR" />
       <BlogNav lang="pt-BR" />
-      <main className="max-w-3xl mx-auto px-6 py-12">
-        <div className="mb-8">
-          <Link href="/pt-br/blog" className="text-sm font-bold text-teal hover:text-rust">
+
+      <main style={{ maxWidth: 760, margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>
+        {/* Back */}
+        <div style={{ marginBottom: '2rem' }}>
+          <Link
+            href="/pt-br/blog"
+            style={{ fontSize: '0.85rem', fontWeight: 700, color: '#2F6451', textDecoration: 'none' }}
+            className="hover:text-rust"
+          >
             ← Voltar ao blog
           </Link>
         </div>
 
-        <header className="mb-10">
-          <div className="flex items-center gap-3 mb-4 flex-wrap">
-            <span className="text-xs font-bold uppercase tracking-widest bg-teal text-cream px-2 py-1">
+        {/* Header */}
+        <header style={{ marginBottom: '2.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+            <span
+              style={{
+                fontSize: '0.65rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                background: '#2F6451',
+                color: '#FAFBF3',
+                padding: '0.2rem 0.6rem',
+              }}
+            >
               {post.category}
             </span>
-            <span className="text-xs text-gray-500">{post.readTime}</span>
-            <time className="text-xs text-gray-500">
+            <span style={{ fontSize: '0.78rem', color: '#888' }}>{post.readTime}</span>
+            <time style={{ fontSize: '0.78rem', color: '#888' }}>
               {new Date(post.date).toLocaleDateString('pt-BR', {
                 day: '2-digit',
                 month: 'long',
@@ -85,44 +103,79 @@ export default async function BlogPostPt({ params }: Props) {
               })}
             </time>
           </div>
-          <h1 className="text-4xl md:text-5xl font-black leading-tight mb-4">{post.title}</h1>
-          <p className="text-lg text-gray-700 leading-relaxed">{post.description}</p>
+
+          <h1
+            style={{
+              fontFamily: "'Sherika', sans-serif",
+              fontWeight: 900,
+              fontSize: 'clamp(2rem, 4vw, 3rem)',
+              lineHeight: 1.08,
+              letterSpacing: '-0.03em',
+              marginBottom: '1rem',
+            }}
+          >
+            {post.title}
+          </h1>
+          <p style={{ fontSize: '1.1rem', color: '#555', lineHeight: 1.65 }}>{post.description}</p>
+
           {post.image && (
-            <div className="mt-6 border-2 border-black shadow-[4px_4px_0_black] overflow-hidden">
-              <img src={post.image} alt={post.title} className="w-full aspect-video object-cover" />
+            <div
+              style={{
+                marginTop: '1.75rem',
+                border: '2px solid #000',
+                boxShadow: '4px 4px 0 #000',
+                overflow: 'hidden',
+              }}
+            >
+              <img src={post.image} alt={post.title} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} />
             </div>
           )}
         </header>
 
+        {/* Article */}
         <article className="prose">
           <MDXRemote source={post.content} components={getMdxComponents()} />
         </article>
 
-        <footer className="mt-16 border-t-2 border-black pt-8">
-          <div className="flex flex-wrap gap-2 mb-6">
+        {/* Footer */}
+        <footer style={{ marginTop: '4rem', borderTop: '2px solid #000', paddingTop: '2rem' }}>
+          {/* Tags */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '2rem' }}>
             {post.tags?.map((tag) => (
-              <span key={tag} className="text-sm border border-black px-3 py-1 font-600">
+              <span key={tag} style={{ fontSize: '0.8rem', border: '1px solid #000', padding: '0.2rem 0.6rem' }}>
                 #{tag}
               </span>
             ))}
           </div>
 
+          {/* Author card */}
           {author && (
-            <div className="flex items-start gap-4 border-2 border-black shadow-[4px_4px_0_black] p-5 mb-8 bg-cream">
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '1.25rem',
+                border: '2px solid #000',
+                boxShadow: '4px 4px 0 rgba(47,100,81,0.3)',
+                padding: '1.5rem',
+                marginBottom: '2rem',
+                background: '#FAFBF3',
+              }}
+            >
               <img
                 src={author.photo}
                 alt={author.name}
-                className="w-16 h-16 rounded-full border-2 border-black object-cover shrink-0"
+                style={{ width: 72, height: 72, borderRadius: '50%', border: '2px solid #000', objectFit: 'cover', flexShrink: 0 }}
               />
               <div>
-                <p className="font-black text-base">{author.name}</p>
-                <p className="text-sm text-gray-600 mb-1">{author.rolePt}</p>
-                <p className="text-sm text-gray-700 leading-relaxed">{author.bioPt}</p>
+                <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 800, fontSize: '1rem', marginBottom: '0.15rem' }}>{author.name}</p>
+                <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.6rem' }}>{author.rolePt}</p>
+                <p style={{ fontSize: '0.875rem', color: '#444', lineHeight: 1.6 }}>{author.bioPt}</p>
                 <a
                   href={author.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block mt-2 text-xs font-bold text-teal hover:text-rust"
+                  style={{ display: 'inline-block', marginTop: '0.6rem', fontSize: '0.78rem', fontWeight: 700, color: '#2F6451', textDecoration: 'none' }}
                 >
                   LinkedIn →
                 </a>
@@ -130,20 +183,30 @@ export default async function BlogPostPt({ params }: Props) {
             </div>
           )}
 
-          <div className="card-brutalist bg-rust text-cream p-6">
-            <p className="font-black text-lg mb-2">Quer vender mais pelo LinkedIn?</p>
-            <p className="mb-4 text-cream/90">
+          {/* CTA */}
+          <div
+            className="card-brutalist"
+            style={{ background: '#E57B33', color: '#FAFBF3', padding: '2rem' }}
+          >
+            <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 900, fontSize: '1.3rem', marginBottom: '0.5rem' }}>
+              Quer vender mais pelo LinkedIn?
+            </p>
+            <p style={{ marginBottom: '1.25rem', opacity: 0.9, lineHeight: 1.6 }}>
               O Chattie é o AI SDR que prospecta, qualifica e engaja seus leads no LinkedIn — no piloto automático.
             </p>
             <a
               href="https://trychattie.com"
-              className="inline-block bg-cream text-black font-bold border-2 border-cream px-6 py-3 hover:bg-orange transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-cta-post"
             >
               Conhecer o Chattie →
             </a>
           </div>
         </footer>
       </main>
+
+      <BlogFooter lang="pt-BR" />
     </>
   )
 }
