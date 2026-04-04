@@ -2,5 +2,34 @@
   "title": "Blog-PTBR",
   "slug": "blog-ptbr",
   "type": "object",
-  "properties": {}
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "excerpt": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "coverImage": {
+      "type": "string"
+    },
+    "readTime": {
+      "type": "string"
+    },
+    "lang": {
+      "type": "string"
+    },
+    "geoOptimized": {
+      "type": "boolean"
+    },
+    "structuredData": {
+      "type": "string"
+    }
+  }
 }
