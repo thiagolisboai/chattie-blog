@@ -2,8 +2,30 @@ import type { MDXComponents } from 'mdx/types'
 import Link from 'next/link'
 import Image from 'next/image'
 
+function CalloutBox({ children, type = 'info' }: { children: React.ReactNode; type?: 'info' | 'cta' | 'tip' }) {
+  const styles: Record<string, React.CSSProperties> = {
+    info: { background: '#E4C1F9', borderColor: '#000' },
+    cta: { background: '#E57B33', borderColor: '#000', color: '#FAFBF3' },
+    tip: { background: '#66BAC6', borderColor: '#000' },
+  }
+  return (
+    <div
+      style={{
+        border: '2px solid #000',
+        boxShadow: '4px 4px 0 #000',
+        padding: '1.25rem 1.5rem',
+        margin: '2rem 0',
+        ...styles[type],
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
 export function getMdxComponents(): MDXComponents {
   return {
+    CalloutBox,
     h1: (props) => <h1 className="text-4xl font-black mb-4 leading-tight" {...props} />,
     h2: (props) => (
       <h2

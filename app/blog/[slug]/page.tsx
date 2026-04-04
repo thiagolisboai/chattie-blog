@@ -10,6 +10,8 @@ import { BlogFooter } from '@/components/blog-footer'
 import { ReadingProgressBar, ScrollToTopButton } from '@/components/post-ui'
 import { RelatedPosts } from '@/components/related-posts'
 import { TableOfContents } from '@/components/table-of-contents'
+import { NewsletterCta } from '@/components/newsletter-cta'
+import { CtaButton } from '@/components/cta-button'
 import { getAuthor } from '@/lib/authors'
 import type { PostFrontmatter } from '@/lib/posts-pt'
 import Link from 'next/link'
@@ -211,6 +213,9 @@ export default async function BlogPostEn({ params }: Props) {
             </div>
           )}
 
+          {/* Newsletter */}
+          <NewsletterCta lang="en" />
+
           {/* Related posts */}
           <RelatedPosts
             currentSlug={post.slug}
@@ -232,14 +237,13 @@ export default async function BlogPostEn({ params }: Props) {
             <p style={{ marginBottom: '1.25rem', opacity: 0.9, lineHeight: 1.6 }}>
               Chattie is the AI SDR that prospects, qualifies and engages your LinkedIn leads — on autopilot.
             </p>
-            <a
+            <CtaButton
               href="https://trychattie.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-cta-post"
+              label="Try Chattie"
+              gaLabel={`post_cta_en_${post.slug}`}
             >
               Try Chattie →
-            </a>
+            </CtaButton>
           </div>
         </footer>
       </main>

@@ -6,6 +6,7 @@ import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { RevealObserver } from '@/components/reveal-observer'
 import { ScrollToTopButton } from '@/components/post-ui'
+import { NewsletterCta } from '@/components/newsletter-cta'
 import type { PostFrontmatter } from '@/lib/posts-pt'
 
 export const metadata: Metadata = {
@@ -86,6 +87,8 @@ export default function BlogListEn() {
             {featured && (
               <BlogCard post={featured as unknown as PostFrontmatter} basePath="/blog" featured lang="en" />
             )}
+            {/* Newsletter */}
+            <NewsletterCta lang="en" />
             {rest.length > 0 && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', margin: '0.5rem 0' }}>
                 <div style={{ flex: 1, height: 2, background: '#000' }} />

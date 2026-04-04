@@ -3,28 +3,32 @@
 /* ─── Sherika @font-face ─── */
 @font-face {
   font-family: 'Sherika';
-  src: url('/fonts/Sherika-Variable.ttf') format('truetype');
+  src: url('/fonts/Sherika-Variable.woff2') format('woff2'),
+       url('/fonts/Sherika-Variable.ttf') format('truetype');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Sherika';
-  src: url('/fonts/Sherika-Bold.ttf') format('truetype');
+  src: url('/fonts/Sherika-Bold.woff2') format('woff2'),
+       url('/fonts/Sherika-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Sherika';
-  src: url('/fonts/Sherika-ExtraBold.ttf') format('truetype');
+  src: url('/fonts/Sherika-ExtraBold.woff2') format('woff2'),
+       url('/fonts/Sherika-ExtraBold.ttf') format('truetype');
   font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Sherika';
-  src: url('/fonts/Sherika-Black.ttf') format('truetype');
+  src: url('/fonts/Sherika-Black.woff2') format('woff2'),
+       url('/fonts/Sherika-Black.ttf') format('truetype');
   font-weight: 900;
   font-style: normal;
   font-display: swap;

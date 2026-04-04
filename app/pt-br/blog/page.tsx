@@ -5,6 +5,7 @@ import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { RevealObserver } from '@/components/reveal-observer'
 import { ScrollToTopButton } from '@/components/post-ui'
+import { NewsletterCta } from '@/components/newsletter-cta'
 
 export const metadata: Metadata = {
   title: 'Blog PT-BR | Chattie',
@@ -78,6 +79,9 @@ export default function BlogListPt() {
             {featured && (
               <BlogCard post={featured} basePath="/pt-br/blog" featured lang="pt-BR" />
             )}
+
+            {/* Newsletter */}
+            <NewsletterCta lang="pt-BR" />
 
             {/* Divider */}
             {rest.length > 0 && (
