@@ -28,9 +28,21 @@ export default function sitemapEn(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     },
+    {
+      url: 'https://trychattie.com/resources/linkedin-connection-templates',
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: 'https://trychattie.com/resources/linkedin-followup-script',
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
     ...posts.map((post) => ({
       url: `https://trychattie.com/blog/${post.slug}`,
-      lastModified: new Date(post.date),
+      lastModified: new Date(post.dateModified || post.date),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     })),

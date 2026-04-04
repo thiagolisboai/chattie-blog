@@ -6,6 +6,7 @@ interface ArticleJsonLdProps {
     description: string
     publishedAt: string
     date: string
+    dateModified?: string
     image: string
     canonicalUrl: string
     author?: string
@@ -202,7 +203,7 @@ export function ArticleJsonLd({ post, lang = 'pt-BR' }: ArticleJsonLdProps) {
     description: post.description,
     inLanguage: lang,
     datePublished: post.publishedAt,
-    dateModified: post.date,
+    dateModified: post.dateModified || post.date,
     author: authorSchema,
     publisher: {
       '@type': 'Organization',

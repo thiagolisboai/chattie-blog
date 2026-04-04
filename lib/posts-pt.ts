@@ -23,6 +23,7 @@ export interface PostFrontmatter {
   canonicalUrl: string
   structuredData: string
   geoOptimized: boolean
+  dateModified?: string
   enSlug?: string
   series?: string
   seriesNumber?: number
@@ -54,6 +55,7 @@ function mapOutstaticFrontmatter(data: Record<string, unknown>, slug: string): P
     canonicalUrl: (data.canonicalUrl as string) || `https://trychattie.com/pt-br/blog/${slug}`,
     structuredData: (data.structuredData as string) || 'article',
     geoOptimized: (data.geoOptimized as boolean) ?? false,
+    dateModified: data.dateModified ? (data.dateModified as string) : undefined,
     enSlug: (data.enSlug as string) || '',
     series: data.series ? (data.series as string) : undefined,
     seriesNumber: data.seriesNumber ? (data.seriesNumber as number) : undefined,

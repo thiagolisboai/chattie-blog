@@ -19,7 +19,7 @@ const CATEGORIES_PT = [
 const CATEGORIES_EN = [
   { label: 'LinkedIn', href: '/blog/category/linkedin' },
   { label: 'Social Selling', href: '/blog/category/social-selling' },
-  { label: 'Comparisons', href: '/blog/category/comparativos' },
+  { label: 'Comparisons', href: '/blog/category/comparisons' },
   { label: 'AI for Sales', href: '/blog/category/ai-for-sales' },
   { label: '📋 Checklist', href: '/resources/linkedin-prospecting-checklist' },
 ]

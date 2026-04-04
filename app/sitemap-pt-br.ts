@@ -32,10 +32,22 @@ export default function sitemapPt(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     },
+    {
+      url: 'https://trychattie.com/pt-br/recursos/templates-mensagem-linkedin',
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
+    {
+      url: 'https://trychattie.com/pt-br/recursos/script-follow-up-linkedin',
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    },
     // Individual posts
     ...posts.map((post) => ({
       url: `https://trychattie.com/pt-br/blog/${post.slug}`,
-      lastModified: new Date(post.date),
+      lastModified: new Date(post.dateModified || post.date),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
     })),
