@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { getAllSlugsPt, getPostBySlugPt, getAllPostsPt } from '@/lib/posts-pt'
 import { getMdxComponents } from '@/components/mdx-components'
+import Image from 'next/image'
 import { ArticleJsonLd } from '@/components/json-ld'
 import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
@@ -130,9 +131,18 @@ export default async function BlogPostPt({ params }: Props) {
                 border: '2px solid #000',
                 boxShadow: '4px 4px 0 #000',
                 overflow: 'hidden',
+                position: 'relative',
+                aspectRatio: '16/9',
               }}
             >
-              <img src={post.image} alt={post.title} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', display: 'block' }} />
+              <Image
+                src={post.image}
+                alt={post.title}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 760px"
+                style={{ objectFit: 'cover' }}
+              />
             </div>
           )}
         </header>
