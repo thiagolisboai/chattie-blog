@@ -36,7 +36,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       languages: {
         'pt-BR': post.canonicalUrl,
         ...(post.enSlug
-          ? { en: `https://trychattie.com/blog/${post.enSlug}` }
+          ? {
+              en: `https://trychattie.com/blog/${post.enSlug}`,
+              'x-default': `https://trychattie.com/blog/${post.enSlug}`,
+            }
           : {}),
       },
     },

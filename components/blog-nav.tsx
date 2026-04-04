@@ -12,12 +12,14 @@ const CATEGORIES_PT = [
   { label: 'LinkedIn', href: '/pt-br/blog/categoria/linkedin' },
   { label: 'Social Selling', href: '/pt-br/blog/categoria/social-selling' },
   { label: 'Chattie', href: '/pt-br/blog/categoria/chattie' },
+  { label: '📋 Checklist', href: '/pt-br/recursos/checklist-prospeccao-linkedin' },
 ]
 
 const CATEGORIES_EN = [
   { label: 'LinkedIn', href: '/blog/category/linkedin' },
   { label: 'Social Selling', href: '/blog/category/social-selling' },
   { label: 'AI for Sales', href: '/blog/category/ai-for-sales' },
+  { label: '📋 Checklist', href: '/resources/linkedin-prospecting-checklist' },
 ]
 
 export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {

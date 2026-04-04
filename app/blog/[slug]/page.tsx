@@ -36,6 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: post.canonicalUrl,
       languages: {
         en: post.canonicalUrl,
+        'x-default': post.canonicalUrl,
         ...(post.ptSlug
           ? { 'pt-BR': `https://trychattie.com/pt-br/blog/${post.ptSlug}` }
           : {}),
