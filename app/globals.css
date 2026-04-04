@@ -261,6 +261,65 @@ body {
   box-shadow: 4px 4px 0 rgba(0,0,0,0.4);
 }
 
+/* ─── Prose table styles ─── */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  font-size: 0.9rem;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  overflow: hidden;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.prose thead {
+  background: #000;
+  color: #FAFBF3;
+}
+.prose th {
+  padding: 0.7rem 1rem;
+  text-align: left;
+  font-family: 'Sherika', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.prose td {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.prose tr:last-child td { border-bottom: none; }
+.prose tr:nth-child(even) { background: rgba(0,0,0,0.03); }
+.prose tr:hover { background: rgba(102,186,198,0.1); }
+
+/* ─── Responsive card grid ─── */
+@media (max-width: 640px) {
+  .blog-featured-card {
+    grid-template-columns: 1fr !important;
+  }
+  .blog-featured-card .card-img-wrap {
+    border-right: none !important;
+    border-bottom: 2px solid #000 !important;
+  }
+}
+
+/* ─── Footer column links ─── */
+.footer-col-link {
+  display: block;
+  font-size: 0.85rem;
+  color: rgba(250,251,243,0.7);
+  text-decoration: none;
+  padding: 0.25rem 0;
+  transition: color 0.15s;
+}
+.footer-col-link:hover { color: #FAFBF3; }
+
 /* ─── Section eyebrow (matches website .section-eyebrow) ─── */
 .eyebrow {
   font-size: 0.72rem;

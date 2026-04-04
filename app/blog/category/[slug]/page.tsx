@@ -19,6 +19,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   'b2b':            'B2B',
   'ai-for-sales':   'AI for Sales',
   'prospecting':    'Prospecting',
+  'comparativos':   'Comparisons',
 }
 
 export async function generateStaticParams() {

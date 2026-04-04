@@ -16,6 +16,8 @@ const categoryColors: Record<string, { bg: string; color: string }> = {
   'chattie':           { bg: '#E57B33', color: '#FAFBF3' },
   'ai-for-sales':      { bg: '#F4B13F', color: '#000' },
   'prospecting':       { bg: '#2F6451', color: '#FAFBF3' },
+  'comparativos':      { bg: '#000', color: '#FAFBF3' },
+  'comparisons':       { bg: '#000', color: '#FAFBF3' },
 }
 
 export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lang = 'pt-BR' }: BlogCardProps) {
@@ -26,7 +28,7 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
     return (
       <Link href={`${basePath}/${post.slug}`} className="block group col-span-full">
         <article
-          className="card-brutalist bg-white overflow-hidden"
+          className="card-brutalist bg-white overflow-hidden blog-featured-card"
           style={{ display: 'grid', gridTemplateColumns: '55% 45%' }}
         >
           {post.image && (
