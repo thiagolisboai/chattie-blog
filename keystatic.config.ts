@@ -1,13 +1,11 @@
 import { config, collection, fields } from '@keystatic/core'
 
-const hasGitHubCreds = !!(
-  process.env.KEYSTATIC_GITHUB_CLIENT_ID &&
-  process.env.KEYSTATIC_GITHUB_CLIENT_SECRET &&
-  process.env.KEYSTATIC_SECRET
-)
+// Use NEXT_PUBLIC_ so the client-side bundle also sees this flag
+// Set NEXT_PUBLIC_KEYSTATIC_GITHUB_ENABLED=true in Vercel env vars
+const useGitHub = process.env.NEXT_PUBLIC_KEYSTATIC_GITHUB_ENABLED === 'true'
 
 export default config({
-  storage: hasGitHubCreds
+  storage: useGitHub
     ? {
         kind: 'github',
         repo: {
