@@ -1,11 +1,11 @@
 {
-  "commit": "",
-  "generated": "2026-04-04T02:25:56.510Z",
+  "commit": "884e1ec157cc42bac8bd5bfdc6dfa6541bdd9975",
+  "generated": "2026-04-04T02:33:41.925Z",
   "metadata": [
     {
       "__outstatic": {
-        "commit": "",
-        "hash": "1702449124",
+        "commit": "884e1ec157cc42bac8bd5bfdc6dfa6541bdd9975",
+        "hash": "3162857180",
         "path": "outstatic/content/blog-ptbr/teste.mdx"
       },
       "author": {
@@ -15,7 +15,7 @@
       "collection": "blog-ptbr",
       "publishedAt": "2026-04-04T02:07:36.838Z",
       "slug": "teste",
-      "status": "draft",
+      "status": "published",
       "title": "Teste"
     }
   ]
