@@ -13,7 +13,7 @@ export default function robots(): MetadataRoute.Robots {
     ],
     sitemap: [
       'https://trychattie.com/sitemap-pt-br.xml',
-      // 'https://trychattie.com/sitemap-en.xml', // uncomment in Phase 6
+      'https://trychattie.com/sitemap-en.xml',
     ],
   }
 }
