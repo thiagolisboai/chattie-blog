@@ -30,7 +30,7 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
           style={{ display: 'grid', gridTemplateColumns: '55% 45%' }}
         >
           {post.image && (
-            <div style={{ overflow: 'hidden', borderRight: '2px solid #000', aspectRatio: '16/9' }}>
+            <div className="card-img-wrap" style={{ borderRight: '2px solid #000', borderBottom: 'none', aspectRatio: '16/9' }}>
               <img
                 src={post.image}
                 alt={post.title}
@@ -102,7 +102,7 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
     <Link href={`${basePath}/${post.slug}`} className="block group reveal">
       <article className="card-brutalist bg-white h-full flex flex-col" style={{ overflow: 'hidden' }}>
         {post.image && (
-          <div style={{ overflow: 'hidden', borderBottom: '2px solid #000', aspectRatio: '16/9', flexShrink: 0 }}>
+          <div className="card-img-wrap" style={{ aspectRatio: '16/9' }}>
             <img
               src={post.image}
               alt={post.title}

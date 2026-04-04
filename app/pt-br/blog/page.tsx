@@ -4,6 +4,7 @@ import { BlogCard } from '@/components/blog-card'
 import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { RevealObserver } from '@/components/reveal-observer'
+import { ScrollToTopButton } from '@/components/post-ui'
 
 export const metadata: Metadata = {
   title: 'Blog PT-BR | Chattie',
@@ -27,6 +28,7 @@ export default function BlogListPt() {
 
   return (
     <>
+      <ScrollToTopButton />
       <BlogNav lang="pt-BR" />
       <RevealObserver />
 

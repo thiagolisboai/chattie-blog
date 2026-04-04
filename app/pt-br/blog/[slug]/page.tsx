@@ -6,6 +6,7 @@ import { getMdxComponents } from '@/components/mdx-components'
 import { ArticleJsonLd } from '@/components/json-ld'
 import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
+import { ReadingProgressBar, ScrollToTopButton } from '@/components/post-ui'
 import { getAuthor } from '@/lib/authors'
 import Link from 'next/link'
 
@@ -63,6 +64,8 @@ export default async function BlogPostPt({ params }: Props) {
 
   return (
     <>
+      <ReadingProgressBar />
+      <ScrollToTopButton />
       <ArticleJsonLd post={post} lang="pt-BR" />
       <BlogNav lang="pt-BR" />
 

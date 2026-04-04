@@ -5,6 +5,7 @@ import { BlogCard } from '@/components/blog-card'
 import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { RevealObserver } from '@/components/reveal-observer'
+import { ScrollToTopButton } from '@/components/post-ui'
 import type { PostFrontmatter } from '@/lib/posts-pt'
 
 export const metadata: Metadata = {
@@ -29,6 +30,7 @@ export default function BlogListEn() {
 
   return (
     <>
+      <ScrollToTopButton />
       <BlogNav lang="en" />
       <RevealObserver />
 

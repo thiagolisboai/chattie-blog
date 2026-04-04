@@ -50,46 +50,115 @@ body {
   font-family: 'Barlow', sans-serif;
 }
 
+/* ─── Card image grain overlay ─── */
+.card-img-wrap {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 2px solid #000;
+  flex-shrink: 0;
+}
+.card-img-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.07;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: multiply;
+}
+
 /* ─── Prose styles for MDX content ─── */
+/* Medium-like reading experience */
+.prose {
+  font-size: 1.125rem;     /* 18px — confortável para leitura longa */
+  line-height: 1.85;       /* generoso, como Medium/Substack */
+  color: #1a1a1a;
+  max-width: 680px;        /* linha ideal ~65-70 chars */
+}
 .prose h1 {
   font-family: 'Sherika', sans-serif;
-  font-size: 2.25rem;
+  font-size: clamp(1.9rem, 4vw, 2.5rem);
   font-weight: 900;
   line-height: 1.1;
   letter-spacing: -0.03em;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  color: #000;
 }
 .prose h2 {
   font-family: 'Sherika', sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.02em;
-  margin-top: 2.5rem;
-  margin-bottom: 0.75rem;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
   border-bottom: 2px solid #000;
   padding-bottom: 0.5rem;
+  color: #000;
 }
 .prose h3 {
   font-family: 'Sherika', sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: -0.01em;
+  margin-top: 2.25rem;
+  margin-bottom: 0.75rem;
+  color: #000;
+}
+.prose h4 {
+  font-family: 'Sherika', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
   margin-top: 1.75rem;
   margin-bottom: 0.5rem;
+  color: #000;
 }
-.prose p { margin-bottom: 1.25rem; line-height: 1.75; font-size: 1.0625rem; }
-.prose ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.25rem; }
-.prose ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.25rem; }
-.prose li { margin-bottom: 0.5rem; line-height: 1.6; }
+.prose p {
+  margin-bottom: 1.6rem;   /* espaço entre parágrafos — respiração Medium */
+  line-height: 1.85;
+  font-size: 1.125rem;
+}
+.prose ul {
+  list-style-type: disc;
+  padding-left: 1.75rem;
+  margin-bottom: 1.6rem;
+}
+.prose ol {
+  list-style-type: decimal;
+  padding-left: 1.75rem;
+  margin-bottom: 1.6rem;
+}
+.prose li {
+  margin-bottom: 0.65rem;
+  line-height: 1.75;
+  font-size: 1.125rem;
+}
 .prose a { color: #2F6451; text-decoration: underline; font-weight: 600; }
 .prose a:hover { color: #E57B33; }
-.prose blockquote { border-left: 4px solid #F4B13F; padding: 1rem; margin: 1.5rem 0; font-style: italic; background: rgba(244, 177, 63, 0.08); }
+.prose blockquote {
+  border-left: 4px solid #F4B13F;
+  padding: 1.25rem 1.5rem;
+  margin: 2rem 0;
+  font-style: italic;
+  font-size: 1.2rem;
+  line-height: 1.7;
+  background: rgba(244, 177, 63, 0.07);
+  color: #333;
+}
 .prose code { font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.07); padding: 0.15em 0.4em; border-radius: 3px; font-size: 0.875em; }
-.prose pre { background: #0B0C10; color: #C5C6C7; padding: 1.5rem; overflow-x: auto; margin: 1.5rem 0; border: 2px solid #000; box-shadow: 4px 4px 0 #000; }
+.prose pre { background: #0B0C10; color: #C5C6C7; padding: 1.5rem; overflow-x: auto; margin: 2rem 0; border: 2px solid #000; box-shadow: 4px 4px 0 #000; font-size: 0.9rem; line-height: 1.6; }
 .prose pre code { background: none; padding: 0; }
-.prose strong { font-weight: 800; }
-.prose hr { border: 2px solid #000; margin: 2rem 0; }
+.prose strong { font-weight: 800; color: #000; }
+.prose hr { border: none; border-top: 2px solid #000; margin: 3rem 0; }
+.prose img { width: 100%; border: 2px solid #000; box-shadow: 4px 4px 0 #000; margin: 2rem 0; }
+/* First paragraph drop-cap feel — first letter slightly larger */
+.prose > p:first-of-type {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #111;
+}
 
 /* ─── Brutalist card ─── */
 .card-brutalist {
@@ -111,6 +180,22 @@ body {
   opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)'/%3E%3C/svg%3E");
   background-size: 200px 200px;
+}
+
+/* ─── Scroll-to-top roll animation ─── */
+@keyframes rollUp {
+  0%   { transform: rotate(0deg) scale(1); }
+  40%  { transform: rotate(180deg) scale(1.15); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* ─── Nav CTA hover ─── */
+.btn-nav-cta {
+  transition: transform 0.12s cubic-bezier(0.16,1,0.3,1), box-shadow 0.12s cubic-bezier(0.16,1,0.3,1);
+}
+.btn-nav-cta:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 #000;
 }
 
 /* ─── Reveal animations ─── */
