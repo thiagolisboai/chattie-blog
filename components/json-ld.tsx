@@ -120,6 +120,34 @@ const FAQ_DATA: Record<string, FaqItem[]> = {
       a: 'Social selling complementa e, com o tempo, reduz a necessidade de cold outreach — mas não o substitui completamente no curto prazo. A vantagem do social selling é que as abordagens chegam com contexto e credibilidade acumulados, gerando taxas de resposta muito mais altas. A maioria das operações B2B de alta performance combina os dois.',
     },
   ],
+  'como-otimizar-perfil-linkedin-para-vendas-b2b': [
+    {
+      q: 'Com que frequência devo atualizar o perfil do LinkedIn?',
+      a: 'A cada 3-6 meses, ou sempre que mudar de cargo, lançar um produto, atingir um resultado relevante ou mudar o perfil de cliente ideal que está buscando. O título e a seção "Sobre" são os mais críticos — devem refletir o foco atual da sua operação comercial.',
+    },
+    {
+      q: 'Devo usar o LinkedIn em inglês ou português para vender B2B no Brasil?',
+      a: 'Para vender para empresas brasileiras, português é o padrão. Se você também atende clientes internacionais, considere manter o título em inglês (maior alcance de busca) e a seção "Sobre" em português com uma versão em inglês ao final. O LinkedIn permite apenas um idioma por perfil — use o do seu público principal.',
+    },
+    {
+      q: 'Vale a pena ter LinkedIn Premium para otimizar vendas B2B?',
+      a: 'Para prospecção ativa com volume médio, o LinkedIn gratuito + Sales Navigator é mais custo-efetivo do que o Premium básico. O Sales Navigator oferece filtros avançados e alertas que impactam diretamente resultados de vendas. O Premium Career ou Business tem pouco diferencial para quem foca em vendas B2B.',
+    },
+  ],
+  'automacao-linkedin-o-que-e-permitido': [
+    {
+      q: 'O LinkedIn pode banir minha conta permanentemente por usar automação?',
+      a: 'Sim, em casos de violação grave e repetida. A maioria das restrições iniciais são temporárias — de 24 horas a 7 dias. Contas com histórico de violações repetidas podem receber restrições permanentes. O risco é maior para contas novas e para quem usa ferramentas de scraping em alto volume.',
+    },
+    {
+      q: 'Ferramentas como Expandi e Waalaxy são seguras de usar?',
+      a: 'Dependem de como são configuradas. Usadas com limites conservadores (menos de 50 conexões/dia), personalização real e fora de horários suspeitos, o risco é gerenciável. Usadas no modo padrão agressivo, aumentam significativamente o risco de restrição. O histórico da conta também importa — perfis novos correm mais risco.',
+    },
+    {
+      q: 'Existe alguma forma de automatizar o LinkedIn sem risco de banimento?',
+      a: 'Ferramentas que não executam ações automaticamente na plataforma — como CRMs sociais que organizam suas conversas e sinalizam timing de follow-up — são essencialmente sem risco porque você executa cada ação manualmente. O risco vem quando a ferramenta age em seu nome no LinkedIn sem sua confirmação por ação.',
+    },
+  ],
   'o-que-e-um-ai-sdr': [
     {
       q: 'O que é um AI SDR e como ele funciona na prática?',

@@ -24,6 +24,8 @@ export interface PostFrontmatter {
   structuredData: string
   geoOptimized: boolean
   enSlug?: string
+  series?: string
+  seriesNumber?: number
 }
 
 export interface Post extends PostFrontmatter {
@@ -53,6 +55,8 @@ function mapOutstaticFrontmatter(data: Record<string, unknown>, slug: string): P
     structuredData: (data.structuredData as string) || 'article',
     geoOptimized: (data.geoOptimized as boolean) ?? false,
     enSlug: (data.enSlug as string) || '',
+    series: data.series ? (data.series as string) : undefined,
+    seriesNumber: data.seriesNumber ? (data.seriesNumber as number) : undefined,
   }
 }
 

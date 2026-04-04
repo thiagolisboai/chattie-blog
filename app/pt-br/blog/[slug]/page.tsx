@@ -92,6 +92,28 @@ export default async function BlogPostPt({ params }: Props) {
 
         {/* Header */}
         <header style={{ marginBottom: '2.5rem' }}>
+          {post.series && (
+            <div style={{ marginBottom: '0.75rem' }}>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  fontSize: '0.65rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.12em',
+                  color: '#2F6451',
+                  border: '1.5px solid #2F6451',
+                  padding: '0.2rem 0.6rem',
+                  fontFamily: "'Sherika', sans-serif",
+                }}
+              >
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#2F6451', flexShrink: 0 }} />
+                {post.series}{post.seriesNumber ? ` #${post.seriesNumber}` : ''}
+              </span>
+            </div>
+          )}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
             <span
               style={{
