@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'trychattie.com' },
     ],
   },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
 }
 
 export default nextConfig
