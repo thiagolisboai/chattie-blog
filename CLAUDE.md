@@ -1,4 +1,4 @@
-# CLAUDE.md — Agente de Conteúdo do Chattie
+# CLAUDE.md — Agente de Conteúdo do Chattie 202604
 
 ## Identidade e contexto
 
