@@ -1,0 +1,22 @@
+{
+  "commit": "",
+  "generated": "2026-04-04T02:25:56.510Z",
+  "metadata": [
+    {
+      "__outstatic": {
+        "commit": "",
+        "hash": "1702449124",
+        "path": "outstatic/content/blog-ptbr/teste.mdx"
+      },
+      "author": {
+        "name": "Thiago Lisboa",
+        "picture": "https://avatars.githubusercontent.com/u/205525595?v=4"
+      },
+      "collection": "blog-ptbr",
+      "publishedAt": "2026-04-04T02:07:36.838Z",
+      "slug": "teste",
+      "status": "draft",
+      "title": "Teste"
+    }
+  ]
+}
