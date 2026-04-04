@@ -233,25 +233,66 @@ export default async function BlogPostPt({ params }: Props) {
             lang="pt-BR"
           />
 
-          {/* CTA */}
-          <div
-            className="card-brutalist"
-            style={{ background: '#E57B33', color: '#FAFBF3', padding: '2rem', marginTop: '2rem' }}
-          >
-            <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 900, fontSize: '1.3rem', marginBottom: '0.5rem' }}>
-              Quer vender mais pelo LinkedIn?
-            </p>
-            <p style={{ marginBottom: '1.25rem', opacity: 0.9, lineHeight: 1.6 }}>
-              O Chattie é o AI SDR que prospecta, qualifica e engaja seus leads no LinkedIn — no piloto automático.
-            </p>
-            <CtaButton
-              href="https://trychattie.com"
-              label="Conhecer o Chattie"
-              gaLabel={`post_cta_pt_${post.slug}`}
-            >
-              Conhecer o Chattie →
-            </CtaButton>
-          </div>
+          {/* CTA — contextual by category */}
+          {(() => {
+            const ctaCopy: Record<string, { heading: string; body: string; btn: string }> = {
+              'social-selling': {
+                heading: 'Pronto para fazer social selling com consistência?',
+                body: 'O Chattie organiza suas conversas no LinkedIn para que nenhum lead quente fique sem follow-up — no timing certo, com o contexto certo.',
+                btn: 'Conhecer o Chattie',
+              },
+              'linkedin': {
+                heading: 'Sua prospecção no LinkedIn merece um sistema.',
+                body: 'O Chattie registra o contexto de cada conversa e sinaliza o momento certo para o follow-up — sem perder o fio da meada.',
+                btn: 'Conhecer o Chattie',
+              },
+              'comparativos': {
+                heading: 'Já que você está comparando, experimente na prática.',
+                body: 'Teste o Chattie gratuitamente. Sem cartão de crédito — conecte sua conta do LinkedIn e veja a diferença.',
+                btn: 'Testar o Chattie',
+              },
+              'chattie': {
+                heading: 'Pronto para ter o mesmo resultado?',
+                body: 'Comece a usar o Chattie hoje e organize sua prospecção no LinkedIn sem a complexidade de um CRM.',
+                btn: 'Testar o Chattie',
+              },
+              'ia-para-vendas': {
+                heading: 'IA que realmente funciona para vendas no LinkedIn.',
+                body: 'O Chattie aplica IA onde ela importa: no contexto de cada conversa, no timing do follow-up e na priorização de quem está quente.',
+                btn: 'Conhecer o Chattie',
+              },
+              'b2b': {
+                heading: 'Quer fechar mais negócios no LinkedIn?',
+                body: 'O Chattie é o AI SDR que prospecta, qualifica e engaja seus leads no LinkedIn — com contexto real, não automação genérica.',
+                btn: 'Conhecer o Chattie',
+              },
+            }
+            const cta = ctaCopy[post.category] ?? {
+              heading: 'Quer vender mais pelo LinkedIn?',
+              body: 'O Chattie é o AI SDR que prospecta, qualifica e engaja seus leads no LinkedIn — no piloto automático.',
+              btn: 'Conhecer o Chattie',
+            }
+            return (
+              <div
+                className="card-brutalist"
+                style={{ background: '#E57B33', color: '#FAFBF3', padding: '2rem', marginTop: '2rem' }}
+              >
+                <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 900, fontSize: '1.3rem', marginBottom: '0.5rem' }}>
+                  {cta.heading}
+                </p>
+                <p style={{ marginBottom: '1.25rem', opacity: 0.9, lineHeight: 1.6 }}>
+                  {cta.body}
+                </p>
+                <CtaButton
+                  href="https://trychattie.com"
+                  label={cta.btn}
+                  gaLabel={`post_cta_pt_${post.slug}`}
+                >
+                  {cta.btn} →
+                </CtaButton>
+              </div>
+            )
+          })()}
         </footer>
       </main>
 

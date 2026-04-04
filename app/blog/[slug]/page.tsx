@@ -240,25 +240,61 @@ export default async function BlogPostEn({ params }: Props) {
             lang="en"
           />
 
-          {/* CTA */}
-          <div
-            className="card-brutalist"
-            style={{ background: '#E57B33', color: '#FAFBF3', padding: '2rem', marginTop: '2rem' }}
-          >
-            <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 900, fontSize: '1.3rem', marginBottom: '0.5rem' }}>
-              Want to sell more on LinkedIn?
-            </p>
-            <p style={{ marginBottom: '1.25rem', opacity: 0.9, lineHeight: 1.6 }}>
-              Chattie is the AI SDR that prospects, qualifies and engages your LinkedIn leads — on autopilot.
-            </p>
-            <CtaButton
-              href="https://trychattie.com"
-              label="Try Chattie"
-              gaLabel={`post_cta_en_${post.slug}`}
-            >
-              Try Chattie →
-            </CtaButton>
-          </div>
+          {/* CTA — contextual by category */}
+          {(() => {
+            const ctaCopy: Record<string, { heading: string; body: string; btn: string }> = {
+              'social-selling': {
+                heading: 'Ready to do social selling consistently?',
+                body: 'Chattie keeps your LinkedIn conversations organized so no warm lead goes without a timely, contextual follow-up.',
+                btn: 'Try Chattie',
+              },
+              'linkedin': {
+                heading: 'Your LinkedIn prospecting deserves a system.',
+                body: 'Chattie tracks every conversation context and signals the right time to follow up — without losing the thread.',
+                btn: 'Try Chattie',
+              },
+              'comparativos': {
+                heading: "Since you're comparing, try it hands-on.",
+                body: 'Test Chattie free. No credit card — connect your LinkedIn account and see the difference.',
+                btn: 'Try Chattie',
+              },
+              'chattie': {
+                heading: 'Ready to get the same results?',
+                body: 'Start using Chattie today and organize your LinkedIn prospecting without CRM complexity.',
+                btn: 'Try Chattie',
+              },
+              'ia-para-vendas': {
+                heading: 'AI that actually works for LinkedIn sales.',
+                body: 'Chattie applies AI where it matters: conversation context, follow-up timing, and prioritizing who is warm right now.',
+                btn: 'Try Chattie',
+              },
+            }
+            const cta = ctaCopy[post.category] ?? {
+              heading: 'Want to sell more on LinkedIn?',
+              body: 'Chattie is the AI SDR that prospects, qualifies and engages your LinkedIn leads — on autopilot.',
+              btn: 'Try Chattie',
+            }
+            return (
+              <div
+                className="card-brutalist"
+                style={{ background: '#E57B33', color: '#FAFBF3', padding: '2rem', marginTop: '2rem' }}
+              >
+                <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 900, fontSize: '1.3rem', marginBottom: '0.5rem' }}>
+                  {cta.heading}
+                </p>
+                <p style={{ marginBottom: '1.25rem', opacity: 0.9, lineHeight: 1.6 }}>
+                  {cta.body}
+                </p>
+                <CtaButton
+                  href="https://trychattie.com"
+                  label={cta.btn}
+                  gaLabel={`post_cta_en_${post.slug}`}
+                >
+                  {cta.btn} →
+                </CtaButton>
+              </div>
+            )
+          })()}
         </footer>
       </main>
 
