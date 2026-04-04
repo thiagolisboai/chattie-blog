@@ -9,6 +9,7 @@ import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { ReadingProgressBar, ScrollToTopButton } from '@/components/post-ui'
 import { RelatedPosts } from '@/components/related-posts'
+import { TableOfContents } from '@/components/table-of-contents'
 import { getAuthor } from '@/lib/authors'
 import type { PostFrontmatter } from '@/lib/posts-pt'
 import Link from 'next/link'
@@ -70,7 +71,7 @@ export default async function BlogPostEn({ params }: Props) {
     <>
       <ReadingProgressBar />
       <ScrollToTopButton />
-      <ArticleJsonLd post={post} lang="en" />
+      <ArticleJsonLd post={{ ...post, slug: post.slug }} lang="en" />
       <BlogNav lang="en" />
 
       <main id="main-content" style={{ maxWidth: 760, margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>
@@ -155,6 +156,9 @@ export default async function BlogPostEn({ params }: Props) {
             </div>
           )}
         </header>
+
+        {/* Table of Contents */}
+        <TableOfContents />
 
         {/* Article */}
         <article className="prose">
