@@ -39,13 +39,17 @@ export function SearchModal({ lang = 'pt-BR' }: { lang?: 'pt-BR' | 'en' }) {
   useEffect(() => { setOpen(false); setQuery('') }, [pathname])
 
   // Load posts once on first open.
-  // Uses absolute URL to the blog app so it works whether the page is served
-  // directly from chattie-blog.vercel.app OR proxied via trychattie.com rewrites.
+  // Relative URL — trychattie.com proxies /search-data.json → chattie-blog.vercel.app
+  // via vercel.json rewrites (same-origin, no CORS needed).
+  // When accessed directly on chattie-blog.vercel.app, the file is also served locally.
   useEffect(() => {
     if (!open || posts.length > 0) return
     setLoading(true)
-    fetch('https://chattie-blog.vercel.app/search-data.json')
-      .then((r) => r.json())
+    fetch('/search-data.json')
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`)
+        return r.json()
+      })
       .then((data) => { setPosts(data.posts ?? []); setLoading(false) })
       .catch(() => setLoading(false))
   }, [open, posts.length])
