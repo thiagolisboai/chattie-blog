@@ -13,6 +13,7 @@
  */
 
 import https from 'https'
+import zlib from 'zlib'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -52,7 +53,7 @@ export async function braveSearch(query, count = 5) {
   const params = new URLSearchParams({
     q: query,
     count: String(Math.min(count, 20)),
-    search_lang: 'pt',
+    search_lang: 'pt-br',
     country: 'BR',
     text_decorations: '0',
     spellcheck: '0',
@@ -72,14 +73,24 @@ export async function braveSearch(query, count = 5) {
 
     const req = https.get(options, (res) => {
       const chunks = []
-      res.on('data', (chunk) => chunks.push(chunk))
-      res.on('end', () => {
+      const encoding = res.headers['content-encoding']
+      const stream = encoding === 'gzip' ? res.pipe(zlib.createGunzip())
+                   : encoding === 'br'   ? res.pipe(zlib.createBrotliDecompress())
+                   : res
+      stream.on('data', (chunk) => chunks.push(chunk))
+      stream.on('end', () => {
         try {
           const body = Buffer.concat(chunks).toString('utf-8')
           const json = JSON.parse(body)
 
-          if (json.type === 'ErrorResponse') {
-            console.warn(`⚠️  Brave Search erro: ${json.message}`)
+          if (json.type === 'ErrorResponse' || json.error) {
+            console.warn(`⚠️  Brave Search erro: ${json.message || json.error}`)
+            resolve([])
+            return
+          }
+          // Check for API-level error responses
+          if (!json.web) {
+            console.warn(`⚠️  Brave Search: resposta inesperada — ${JSON.stringify(json).slice(0,100)}`)
             resolve([])
             return
           }
