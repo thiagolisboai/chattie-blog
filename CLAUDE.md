@@ -30,7 +30,13 @@ O relatório define a prioridade da sessão. Nunca escolher tema por intuição 
 2. **Oportunidades de CTR** — reescrever title/meta description para posts com impressões altas e CTR < 3%
 3. **Queries sem post dedicado** — criar novo post se houver query com > 50 impressões sem conteúdo específico
 4. **Conteúdo dormante** — revisar posts com impressões mas zero cliques
-5. **Novo post planejado** — só criar se os itens 1-4 não forem urgentes
+5. **Novo post do backlog** — consultar `docs/keyword-backlog.md`, escolher keyword de Alta prioridade e Baixa/Média competição
+
+### Keyword backlog
+
+Backlog priorizado em: `docs/keyword-backlog.md`  
+Escolher sempre keywords com **Alta** prioridade. Preferir **Baixa/Média** competição quando o GSC não aponta urgência.  
+Marcar como `publicado` no backlog após o deploy, com o slug do post.
 
 ### Quando o GSC não estiver configurado
 
