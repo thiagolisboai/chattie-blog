@@ -1,13 +1,8 @@
 import { ImageResponse } from 'next/og'
-import { getPostBySlugPt, getAllSlugsPt } from '@/lib/posts-pt'
+import { getPostBySlugPt } from '@/lib/posts-pt'
 
-export const runtime = 'edge'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
-
-export async function generateStaticParams() {
-  return getAllSlugsPt().map((slug) => ({ slug }))
-}
 
 const CATEGORY_COLORS: Record<string, { bg: string; color: string }> = {
   'social-selling':  { bg: '#2F6451', color: '#FAFBF3' },
