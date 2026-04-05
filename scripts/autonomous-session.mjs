@@ -72,6 +72,88 @@ function log(msg) {
   LOG.push(line)
 }
 
+// ─── Step 0: Brave Search health check ───────────────────────────────────────
+
+/**
+ * Faz uma query de teste real na Brave Search API para confirmar que a key
+ * está válida e a API está respondendo antes de iniciar a sessão.
+ *
+ * Retorna: 'ok' | 'no-key' | 'rate-limit' | 'auth-error' | 'network-error' | 'degraded'
+ *
+ * Política:
+ *   - 'ok'         → tudo certo, continua normalmente
+ *   - 'no-key'     → BRAVE_API_KEY ausente; ABORTA se config.quality.groundingVerify=true,
+ *                    pois grounding sem SERP não tem valor (claims não verificados)
+ *   - 'rate-limit' → 429 da API; aborta para não gerar conteúdo sem análise competitiva
+ *   - 'auth-error' → 401/403; key inválida ou expirada; aborta
+ *   - 'network-error' → timeout/erro de rede; aborta por padrão
+ *   - 'degraded'   → resposta inesperada mas não fatal
+ */
+async function checkBraveSearch() {
+  const key = process.env.BRAVE_API_KEY
+  if (!key) {
+    log('⚠️  BRAVE_API_KEY ausente — SERP analysis e grounding desativados')
+    return 'no-key'
+  }
+
+  log('🔍  Verificando Brave Search API...')
+
+  const { default: _https } = await import('https')
+  const { default: _zlib }  = await import('zlib')
+
+  const params = new URLSearchParams({ q: 'linkedin prospecção b2b', count: '1', search_lang: 'pt-br', country: 'BR' })
+  const options = {
+    hostname: 'api.search.brave.com',
+    path: `/res/v1/web/search?${params}`,
+    method: 'GET',
+    headers: { Accept: 'application/json', 'Accept-Encoding': 'gzip', 'X-Subscription-Token': key },
+  }
+
+  return new Promise((resolve) => {
+    const req = _https.get(options, (res) => {
+      if (res.statusCode === 401 || res.statusCode === 403) {
+        log(`❌  Brave Search: autenticação falhou (HTTP ${res.statusCode}) — key inválida ou expirada`)
+        resolve('auth-error')
+        return
+      }
+      if (res.statusCode === 429) {
+        log(`❌  Brave Search: rate limit atingido (HTTP 429) — aguarde antes de rodar novamente`)
+        resolve('rate-limit')
+        return
+      }
+      const chunks = []
+      const enc = res.headers['content-encoding']
+      const stream = enc === 'gzip' ? res.pipe(_zlib.createGunzip()) : res
+      stream.on('data', c => chunks.push(c))
+      stream.on('end', () => {
+        try {
+          const json = JSON.parse(Buffer.concat(chunks).toString('utf-8'))
+          if (json.web?.results?.length > 0) {
+            log('✅  Brave Search OK')
+            resolve('ok')
+          } else {
+            log(`⚠️  Brave Search: resposta inesperada — ${JSON.stringify(json).slice(0, 80)}`)
+            resolve('degraded')
+          }
+        } catch {
+          log('⚠️  Brave Search: erro ao parsear resposta')
+          resolve('degraded')
+        }
+      })
+    })
+
+    req.on('error', (e) => {
+      log(`❌  Brave Search: erro de rede — ${e.message}`)
+      resolve('network-error')
+    })
+    req.setTimeout(8000, () => {
+      req.destroy()
+      log('❌  Brave Search: timeout (8s) — API não respondeu')
+      resolve('network-error')
+    })
+  })
+}
+
 // ─── Step 1: Run GSC report ───────────────────────────────────────────────────
 
 async function runGscReport() {
@@ -634,6 +716,26 @@ async function main() {
   if (!process.env.ANTHROPIC_API_KEY) {
     log('❌  ANTHROPIC_API_KEY não configurado. Abortando.')
     process.exit(1)
+  }
+
+  // ── Brave Search health check ──
+  // Realiza uma query de teste ANTES de qualquer geração.
+  // Status que abortam: auth-error, rate-limit, network-error, no-key (quando grounding ativo)
+  const braveStatus = await checkBraveSearch()
+  const braveRequired = config.quality.groundingVerify  // grounding sem SERP = claims não verificados
+  const FATAL_BRAVE = ['auth-error', 'rate-limit', 'network-error']
+  if (FATAL_BRAVE.includes(braveStatus)) {
+    log(`❌  Abortando sessão — Brave Search indisponível (${braveStatus}).`)
+    log('    Verifique BRAVE_API_KEY, cota e conectividade antes de tentar novamente.')
+    process.exit(1)
+  }
+  if (braveStatus === 'no-key' && braveRequired) {
+    log('❌  Abortando — groundingVerify=true requer BRAVE_API_KEY para verificar claims.')
+    log('    Configure BRAVE_API_KEY ou desative quality.groundingVerify em dexter.config.mjs.')
+    process.exit(1)
+  }
+  if (braveStatus === 'degraded') {
+    log('⚠️  Brave Search em modo degraded — continuando, mas análise SERP pode ser incompleta')
   }
 
   // Print active config on startup
