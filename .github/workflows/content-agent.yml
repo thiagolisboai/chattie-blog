@@ -105,9 +105,7 @@ jobs:
             MSG="content: autonomous session $(date +%Y-%m-%d)"
           fi
 
-          git commit -m "$MSG
-
-Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+          git commit -m "$MSG" -m "Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
           git push origin main
           echo "Push concluido - Vercel deploying..."
