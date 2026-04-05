@@ -25,7 +25,7 @@ const DIRS = {
   'EN':    path.join(ROOT, 'content', 'blog-en'),
 }
 
-const TODAY = new Date('2026-04-05')
+const TODAY = new Date()
 const STALE_MONTHS = 6   // flag posts older than this
 
 // ─── Parse frontmatter ──────────────────────────────────────────────────────

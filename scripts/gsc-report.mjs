@@ -365,6 +365,121 @@ h(
 const outPath = path.join(ROOT, 'docs', 'gsc-insights.md')
 fs.writeFileSync(outPath, lines.join('\n'), 'utf-8')
 
+// T2.6: Append snapshot to gsc-history.jsonl for trend analysis
+try {
+  const historyEntry = {
+    date: TODAY,
+    period: { start: PERIOD_START, end: PERIOD_END, days: DAYS },
+    totals: {
+      clicks:      totalClicks,
+      impressions: totalImpressions,
+      ctr:         parseFloat(avgCtr.toFixed(4)),
+      position:    parseFloat(avgPosition.toFixed(2)),
+      pages:       blogPages.length,
+    },
+    topPages: topPages.slice(0, 5).map(p => ({
+      url:         p.url.replace('https://trychattie.com', ''),
+      clicks:      p.clicks,
+      impressions: p.impressions,
+      ctr:         parseFloat(p.ctr.toFixed(4)),
+      position:    parseFloat(p.position.toFixed(2)),
+    })),
+    ctrOpportunities: ctrOpportunities.length,
+    rankLosses:        rankLosses.length,
+    queryGaps:         queryOpportunities.length,
+  }
+  const historyPath = path.join(ROOT, 'docs', 'gsc-history.jsonl')
+  fs.appendFileSync(historyPath, JSON.stringify(historyEntry) + '\n', 'utf-8')
+} catch { /* nao bloquear */ }
+
+// ─── F3.3: Auto quality scoring based on real GSC performance ────────────────
+// Rates posts with ≥30 days of age based on CTR, position and impressions.
+// Writes to docs/quality-ratings.jsonl with source: "gsc-auto".
+// Human ratings (source: "human") always take precedence over auto scores.
+
+try {
+  const ratingsPath   = path.join(ROOT, 'docs', 'quality-ratings.jsonl')
+  const blogDir       = path.join(ROOT, 'content', 'blog')
+  const MIN_AGE_DAYS  = 30
+  const now           = new Date()
+
+  // Load existing ratings to avoid re-scoring today
+  const existingRatings = new Map() // slug → most recent entry
+  if (fs.existsSync(ratingsPath)) {
+    fs.readFileSync(ratingsPath, 'utf-8').trim().split('\n').filter(Boolean).forEach(line => {
+      try {
+        const e = JSON.parse(line)
+        if (e.slug) existingRatings.set(e.slug, e)
+      } catch { /* skip */ }
+    })
+  }
+
+  let autoScored = 0
+
+  for (const page of blogPages) {
+    const urlSlug = page.url
+      .replace('https://trychattie.com/pt-br/blog/', '')
+      .replace('https://trychattie.com', '')
+      .replace(/^\/pt-br\/blog\//, '')
+      .replace(/\/$/, '')
+
+    if (!urlSlug || urlSlug === '/') continue
+
+    // Find corresponding MDX file
+    const mdxPath = path.join(blogDir, `${urlSlug}.mdx`)
+    if (!fs.existsSync(mdxPath)) continue
+
+    // Check post age
+    const raw = fs.readFileSync(mdxPath, 'utf-8')
+    const fmMatch = raw.match(/^---\n([\s\S]*?)\n---/)
+    if (!fmMatch) continue
+    const fm = {}
+    fmMatch[1].split('\n').forEach(line => {
+      const colonIdx = line.indexOf(':')
+      if (colonIdx === -1) return
+      fm[line.slice(0, colonIdx).trim()] = line.slice(colonIdx + 1).trim().replace(/^"|"$/g, '')
+    })
+
+    const publishedAt = fm.publishedAt || fm.date || ''
+    if (!publishedAt) continue
+    const publishedDate = new Date(publishedAt)
+    const ageDays = (now - publishedDate) / (1000 * 60 * 60 * 24)
+    if (ageDays < MIN_AGE_DAYS) continue
+
+    // Skip if already auto-scored today
+    const existing = existingRatings.get(urlSlug)
+    if (existing?.source === 'gsc-auto' && existing?.date === TODAY) continue
+
+    // Compute score (1-5 scale)
+    let pts = 0
+    if (page.ctr >= 0.03)        pts += 2  // CTR > 3%
+    else if (page.ctr >= 0.015)  pts += 1  // CTR > 1.5%
+    if (page.position <= 10)     pts += 2  // Top 10
+    else if (page.position <= 20) pts += 1 // Top 20
+    if (page.impressions >= 100) pts += 1  // Volume signal
+
+    // Map 0-5 pts → 1-5 stars
+    const rating = Math.max(1, Math.min(5, pts === 0 ? 1 : pts))
+
+    const entry = {
+      slug:    urlSlug,
+      rating,
+      notes:   `GSC auto: CTR ${(page.ctr * 100).toFixed(1)}%, pos ${page.position.toFixed(1)}, ${page.impressions} imp`,
+      date:    TODAY,
+      source:  'gsc-auto',
+    }
+
+    fs.appendFileSync(ratingsPath, JSON.stringify(entry) + '\n', 'utf-8')
+    autoScored++
+  }
+
+  if (autoScored > 0) {
+    console.log(`⭐  F3.3: ${autoScored} post(s) avaliados automaticamente via GSC`)
+  }
+} catch (err) {
+  console.warn(`⚠️  F3.3: Auto-scoring falhou: ${err.message}`)
+}
+
 console.log(`
 ✅  Relatório gerado: docs/gsc-insights.md
 

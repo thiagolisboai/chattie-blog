@@ -36,6 +36,12 @@ function loadEnv() {
 }
 loadEnv()
 
+// ─── F2.4: In-process cache (lives for the duration of the Node.js process) ───
+// Avoids re-fetching the same query twice within a single agent session.
+// Key: "query::count" → Value: results array
+
+const _cache = new Map()
+
 // ─── Core function ────────────────────────────────────────────────────────────
 
 /**
@@ -44,6 +50,11 @@ loadEnv()
  * @returns {Promise<Array<{title: string, url: string, description: string, position: number}>>}
  */
 export async function braveSearch(query, count = 5) {
+  const cacheKey = `${query}::${count}`
+  if (_cache.has(cacheKey)) {
+    console.log(`   🗃️  Brave cache hit: "${query.slice(0, 50)}"`)
+    return _cache.get(cacheKey)
+  }
   const key = process.env.BRAVE_API_KEY
   if (!key) {
     console.warn('⚠️  BRAVE_API_KEY não configurado — retornando SERP vazia')
@@ -103,6 +114,7 @@ export async function braveSearch(query, count = 5) {
             description: r.description || r.extra_snippets?.[0] || '',
           }))
 
+          _cache.set(cacheKey, results)
           resolve(results)
         } catch (e) {
           console.warn(`⚠️  Brave Search parse error: ${e.message}`)

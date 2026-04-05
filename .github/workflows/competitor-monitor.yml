@@ -1,0 +1,70 @@
+# Competitor Monitor — T4.19
+#
+# Monitora o conteúdo dos concorrentes mensalmente e gera relatório de gaps.
+# Roda no dia 15 de cada mês às 9h BRT (12h UTC).
+# Pode ser disparado manualmente via Actions > Run workflow.
+#
+# Secrets necessários:
+#   BRAVE_API_KEY — para buscas de conteúdo concorrente
+
+name: Competitor Monitor
+
+on:
+  schedule:
+    - cron: '0 12 15 * *'   # 15th of every month at 9h BRT
+  workflow_dispatch:
+
+concurrency:
+  group: competitor-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    name: Monitor Competitor Content
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run competitor monitor
+        run: node scripts/competitor-monitor.mjs
+        env:
+          BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
+
+      - name: Commit report
+        run: |
+          git config user.name "Dexter"
+          git config user.email "dexter@trychattie.com"
+          git add docs/competitor-report.md docs/competitors.md
+          if git diff --staged --quiet; then
+            echo "Sem mudanças no relatório."
+            exit 0
+          fi
+          git commit -m "monitor: competitor report $(date +%Y-%m)" \
+            -m "Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+          git push origin main
+
+      - name: Write job summary
+        if: always()
+        run: |
+          echo "## Competitor Monitor" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f docs/competitor-report.md ]; then
+            head -5 docs/competitor-report.md >> $GITHUB_STEP_SUMMARY
+          fi

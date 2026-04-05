@@ -18,7 +18,11 @@ export interface PostFrontmatter {
   category: string
   tags: string[]
   image: string
+  imageAlt?: string        // F3.2: SEO-optimized alt text for cover image
   author: string
+  authorTitle?: string     // F1.1: EEAT — author job title
+  authorBio?: string       // F1.1: EEAT — short author bio
+  authorLinkedIn?: string  // F1.1: EEAT — author LinkedIn URL (sameAs in Person schema)
   readTime: string
   canonicalUrl: string
   structuredData: string
@@ -27,6 +31,8 @@ export interface PostFrontmatter {
   enSlug?: string
   series?: string
   seriesNumber?: number
+  type?: string            // F3.1: 'pillar' | 'post' (default)
+  cluster?: string[]       // F3.1: slugs of satellite posts in the cluster
 }
 
 export interface Post extends PostFrontmatter {
@@ -50,7 +56,11 @@ function mapOutstaticFrontmatter(data: Record<string, unknown>, slug: string): P
     category: (data.category as string) || 'chattie',
     tags: (data.tags as string[]) || ['chattie', 'linkedin', 'b2b'],
     image: (data.coverImage as string) || (data.image as string) || '',
+    imageAlt: (data.imageAlt as string) || undefined,
     author: authorName,
+    authorTitle: (data.authorTitle as string) || undefined,
+    authorBio: (data.authorBio as string) || undefined,
+    authorLinkedIn: (data.authorLinkedIn as string) || undefined,
     readTime: (data.readTime as string) || '5 min',
     canonicalUrl: (data.canonicalUrl as string) || `https://trychattie.com/pt-br/blog/${slug}`,
     structuredData: (data.structuredData as string) || 'article',
@@ -59,6 +69,8 @@ function mapOutstaticFrontmatter(data: Record<string, unknown>, slug: string): P
     enSlug: (data.enSlug as string) || '',
     series: data.series ? (data.series as string) : undefined,
     seriesNumber: data.seriesNumber ? (data.seriesNumber as number) : undefined,
+    type: (data.type as string) || undefined,
+    cluster: Array.isArray(data.cluster) ? (data.cluster as string[]) : undefined,
   }
 }
 

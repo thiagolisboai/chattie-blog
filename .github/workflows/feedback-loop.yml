@@ -1,0 +1,105 @@
+# C1: Feedback Loop — Dexter verifica performance dos posts 30 dias apos publicacao
+#
+# Roda automaticamente: dia 1 de cada mes as 9h BRT (12h UTC)
+# Pode ser disparado manualmente via Actions > Run workflow
+#
+# Secrets necessarios (mesmos do content-agent):
+#   GSC_KEY_JSON   - Service account JSON em base64
+
+name: Dexter - Feedback Loop
+
+on:
+  schedule:
+    - cron: '0 12 1 * *'
+  workflow_dispatch:
+    inputs:
+      min_age:
+        description: 'Idade minima do post em dias (padrao: 30)'
+        required: false
+        type: string
+        default: '30'
+      gsc_days:
+        description: 'Janela de dados GSC em dias (padrao: 28)'
+        required: false
+        type: string
+        default: '28'
+
+concurrency:
+  group: dexter-feedback-loop
+  cancel-in-progress: false
+
+jobs:
+  feedback-loop:
+    name: Dexter - Feedback Loop
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup GSC key file
+        run: |
+          echo "$GSC_KEY_JSON" | base64 -d > /tmp/gsc-key.json
+          echo "GSC key file created"
+        env:
+          GSC_KEY_JSON: ${{ secrets.GSC_KEY_JSON }}
+
+      - name: Run Feedback Loop
+        run: |
+          ARGS=""
+          if [ -n "$MIN_AGE" ]; then
+            ARGS="--min-age=$MIN_AGE"
+          fi
+          if [ -n "$GSC_DAYS" ]; then
+            ARGS="$ARGS --days=$GSC_DAYS"
+          fi
+          node scripts/feedback-loop.mjs $ARGS
+        env:
+          GSC_KEY_FILE: /tmp/gsc-key.json
+          GSC_SITE_URL: https://trychattie.com/
+          MIN_AGE: ${{ github.event.inputs.min_age }}
+          GSC_DAYS: ${{ github.event.inputs.gsc_days }}
+
+      - name: Configure git
+        run: |
+          git config user.name "Dexter"
+          git config user.email "dexter@trychattie.com"
+
+      - name: Commit feedback queue update
+        run: |
+          git add docs/feedback-queue.md
+          if git diff --staged --quiet; then
+            echo "Nenhuma atualizacao no feedback queue."
+            exit 0
+          fi
+          git commit -m "docs: atualiza feedback-queue $(date +%Y-%m-%d)" \
+            -m "Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+          git push origin main
+          echo "Feedback queue atualizada e commitada."
+
+      - name: Write job summary
+        if: always()
+        run: |
+          echo "## Dexter - Feedback Loop" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f docs/feedback-queue.md ]; then
+            head -30 docs/feedback-queue.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Feedback queue nao gerada." >> $GITHUB_STEP_SUMMARY
+          fi

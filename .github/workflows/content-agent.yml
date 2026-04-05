@@ -1,22 +1,27 @@
 # Dexter - Agente de conteudo autonomo do Chattie Blog
 #
-# Roda automaticamente: seg/qua/sex as 8h BRT (11h UTC)
-# Pode ser disparado manualmente via Actions > Run workflow
+# CONFIGURAÇÃO PRINCIPAL: edite dexter.config.mjs na raiz do repositório.
+# Este arquivo controla apenas a infraestrutura CI/CD.
+#
+# Agendamento: seg/qua/sex as 8h BRT (11h UTC) — altere o cron abaixo
+# para mudar a frequência. Atualize também schedule.cron em dexter.config.mjs.
 #
 # Secrets necessarios (Settings > Secrets > Actions):
-#   ANTHROPIC_API_KEY   - Anthropic API key
-#   PEXELS_API_KEY      - Pexels API key
-#   BRAVE_API_KEY       - Brave Search API key
-#   GSC_KEY_JSON        - JSON de service account em base64
+#   ANTHROPIC_API_KEY   - Anthropic API key (obrigatorio)
+#   PEXELS_API_KEY      - Pexels API key (opcional — usa fallback)
+#   BRAVE_API_KEY       - Brave Search API key (opcional — reduz inteligencia)
+#   GSC_KEY_JSON        - JSON de service account em base64 (opcional)
 #   NOTIFY_EMAIL        - Email para notificacao pos-publicacao (opcional)
 #   MAIL_USERNAME       - Gmail/SMTP username para envio (opcional)
 #   MAIL_PASSWORD       - Gmail App Password para envio (opcional)
+#   BEEHIIV_API_KEY     - Beehiiv API key (opcional)
+#   BEEHIIV_PUBLICATION_ID - Beehiiv publication ID (opcional)
 
 name: Dexter
 
 on:
   schedule:
-    - cron: '0 11 * * 1,3,5'
+    - cron: '0 11 * * 1,3,5'   # seg/qua/sex 8h BRT — espelhar em dexter.config.mjs schedule.cron
   workflow_dispatch:
     inputs:
       keyword:
@@ -25,6 +30,21 @@ on:
         type: string
       dry_run:
         description: 'Dry run (gera mas nao commita)'
+        required: false
+        type: boolean
+        default: false
+      pr_mode:
+        description: 'Forcar PR mode (sobrescreve config)'
+        required: false
+        type: boolean
+        default: false
+      direct:
+        description: 'Forcar commit direto (sobrescreve config.publishing.mode=pr)'
+        required: false
+        type: boolean
+        default: false
+      pillar:
+        description: 'Modo pilar — gera post de referência (3500+ palavras, ToC, cluster)'
         required: false
         type: boolean
         default: false
@@ -76,6 +96,18 @@ jobs:
           if [ "$INPUT_DRY_RUN" = "true" ]; then
             ARGS="$ARGS --dry-run"
           fi
+          if [ "$INPUT_PR_MODE" = "true" ]; then
+            ARGS="$ARGS --pr-mode"
+          fi
+          # Forçar commit direto via input (sobrescreve config.publishing.mode = "pr")
+          if [ "$INPUT_DIRECT" = "true" ]; then
+            ARGS="$ARGS --direct"
+          fi
+          if [ "$INPUT_PILLAR" = "true" ]; then
+            ARGS="$ARGS --type=pillar"
+          fi
+          # Nota: PR mode para crons e configuração geral é controlado por dexter.config.mjs
+          # O script autonomous-session.mjs lê o config e decide o modo automaticamente.
           node scripts/autonomous-session.mjs $ARGS
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -85,6 +117,10 @@ jobs:
           GSC_SITE_URL: https://trychattie.com/
           INPUT_KEYWORD: ${{ github.event.inputs.keyword }}
           INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
+          INPUT_PR_MODE: ${{ github.event.inputs.pr_mode }}
+          INPUT_DIRECT: ${{ github.event.inputs.direct }}
+          INPUT_PILLAR: ${{ github.event.inputs.pillar }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # A6: Salvar o MDX gerado como artifact (disponivel por 7 dias mesmo se commit falhar)
       - name: Save generated post as artifact
@@ -99,16 +135,20 @@ jobs:
       - name: Configure git
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
-          git config user.name "Dexter"
+          # Nome e email definidos em dexter.config.mjs publishing.gitAuthor
+          git config user.name "Thiago Lisboa"
           git config user.email "dexter@trychattie.com"
 
       - name: Commit and push
-        if: ${{ github.event.inputs.dry_run != 'true' }}
+        if: ${{ github.event.inputs.dry_run != 'true' && github.event.inputs.pr_mode != 'true' && steps.agent.outputs.mode != 'pr' }}
         run: |
           git add content/blog/
           git add docs/keyword-backlog.md
           git add docs/gsc-insights.md
+          git add docs/gsc-history.jsonl
           git add docs/agent-session-log.md
+          git add docs/dexter-dashboard.md
+          git add docs/linkedin-drafts/
 
           if git diff --staged --quiet; then
             echo "Nada para commitar."
@@ -126,6 +166,55 @@ jobs:
           git push origin main
           echo "Push concluido - Vercel deploying..."
 
+      # F2.2: Health check — verifica se o post está acessível após deploy Vercel
+      - name: Health check post-deploy
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.agent.outputs.slug != '' && steps.agent.outputs.mode != 'pr' }}
+        run: |
+          echo "Aguardando deploy Vercel (3 min)..."
+          sleep 180
+          URL="https://trychattie.com/pt-br/blog/${{ steps.agent.outputs.slug }}"
+          STATUS=$(curl -o /dev/null -s -w "%{http_code}" --max-time 15 "$URL")
+          if [ "$STATUS" = "200" ]; then
+            echo "✅ Post acessível: HTTP $STATUS — $URL"
+          else
+            echo "⚠️ Post retornou HTTP $STATUS — $URL"
+            echo "   Verifique o deploy no Vercel. O post pode ainda estar sendo buildado."
+          fi
+        continue-on-error: true
+
+      # T1.1: Submeter URL para indexacao imediata no Google
+      - name: Submit URL for Google Indexing
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.agent.outputs.slug != '' && steps.agent.outputs.mode != 'pr' }}
+        run: node scripts/submit-indexing.mjs --slug=${{ steps.agent.outputs.slug }}
+        env:
+          GSC_KEY_FILE: /tmp/gsc-key.json
+          GSC_SITE_URL: https://trychattie.com/
+
+      # T1.3: Criar draft de newsletter no Beehiiv
+      - name: Create Beehiiv newsletter draft
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.agent.outputs.slug != '' && steps.agent.outputs.mode != 'pr' }}
+        run: node scripts/beehiiv-draft.mjs --slug=${{ steps.agent.outputs.slug }}
+        env:
+          BEEHIIV_API_KEY: ${{ secrets.BEEHIIV_API_KEY }}
+          BEEHIIV_PUBLICATION_ID: ${{ secrets.BEEHIIV_PUBLICATION_ID }}
+        continue-on-error: true
+
+      # A5: Preparar conteudo do dashboard para incluir no email
+      - name: Read dashboard for email
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.agent.outputs.title != '' }}
+        id: dashboard
+        run: |
+          if [ -f docs/dexter-dashboard.md ]; then
+            # Extrai as secoes de metricas GSC e publicacoes (primeiras 60 linhas apos o cabecalho)
+            DASHBOARD=$(tail -n +4 docs/dexter-dashboard.md | head -60)
+            # Salva em variavel multiline para o GitHub Actions
+            echo "content<<DASHBOARD_EOF" >> $GITHUB_OUTPUT
+            echo "$DASHBOARD" >> $GITHUB_OUTPUT
+            echo "DASHBOARD_EOF" >> $GITHUB_OUTPUT
+          else
+            echo "content=Dashboard nao disponivel nesta sessao." >> $GITHUB_OUTPUT
+          fi
+
       # A5: Notificacao por email apos publicacao bem-sucedida
       - name: Send email notification
         if: ${{ github.event.inputs.dry_run != 'true' && steps.agent.outputs.title != '' }}
@@ -136,19 +225,36 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           to: ${{ secrets.NOTIFY_EMAIL }}
-          from: Dexter <${{ secrets.MAIL_USERNAME }}>
+          from: Thiago Lisboa via Dexter <${{ secrets.MAIL_USERNAME }}>
           subject: "Dexter publicou: ${{ steps.agent.outputs.title }}"
           body: |
-            O Dexter publicou um novo post no Chattie Blog.
+            Novo post publicado no Chattie Blog.
 
-            Titulo: ${{ steps.agent.outputs.title }}
-            Slug:   ${{ steps.agent.outputs.slug }}
-            URL:    https://trychattie.com/pt-br/blog/${{ steps.agent.outputs.slug }}
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            POST PUBLICADO
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-            Verifique o post e solicite indexacao no GSC se necessario.
+            Titulo:  ${{ steps.agent.outputs.title }}
+            Slug:    ${{ steps.agent.outputs.slug }}
+            URL:     https://trychattie.com/pt-br/blog/${{ steps.agent.outputs.slug }}
+            Modo:    ${{ steps.agent.outputs.mode }}
+
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            DASHBOARD — ESTADO ATUAL DO BLOG
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+            ${{ steps.dashboard.outputs.content }}
+
+            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+            Acoes possiveis:
+            - Revisar post: https://trychattie.com/pt-br/blog/${{ steps.agent.outputs.slug }}
+            - Ver session log: https://github.com/${{ github.repository }}/blob/main/docs/agent-session-log.md
+            - Ver dashboard completo: https://github.com/${{ github.repository }}/blob/main/docs/dexter-dashboard.md
 
             --
             Dexter - Agente de Conteudo Autonomo do Chattie Blog
+            Executado por: Thiago Lisboa
 
       - name: Write job summary
         if: always()

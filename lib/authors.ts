@@ -21,7 +21,7 @@ export const AUTHORS: Record<string, Author> = {
     bioPt: 'Thiago Lisboa é o fundador do Chattie, o AI SDR criado para prospecção B2B no LinkedIn. Escreve sobre social selling, estratégia no LinkedIn e vendas com IA.',
     // Drop your photo at: public/authors/thiago-lisboa.jpg (400x400px recommended)
     photo: '/authors/thiagolisboa-profile-blogchattie.png',
-    linkedin: 'https://www.linkedin.com/in/thiago-avelino-tra/',
+    linkedin: 'https://www.linkedin.com/in/thiagolisboai',
     url: 'https://trychattie.com',
   },
 }

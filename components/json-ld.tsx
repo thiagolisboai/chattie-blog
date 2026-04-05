@@ -8,8 +8,11 @@ interface ArticleJsonLdProps {
     date: string
     dateModified?: string
     image: string
+    imageAlt?: string       // F3.2
     canonicalUrl: string
     author?: string
+    authorTitle?: string    // F1.1
+    authorLinkedIn?: string // F1.1 — merged into sameAs
     tags?: string[]
     structuredData?: string
     slug?: string
@@ -331,18 +334,26 @@ const DEFINED_TERMS: Record<string, { name: string; description: string }> = {
 export function ArticleJsonLd({ post, lang = 'pt-BR' }: ArticleJsonLdProps) {
   const author = getAuthor(post.author || 'Thiago Lisboa')
 
+  // F1.1: merge frontmatter authorLinkedIn into sameAs (takes precedence if set)
+  const linkedInUrl = post.authorLinkedIn || author?.linkedin
   const authorSchema = author
     ? {
         '@type': 'Person',
         name: author.name,
         url: author.url,
         image: `https://trychattie.com${author.photo}`,
-        sameAs: [author.linkedin, ...(author.twitter ? [author.twitter] : [])],
+        jobTitle: post.authorTitle || author.role,
+        sameAs: [
+          linkedInUrl,
+          ...(author.twitter ? [author.twitter] : []),
+        ].filter(Boolean),
       }
     : {
         '@type': 'Person',
         name: post.author || 'Thiago Lisboa',
         url: 'https://trychattie.com',
+        ...(linkedInUrl ? { sameAs: [linkedInUrl] } : {}),
+        ...(post.authorTitle ? { jobTitle: post.authorTitle } : {}),
       }
 
   const baseSchema = {
@@ -368,6 +379,7 @@ export function ArticleJsonLd({ post, lang = 'pt-BR' }: ArticleJsonLdProps) {
       url: post.image,
       width: 1200,
       height: 630,
+      caption: post.imageAlt || post.title,
     },
     mainEntityOfPage: {
       '@type': 'WebPage',

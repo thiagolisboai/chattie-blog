@@ -150,3 +150,16 @@ console.log(`
     • Pelo menos 1 post de comparação por cluster de ferramentas
 ─────────────────────────────────────────────────────────────────
 `)
+
+// ─── B5: JSON output for programmatic use ────────────────────────────────────
+
+if (process.argv.includes('--json')) {
+  const jsonResult = {
+    total: allPosts.length,
+    categories: catCount,
+    schemas: schemaCount,
+    structuredData: fmSdCount,
+    richSchemaPct: allPosts.length > 0 ? Math.round(richSchema.length / allPosts.length * 100) : 0,
+  }
+  process.stdout.write('\n' + JSON.stringify(jsonResult) + '\n')
+}

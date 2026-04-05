@@ -56,4 +56,4 @@ _O domínio aparece nessas buscas mas provavelmente sem post específico._
 4. Sem conteúdo dormante crítico.
 
 ---
-_Gerado automaticamente por `scripts/gsc-report.mjs` em 05/04/2026, 00:45:36_
+_Gerado automaticamente por `scripts/gsc-report.mjs` em 05/04/2026, 13:52:28_

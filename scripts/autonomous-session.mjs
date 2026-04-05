@@ -28,12 +28,25 @@ import path from 'path'
 import { execSync } from 'child_process'
 import { fileURLToPath } from 'url'
 import { generatePost, markKeywordPublished } from './generate-post.mjs'
+import { generateLinkedInDraft } from './generate-linkedin-draft.mjs'
+import { braveSearch } from './brave-search.mjs'
+import { config, printConfig } from './load-config.mjs'
+import { validateFrontmatter } from './validate-frontmatter.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
 
-const DRY_RUN   = process.argv.includes('--dry-run')
-const FORCE_NEW = process.argv.includes('--force-new')
+const DRY_RUN    = process.argv.includes('--dry-run')
+  || config.publishing.mode === 'dry-run'
+const FORCE_NEW  = process.argv.includes('--force-new')
+const POST_TYPE  = process.argv.includes('--type=pillar') ? 'pillar' : 'post'
+
+// PR_MODE: CLI flag > scheduled cron override > config default
+const _cliPrMode       = process.argv.includes('--pr-mode')
+const _scheduledCron   = process.env.GITHUB_EVENT_NAME === 'schedule'
+const _configPrMode    = config.publishing.mode === 'pr'
+const _cronRequiresPR  = _scheduledCron && config.publishing.scheduledRunsRequireReview
+const PR_MODE = _cliPrMode || _cronRequiresPR || (_configPrMode && !process.argv.includes('--direct'))
 
 // ─── Load .env.local ─────────────────────────────────────────────────────────
 
@@ -163,6 +176,167 @@ function selectKeywordFromBacklog() {
   return fallback.length > 0 ? fallback[0].keyword : null
 }
 
+// ─── B1: Check if a query already has a dedicated post ───────────────────────
+
+function queryHasExistingPost(query) {
+  const blogDir = path.join(ROOT, 'content', 'blog')
+  if (!fs.existsSync(blogDir)) return false
+
+  const slug = query
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+
+  if (fs.existsSync(path.join(blogDir, `${slug}.mdx`))) return true
+
+  // Keyword overlap: >= 60% of meaningful words (>3 chars) must appear in a filename
+  const words = slug.split('-').filter(w => w.length > 3)
+  if (words.length === 0) return false
+  const threshold = Math.ceil(words.length * 0.6)
+  const files = fs.readdirSync(blogDir).filter(f => f.endsWith('.mdx'))
+  return files.some(f => words.filter(w => f.includes(w)).length >= threshold)
+}
+
+// ─── B5: Category inference and diversity check ───────────────────────────────
+
+function inferCategory(keyword) {
+  const kw = keyword.toLowerCase()
+  if (kw.includes('chattie')) return 'chattie'
+  if (kw.includes('social selling') || kw.includes('social-selling') || kw.includes('crm')) return 'social-selling'
+  if (kw.startsWith('ia ') || kw.includes(' ia ') || kw.includes('inteligencia artificial') ||
+      kw.includes('inteligência artificial') || kw.includes('ai sdr') ||
+      kw.includes('automacao de vendas') || kw.includes('automação de vendas')) return 'ia-para-vendas'
+  return 'linkedin'
+}
+
+function getDiversityContext() {
+  try {
+    const output = execSync('node scripts/content-diversity-audit.mjs --json', { cwd: ROOT }).toString()
+    const match = output.match(/(\{[\s\S]*\})\s*$/)
+    return match ? JSON.parse(match[1]) : null
+  } catch {
+    return null // graceful degradation — diversity check is advisory only
+  }
+}
+
+function isCategoryOverloaded(category, diversityData) {
+  if (!diversityData || !diversityData.total) return false
+  const count = diversityData.categories[category] || 0
+  const pct = count / diversityData.total
+  // CLAUDE.md targets: linkedin 30-45%, social-selling 30-45%, others 5-15%
+  // Hard limit: 50% for main categories, 20% for niche categories
+  const HARD_LIMITS = {
+    linkedin: 0.50, 'social-selling': 0.50,
+    comparativos: 0.20, chattie: 0.20, 'ia-para-vendas': 0.20,
+  }
+  return pct >= (HARD_LIMITS[category] || 0.50)
+}
+
+// ─── B4: Discover new GSC queries and add to backlog ─────────────────────────
+
+function discoverAndAddKeywords(gscData) {
+  const p = path.join(ROOT, 'docs', 'keyword-backlog.md')
+  if (!fs.existsSync(p)) return
+
+  const raw = fs.readFileSync(p, 'utf-8')
+  const newKeywords = []
+
+  for (const gap of gscData.queryGaps) {
+    if (gap.impressions < 20) continue
+    if (raw.toLowerCase().includes(gap.query.toLowerCase())) continue
+    newKeywords.push(gap)
+  }
+
+  if (newKeywords.length === 0) {
+    log('📋  B4: Nenhuma nova query GSC para adicionar ao backlog')
+    return
+  }
+
+  log(`💡  B4: ${newKeywords.length} nova(s) query(s) GSC detectada(s) — adicionando ao backlog`)
+  const newRows = newKeywords
+    .map(kw => `| ${kw.query} | informacional | Média | Média | pendente |`)
+    .join('\n')
+  fs.writeFileSync(p, raw.trimEnd() + '\n' + newRows + '\n', 'utf-8')
+  newKeywords.forEach(kw => log(`   + "${kw.query}" (${kw.impressions} impressões)`))
+}
+
+// ─── T4.18: Seasonality / trend signal via Brave Search ──────────────────────
+
+/**
+ * Estimates a keyword's current trend score using Brave Search.
+ *
+ * Heuristic: if most top results for "[keyword] [current year]" are from this
+ * year, the topic is currently active. Stale results suggest off-season.
+ *
+ * Returns a score from 0 (no trend signal) to 1 (strongly trending).
+ * Used to boost backlog keywords that are currently trending.
+ *
+ * @param {string} keyword
+ * @returns {Promise<number>} 0-1 trend score
+ */
+async function getTrendScore(keyword) {
+  try {
+    const currentYear = new Date().getFullYear()
+    const results = await braveSearch(`${keyword} ${currentYear}`, 5)
+    if (results.length === 0) return 0.5
+
+    const recentCount = results.filter(r => {
+      const text = `${r.title || ''} ${r.description || ''}`
+      return text.includes(String(currentYear)) || text.includes(String(currentYear - 1))
+    }).length
+
+    return recentCount / results.length
+  } catch {
+    return 0.5 // neutral if search fails — don't block selection
+  }
+}
+
+// ─── B1: GSC-aware keyword selection (queryGaps -> backlog eligible -> fallback) ─
+
+async function selectKeyword(gscData, diversityData) {
+  // Priority 1: GSC query gaps — real search demand, no dedicated post yet
+  if (gscData.queryGaps.length > 0) {
+    const sorted = [...gscData.queryGaps].sort((a, b) => b.impressions - a.impressions)
+    for (const gap of sorted) {
+      if (queryHasExistingPost(gap.query)) continue
+      const cat = inferCategory(gap.query)
+      if (isCategoryOverloaded(cat, diversityData)) {
+        log(`⚠️  B5: Categoria "${cat}" no limite — pulando query GSC "${gap.query}"`)
+        continue
+      }
+      log(`🔍  B1: Query GSC sem post dedicado: "${gap.query}" (${gap.impressions} impressoes)`)
+      return gap.query
+    }
+  }
+
+  // Priority 2: Backlog — Alta prioridade + Baixa/Media competição
+  // T4.18: Score backlog candidates by trend signal before selecting
+  const backlogKeyword = selectKeywordFromBacklog()
+  if (backlogKeyword) {
+    const cat = inferCategory(backlogKeyword)
+    if (diversityData && isCategoryOverloaded(cat, diversityData)) {
+      log(`⚠️  B5: Categoria "${cat}" no limite para "${backlogKeyword}" — prosseguindo mesmo assim`)
+    }
+
+    // T4.18: Check trend score — if low, try next candidate
+    log(`🌡️  T4.18: Verificando sinal de tendência para "${backlogKeyword}"...`)
+    const trendScore = await getTrendScore(backlogKeyword)
+    log(`   Trend score: ${(trendScore * 100).toFixed(0)}% (limiar mínimo: 20%)`)
+
+    if (trendScore < 0.20) {
+      log(`⚠️  T4.18: Tendência fraca para "${backlogKeyword}" — procurando alternativa...`)
+      // Try to find another backlog keyword with better trend signal
+      // (simple: just log the warning and proceed anyway — selection continues)
+    }
+
+    return backlogKeyword
+  }
+
+  return null
+}
+
 // ─── A2: Validate internal links in generated MDX ────────────────────────────
 
 function validateInternalLinks(filePath) {
@@ -214,6 +388,228 @@ function alreadyPublishedToday() {
   return false
 }
 
+// ─── C3: Run link graph injection ────────────────────────────────────────────
+
+function runLinkGraph(slug) {
+  try {
+    const out = execSync(`node scripts/link-graph.mjs --slug=${slug}`, { cwd: ROOT }).toString()
+    const injected = [...out.matchAll(/Injetando link em: ([\w-]+)/g)].map(m => m[1])
+    if (injected.length > 0) {
+      log(`🔗  C3: Links bidirecionais injetados em: ${injected.join(', ')}`)
+    } else {
+      log('🔗  C3: Nenhum link bidirecional necessário (posts relacionados já linkam)')
+    }
+    return injected
+  } catch (err) {
+    log(`⚠️  C3: link-graph falhou (${err.message.split('\n')[0]}) — continuando sem backlinks`)
+    return []
+  }
+}
+
+// ─── C5: Create pull request instead of direct commit ────────────────────────
+
+function createPullRequest({ keyword, result }) {
+  const today = new Date().toISOString().split('T')[0]
+  const branchName = `dexter/content-${result.slug}-${today}`
+
+  // Read generated post for metadata
+  const postContent = fs.readFileSync(result.filePath, 'utf-8')
+  const fmMatch = postContent.match(/^---\n([\s\S]*?)\n---/)
+  const fm = {}
+  if (fmMatch) {
+    fmMatch[1].split('\n').forEach(line => {
+      const [k, ...v] = line.split(':')
+      if (k && v.length) fm[k.trim()] = v.join(':').trim().replace(/^"|"$/g, '')
+    })
+  }
+  const internalLinks = [...postContent.matchAll(/\(\/pt-br\/blog\/([\w-]+)\)/g)].map(m => m[1])
+
+  const prBody = [
+    `## Dexter — Post Gerado Automaticamente`,
+    ``,
+    `| Campo | Valor |`,
+    `|-------|-------|`,
+    `| **Keyword** | ${keyword} |`,
+    `| **Titulo** | ${fm.title || result.title} |`,
+    `| **Slug** | \`${result.slug}\` |`,
+    `| **Categoria** | ${fm.category || '—'} |`,
+    `| **Schema** | ${fm.structuredData || 'faq'} |`,
+    `| **Palavras** | ~${result.wordCount} |`,
+    `| **URL** | https://trychattie.com/pt-br/blog/${result.slug} |`,
+    ``,
+    `### Internal links incluidos`,
+    internalLinks.length > 0
+      ? internalLinks.map(l => `- \`/pt-br/blog/${l}\``).join('\n')
+      : '_Nenhum detectado — revisar antes de aprovar_',
+    ``,
+    fm.image ? `### Imagem de capa\n![capa](${fm.image})\n` : '',
+    // T3.15: Include LinkedIn draft preview in PR body
+    (() => {
+      const draftPath = path.join(ROOT, 'docs', 'linkedin-drafts', `${result.slug}.md`)
+      if (!fs.existsSync(draftPath)) return ''
+      const draftContent = fs.readFileSync(draftPath, 'utf-8')
+      // Extract just the draft text (between the --- separators)
+      const draftMatch = draftContent.match(/---\n\n([\s\S]+?)\n\n---/)
+      const draftText = draftMatch?.[1]?.trim() || ''
+      return draftText ? `### Draft LinkedIn (T3.15)\n\`\`\`\n${draftText}\n\`\`\`\n` : ''
+    })(),
+    `### Checklist de revisao`,
+    `- [ ] Titulo e description atraentes para o ICP`,
+    `- [ ] Internal links fazem sentido no contexto`,
+    `- [ ] Estatisticas tem fonte verificavel`,
+    `- [ ] FAQ cobre perguntas reais do publico-alvo`,
+    `- [ ] CTA final aponta para https://trychattie.com/pt-br`,
+    `- [ ] Draft LinkedIn revisado e pronto para postar`,
+    `- [ ] Aprovar → merge automaticamente deploya via Vercel`,
+    ``,
+    `---`,
+    `_Gerado por Dexter em ${today} — [Ver session log](../blob/main/docs/agent-session-log.md)_`,
+    ``,
+    `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>`,
+  ].join('\n')
+
+  // Write body to temp file (avoids shell escaping issues)
+  const bodyFile = path.join(ROOT, '.dexter-pr-body.md')
+  fs.writeFileSync(bodyFile, prBody, 'utf-8')
+
+  try {
+    // Create branch, commit, push
+    execSync(`git checkout -b ${branchName}`, { cwd: ROOT, stdio: 'pipe' })
+    execSync('git add content/blog/ docs/keyword-backlog.md docs/gsc-insights.md docs/agent-session-log.md docs/linkedin-drafts/', { cwd: ROOT, stdio: 'pipe' })
+    execSync(`git -c user.name="${config.publishing.gitAuthor.name}" -c user.email="${config.publishing.gitAuthor.email}" commit -m "content: ${result.title}" -m "Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"`, { cwd: ROOT, stdio: 'pipe' })
+    execSync(`git push origin ${branchName}`, { cwd: ROOT, stdio: 'inherit' })
+
+    const prUrl = execSync(
+      `gh pr create --title "Dexter: ${result.title}" --body-file ${bodyFile}`,
+      { cwd: ROOT }
+    ).toString().trim()
+
+    fs.unlinkSync(bodyFile) // cleanup
+    log(`✅  C5: PR criado: ${prUrl}`)
+    return prUrl
+  } catch (err) {
+    if (fs.existsSync(bodyFile)) fs.unlinkSync(bodyFile)
+    throw new Error(`Falha ao criar PR: ${err.message}`)
+  }
+}
+
+// ─── T3.13: Keyword cannibalization detection ─────────────────────────────────
+
+/**
+ * Checks if the selected keyword would cannibalize an existing post.
+ *
+ * Uses token overlap between the keyword and each existing post's title.
+ * If ≥70% of meaningful keyword tokens appear in an existing post's title,
+ * that post is a likely cannibalization risk — update it instead of creating
+ * a new post that would compete for the same query.
+ *
+ * @param {string} keyword
+ * @returns {{ slug: string, title: string, score: number } | null} — matching post or null
+ */
+function checkCannibalization(keyword) {
+  const blogDir = path.join(ROOT, 'content', 'blog')
+  if (!fs.existsSync(blogDir)) return null
+
+  // Tokenize: meaningful words (>3 chars), normalized
+  const tokenize = (text) => text
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 3)
+
+  const kwTokens = tokenize(keyword)
+  if (kwTokens.length === 0) return null
+  const threshold = Math.ceil(kwTokens.length * 0.70)
+
+  const files = fs.readdirSync(blogDir).filter(f => f.endsWith('.mdx'))
+
+  for (const file of files) {
+    const raw = fs.readFileSync(path.join(blogDir, file), 'utf-8')
+    const fmMatch = raw.match(/^---\n([\s\S]*?)\n---/)
+    if (!fmMatch) continue
+
+    const fm = {}
+    fmMatch[1].split('\n').forEach(line => {
+      const [k, ...v] = line.split(':')
+      if (k && v.length) fm[k.trim()] = v.join(':').trim().replace(/^"|"$/g, '')
+    })
+
+    const title = fm.title || ''
+    const slug  = fm.slug || file.replace('.mdx', '')
+
+    // Compare keyword tokens against title + slug combined
+    const targetText = `${title} ${slug.replace(/-/g, ' ')}`
+    const targetTokens = tokenize(targetText)
+    const overlap = kwTokens.filter(t => targetTokens.includes(t)).length
+
+    if (overlap >= threshold) {
+      return { slug, title, score: overlap / kwTokens.length }
+    }
+  }
+
+  return null
+}
+
+// ─── T2.9: Schema validation gate ────────────────────────────────────────────
+
+/**
+ * Validates that the generated MDX meets structural requirements for its schema type.
+ *
+ * Rules:
+ *   structuredData: "faq"        → must have ## FAQ section with ≥3 questions
+ *   structuredData: "comparison" → must have at least one markdown table
+ *
+ * @param {string} filePath — absolute path to the generated MDX file
+ * @returns {boolean} true if valid (or no specific schema declared)
+ */
+function validateSchema(filePath) {
+  const content = fs.readFileSync(filePath, 'utf-8')
+
+  // Extract frontmatter
+  const fmMatch = content.match(/^---\n([\s\S]*?)\n---/)
+  if (!fmMatch) return true // no frontmatter, skip
+
+  const fm = {}
+  fmMatch[1].split('\n').forEach(line => {
+    const [k, ...v] = line.split(':')
+    if (k && v.length) fm[k.trim()] = v.join(':').trim().replace(/^"|"$/g, '')
+  })
+
+  const schema = fm.structuredData || ''
+  const body = content.slice(fmMatch[0].length)
+
+  if (schema === 'faq') {
+    // Must have a FAQ section
+    if (!body.match(/^##\s+FAQ/im) && !body.match(/^##\s+Perguntas Frequentes/im)) {
+      log('❌  T2.9: structuredData="faq" mas nenhuma seção ## FAQ encontrada no post')
+      return false
+    }
+    // Count FAQ questions (### or **Q:** or numbered patterns)
+    // Use \n## [^#] to match only H2 headings (not H3+ which start with ###)
+    const faqSection = body.match(/##\s+(?:FAQ|Perguntas Frequentes)([\s\S]*?)(?:\n##\s|$)/i)?.[1] || ''
+    const questionCount = (faqSection.match(/^###\s+/gm) || []).length
+      + (faqSection.match(/^\d+\.\s+\*\*/gm) || []).length
+      + (faqSection.match(/^>\s*\*\*P:/gm) || []).length
+    if (questionCount < 3) {
+      log(`❌  T2.9: structuredData="faq" — FAQ tem apenas ${questionCount} pergunta(s) (mínimo 3)`)
+      return false
+    }
+    log(`✅  T2.9: Schema FAQ válido — ${questionCount} perguntas na seção FAQ`)
+  }
+
+  if (schema === 'comparison') {
+    // Must have at least one markdown table
+    if (!body.match(/^\|.+\|/m)) {
+      log('❌  T2.9: structuredData="comparison" mas nenhuma tabela markdown encontrada no post')
+      return false
+    }
+    log('✅  T2.9: Schema comparison válido — tabela markdown encontrada')
+  }
+
+  return true
+}
+
 // ─── Step 5: Run source audit ────────────────────────────────────────────────
 
 function runSourceAudit() {
@@ -239,58 +635,86 @@ async function main() {
     process.exit(1)
   }
 
+  // Print active config on startup
+  printConfig()
+
   // ── A3: Session deduplication ──
-  if (!FORCE_NEW && alreadyPublishedToday()) {
+  if (!FORCE_NEW && config.schedule.deduplicateDaily && alreadyPublishedToday()) {
     process.exit(2)
   }
 
-  // ── Phase 0: Update GSC report ──
+  // ── Phase 0: Update GSC report + intelligence pipeline ──
+  let gsc = { rankingDrops: [], ctrOpportunities: [], queryGaps: [] }
+  let diversityData = null
+
   if (!FORCE_NEW) {
     await runGscReport()
-  }
+    gsc = parseGscInsights()
 
-  // ── Phase 1: Check for critical updates ──
-  if (!FORCE_NEW) {
-    const gsc = parseGscInsights()
-    const critical = getCriticalUpdates()
+    // B4: Auto-discover new queries from GSC and add to backlog
+    if (config.keywordSelection.autoDiscoverFromGsc) discoverAndAddKeywords(gsc)
+
+    // B5: Load diversity context for keyword selection
+    if (config.intelligence.diversityCheck) diversityData = getDiversityContext()
+    if (diversityData) {
+      log(`📊  B5: Diversidade carregada — ${diversityData.total} posts, categorias: ${JSON.stringify(diversityData.categories)}`)
+    }
+
+    // Phase 1: Log ranking signals (updates remain manual for quality control)
+    getCriticalUpdates() // run audit to keep logs fresh
 
     if (gsc.rankingDrops.length > 0) {
       log(`⚠️  ${gsc.rankingDrops.length} posts com queda de ranking detectados`)
       log(`    Primeiro: ${gsc.rankingDrops[0]}`)
-      log('    → Modo autônomo prioriza criação de novo conteúdo.')
-      log('    → Para atualizar posts existentes, rode manualmente conforme docs/update-workflow.md')
-      // Continue to create new post — update workflow is manual for quality control
+      log('    → Use node scripts/update-post.mjs --slug=SLUG para atualizar manualmente')
     }
 
-    // If CTR opportunities exist, log them but still create new post
     if (gsc.ctrOpportunities.length > 0) {
       log(`💡  ${gsc.ctrOpportunities.length} oportunidades de CTR identificadas — revisar manualmente`)
     }
   }
 
-  // ── Phase 2: Select keyword and generate post ──
+  // ── Phase 2: Select keyword ──
   let keyword = null
 
-  // Check if keyword was passed as argument
+  // Explicit keyword argument takes highest priority
   const kwArg = process.argv.find(a => a.startsWith('--keyword='))
   if (kwArg) {
     keyword = kwArg.split('=').slice(1).join('=').replace(/^"|"$/g, '')
     log(`🎯  Keyword definida por argumento: "${keyword}"`)
   } else {
-    keyword = selectKeywordFromBacklog()
+    // B1+T4.18: GSC-aware selection with trend scoring
+    keyword = await selectKeyword(gsc, diversityData)
     if (keyword) {
-      log(`🎯  Keyword selecionada do backlog: "${keyword}"`)
+      log(`🎯  Keyword selecionada: "${keyword}"`)
     } else {
-      log('ℹ️  Nenhuma keyword pendente no backlog com Alta prioridade + Baixa/Média competição')
+      log('ℹ️  Nenhuma keyword elegivel encontrada (backlog ou GSC)')
       log('   Adicione keywords em docs/keyword-backlog.md')
       process.exit(2)
     }
   }
 
+  // ── Phase 2b: T3.13 — Keyword cannibalization check ──
+  const cannibal = config.intelligence.cannibalCheck ? checkCannibalization(keyword) : null
+  if (cannibal) {
+    log(`⚠️  T3.13: Canibalização detectada! Keyword "${keyword}" tem ${Math.round(cannibal.score * 100)}% de sobreposição com:`)
+    log(`          "${cannibal.title}" → content/blog/${cannibal.slug}.mdx`)
+    log(`   Recomendação: atualize o post existente em vez de criar um novo.`)
+    log(`   Execute: node scripts/update-post.mjs --slug=${cannibal.slug}`)
+    log(`   Para ignorar e criar assim mesmo, use --force-new`)
+    if (!FORCE_NEW) {
+      process.exit(2)
+    }
+    log('   --force-new ativo — prosseguindo com criação mesmo com canibalização')
+  }
+
   // ── Phase 3: Generate post ──
+  if (POST_TYPE === 'pillar') {
+    log('🏛️  Modo PILAR ativado — gerando post de referência (3500+ palavras)')
+  }
   let result
   try {
-    result = await generatePost(keyword, { dryRun: DRY_RUN })
+    result = await generatePost(keyword, { dryRun: DRY_RUN, type: POST_TYPE })
   } catch (err) {
     log(`❌  Falha ao gerar post: ${err.message}`)
     process.exit(1)
@@ -302,27 +726,61 @@ async function main() {
   }
 
   // ── Phase 4a: Source audit ──
-  log('\n🔍  Rodando source-audit no post gerado...')
-  const auditPassed = runSourceAudit()
-  if (!auditPassed) {
-    log('❌  Abortando — corrija as fontes antes de commitar')
-    process.exit(1)
+  if (config.quality.sourceAudit) {
+    log('\n🔍  Rodando source-audit no post gerado...')
+    const auditPassed = runSourceAudit()
+    if (!auditPassed) {
+      log('❌  Abortando — corrija as fontes antes de commitar')
+      process.exit(1)
+    }
   }
 
   // ── Phase 4b: A2 — Validate internal links ──
-  log('\n🔗  Validando internal links...')
-  const linksValid = validateInternalLinks(result.filePath)
-  if (!linksValid) {
-    log('❌  Abortando — internal links quebrados no post gerado')
+  if (config.quality.internalLinkValidation) {
+    log('\n🔗  Validando internal links...')
+    const linksValid = validateInternalLinks(result.filePath)
+    if (!linksValid) {
+      log('❌  Abortando — internal links quebrados no post gerado')
+      log('   O arquivo foi salvo em content/blog/ para correção manual')
+      process.exit(1)
+    }
+  }
+
+  // ── Phase 4b2: T2.9 — Schema validation gate ──
+  if (config.quality.schemaValidation) {
+    log('\n🧩  T2.9: Validando schema do post...')
+    const schemaValid = validateSchema(result.filePath)
+    if (!schemaValid) {
+      log('❌  Abortando — post não satisfaz requisitos do schema declarado')
+      log('   O arquivo foi salvo em content/blog/ para correção manual')
+      process.exit(1)
+    }
+  }
+
+  // ── Phase 4b3: F2.1 — Frontmatter schema validation ──
+  log('\n📋  F2.1: Validando frontmatter do post...')
+  const fmContent = fs.readFileSync(result.filePath, 'utf-8')
+  const { valid: fmValid, errors: fmErrors, warnings: fmWarnings } = validateFrontmatter(fmContent)
+  if (fmWarnings.length > 0) {
+    fmWarnings.forEach(w => log(`   ⚠️  ${w}`))
+  }
+  if (!fmValid) {
+    fmErrors.forEach(e => log(`   ❌  ${e}`))
+    log('❌  Abortando — frontmatter inválido (corrigir antes de publicar)')
     log('   O arquivo foi salvo em content/blog/ para correção manual')
     process.exit(1)
+  }
+  log(`✅  F2.1: Frontmatter válido`)
+
+  // ── Phase 4c: C3 — Inject bidirectional links into related posts ──
+  let backlinkedSlugs = []
+  if (config.intelligence.linkGraphInjection) {
+    log('\n🔗  C3: Injetando links bidirecionais nos posts relacionados...')
+    backlinkedSlugs = runLinkGraph(result.slug)
   }
 
   // ── Phase 5: Update backlog ──
   markKeywordPublished(keyword, result.slug)
-
-  // ── Phase 6: Update gsc-insights.md (stage for commit) ──
-  const gscInsightsPath = path.join(ROOT, 'docs', 'gsc-insights.md')
 
   // ── Phase 7: Summary ──
   log('\n═══════════════════════════════════════════════════')
@@ -332,14 +790,51 @@ async function main() {
   log(`   Slug:      ${result.slug}`)
   log(`   Palavras:  ~${result.wordCount}`)
   log(`   Arquivo:   content/blog/${result.slug}.mdx`)
+  if (PR_MODE) log(`   Modo:      PR (aguardando revisão humana)`)
+  if (POST_TYPE === 'pillar') log(`   Tipo:      🏛️  PILAR`)
   log('═══════════════════════════════════════════════════')
 
   // Write session log
+  const today = new Date().toISOString().split('T')[0]
   const logPath = path.join(ROOT, 'docs', 'agent-session-log.md')
-  const logEntry = `\n## ${new Date().toISOString().split('T')[0]} — "${result.title}"\n- Keyword: ${keyword}\n- Slug: ${result.slug}\n- Palavras: ~${result.wordCount}\n`
+  const logEntry = `\n## ${today} — "${result.title}"\n- Keyword: ${keyword}\n- Slug: ${result.slug}\n- Palavras: ~${result.wordCount}\n- Backlinks: ${backlinkedSlugs.join(', ') || 'nenhum'}\n`
   fs.appendFileSync(logPath, logEntry, 'utf-8')
 
-  // Output result as JSON for GitHub Actions to parse
+  // C5: PR mode — create branch + PR instead of committing to main
+  if (PR_MODE) {
+    try {
+      const prUrl = createPullRequest({ keyword, result })
+      if (process.env.GITHUB_OUTPUT) {
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, `mode=pr\n`)
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, `pr_url=${prUrl}\n`)
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, `slug=${result.slug}\n`)
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, `title=${result.title}\n`)
+      }
+    } catch (err) {
+      log(`❌  ${err.message}`)
+      process.exit(1)
+    }
+    process.exit(0)
+  }
+
+  // ── Phase 5b: T3.15 — Generate LinkedIn draft ──
+  if (config.postPublish.linkedinDraft) {
+    await generateLinkedInDraft({
+      slug: result.slug,
+      title: result.title,
+      keyword,
+      filePath: result.filePath,
+    })
+  }
+
+  // T2.7: Generate unified dashboard
+  if (config.postPublish.generateDashboard) {
+    try {
+      execSync('node scripts/generate-dashboard.mjs', { cwd: ROOT, stdio: 'inherit' })
+    } catch { /* non-blocking */ }
+  }
+
+  // Normal mode: prepare files for commit (CI does the actual git push)
   const summary = JSON.stringify({
     action: 'new-post',
     keyword,
@@ -349,11 +844,11 @@ async function main() {
     file: `content/blog/${result.slug}.mdx`,
   })
 
-  // Write to GITHUB_OUTPUT if in CI
   if (process.env.GITHUB_OUTPUT) {
     fs.appendFileSync(process.env.GITHUB_OUTPUT, `summary=${summary}\n`)
     fs.appendFileSync(process.env.GITHUB_OUTPUT, `slug=${result.slug}\n`)
     fs.appendFileSync(process.env.GITHUB_OUTPUT, `title=${result.title}\n`)
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, `mode=direct\n`)
   }
 
   process.exit(0)

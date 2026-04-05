@@ -53,15 +53,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: 'pt_BR',
       type: 'article',
       publishedTime: post.publishedAt,
+      modifiedTime: post.dateModified || post.date,
       authors: [post.author || 'Thiago Lisboa'],
       tags: post.tags,
-      images: [{ url: post.image, width: 1200, height: 630 }],
+      images: [{
+        url: post.image,
+        width: 1200,
+        height: 630,
+        alt: post.imageAlt || post.title,
+      }],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.description,
-      images: [post.image],
+      images: [{ url: post.image, alt: post.imageAlt || post.title }],
     },
   }
 }
@@ -78,7 +84,16 @@ export default async function BlogPostPt({ params }: Props) {
     <>
       <ReadingProgressBar slug={post.slug} lang="pt-BR" />
       <ScrollToTopButton />
-      <ArticleJsonLd post={{ ...post, slug: post.slug }} lang="pt-BR" />
+      <ArticleJsonLd
+        post={{
+          ...post,
+          slug: post.slug,
+          imageAlt: post.imageAlt,
+          authorTitle: post.authorTitle,
+          authorLinkedIn: post.authorLinkedIn,
+        }}
+        lang="pt-BR"
+      />
       <BreadcrumbSchema items={[
         { name: 'Blog', url: 'https://trychattie.com/pt-br/blog' },
         { name: post.category, url: `https://trychattie.com/pt-br/blog/categoria/${post.category}` },
@@ -173,7 +188,7 @@ export default async function BlogPostPt({ params }: Props) {
             >
               <Image
                 src={post.image}
-                alt={post.title}
+                alt={post.imageAlt || post.title}
                 fill
                 priority
                 sizes="(max-width: 768px) 100vw, 760px"
