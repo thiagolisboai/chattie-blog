@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import type { PostFrontmatter } from '@/lib/posts-pt'
 
 interface RelatedPostsProps {
@@ -72,17 +73,13 @@ export function RelatedPosts({ currentSlug, currentCategory, currentTags, allPos
                 style={{ background: '#fff', height: '100%', overflow: 'hidden' }}
               >
                 {post.image && (
-                  <div style={{ overflow: 'hidden', borderBottom: '2px solid #000', aspectRatio: '16/9' }}>
-                    <img
+                  <div style={{ overflow: 'hidden', borderBottom: '2px solid #000', aspectRatio: '16/9', position: 'relative' }}>
+                    <Image
                       src={post.image}
                       alt={post.title}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)',
-                        display: 'block',
-                      }}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      style={{ objectFit: 'cover', transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)' }}
                       className="group-hover:scale-105"
                     />
                   </div>

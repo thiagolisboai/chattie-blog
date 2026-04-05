@@ -25,9 +25,19 @@ export const metadata: Metadata = {
   },
 }
 
-export default function BlogListEn() {
-  const posts = getAllPostsEn()
-  const [featured, ...rest] = posts
+const POSTS_PER_PAGE = 12
+
+interface Props {
+  searchParams: Promise<{ page?: string }>
+}
+
+export default async function BlogListEn({ searchParams }: Props) {
+  const { page: pageParam } = await searchParams
+  const currentPage = Math.max(1, parseInt(pageParam ?? '1', 10))
+  const allPosts = getAllPostsEn()
+  const totalPages = Math.ceil(Math.max(0, allPosts.length - 1) / POSTS_PER_PAGE)
+  const [featured] = allPosts
+  const rest = allPosts.slice(1 + (currentPage - 1) * POSTS_PER_PAGE, 1 + currentPage * POSTS_PER_PAGE)
 
   return (
     <>
@@ -71,7 +81,7 @@ export default function BlogListEn() {
       </div>
 
       <main style={{ maxWidth: 1200, margin: '0 auto', padding: '3.5rem 1.5rem 5rem' }}>
-        {posts.length === 0 ? (
+        {allPosts.length === 0 ? (
           <div className="card-brutalist" style={{ padding: '3rem', textAlign: 'center' }}>
             <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 900, fontSize: '1.5rem', marginBottom: '0.5rem' }}>Coming soon.</p>
             <p style={{ color: '#666', marginBottom: '1.5rem' }}>The first English posts are on their way.</p>
@@ -103,6 +113,27 @@ export default function BlogListEn() {
                 </div>
               ))}
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <nav aria-label="Pagination" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', marginTop: '3rem' }}>
+                {currentPage > 1 && (
+                  <a href={currentPage === 2 ? '/blog' : `/blog?page=${currentPage - 1}`}
+                    style={{ border: '2px solid #000', padding: '0.45rem 1rem', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none', color: '#000', background: '#fff', boxShadow: '3px 3px 0 #000' }}>
+                    ← Previous
+                  </a>
+                )}
+                <span style={{ fontSize: '0.85rem', color: '#666', fontWeight: 600 }}>
+                  {currentPage} / {totalPages}
+                </span>
+                {currentPage < totalPages && (
+                  <a href={`/blog?page=${currentPage + 1}`}
+                    style={{ border: '2px solid #000', padding: '0.45rem 1rem', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none', color: '#000', background: '#F4B13F', boxShadow: '3px 3px 0 #000' }}>
+                    Next →
+                  </a>
+                )}
+              </nav>
+            )}
           </div>
         )}
       </main>

@@ -1,29 +1,45 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { trackPostRead } from '@/lib/analytics'
 
-export function ReadingProgressBar() {
+interface ReadingProgressBarProps {
+  slug?: string
+  lang?: string
+}
+
+export function ReadingProgressBar({ slug, lang }: ReadingProgressBarProps) {
   const [progress, setProgress] = useState(0)
+  const firedMilestones = useRef<Set<number>>(new Set())
 
   useEffect(() => {
+    const milestones = [25, 50, 75, 100]
     const update = () => {
       const article = document.querySelector('article.prose') as HTMLElement | null
+      let pct: number
       if (!article) {
         const docH = document.documentElement.scrollHeight - window.innerHeight
-        setProgress(docH > 0 ? (window.scrollY / docH) * 100 : 0)
-        return
+        pct = docH > 0 ? (window.scrollY / docH) * 100 : 0
+      } else {
+        const articleTop = article.offsetTop
+        const articleH = article.offsetHeight
+        const scrolled = window.scrollY - articleTop
+        pct = Math.min(100, Math.max(0, (scrolled / (articleH - window.innerHeight * 0.5)) * 100))
       }
-      const rect = article.getBoundingClientRect()
-      const articleTop = article.offsetTop
-      const articleH = article.offsetHeight
-      const scrolled = window.scrollY - articleTop
-      const pct = Math.min(100, Math.max(0, (scrolled / (articleH - window.innerHeight * 0.5)) * 100))
       setProgress(pct)
+      if (slug && lang) {
+        for (const milestone of milestones) {
+          if (pct >= milestone && !firedMilestones.current.has(milestone)) {
+            firedMilestones.current.add(milestone)
+            trackPostRead(slug, lang, milestone)
+          }
+        }
+      }
     }
     window.addEventListener('scroll', update, { passive: true })
     update()
     return () => window.removeEventListener('scroll', update)
-  }, [])
+  }, [slug, lang])
 
   return (
     <div

@@ -35,7 +35,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={barlow.variable}>
+    <html lang="pt-BR" className={barlow.variable} suppressHydrationWarning>
+      <head>
+        {/* Set html[lang] synchronously so crawlers and screen readers get correct value immediately */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var p=window.location.pathname;document.documentElement.lang=(p.startsWith('/pt-br')||p==='/')?'pt-BR':'en'})()`,
+          }}
+        />
+        {/* RSS feed discovery */}
+        <link rel="alternate" type="application/rss+xml" title="Chattie Blog PT-BR" href="/feed.xml" />
+        <link rel="alternate" type="application/rss+xml" title="Chattie Blog EN" href="/en/feed.xml" />
+      </head>
       <body className="min-h-screen bg-cream text-chattie-black">
         <WebsiteSchema />
         <HtmlLang />

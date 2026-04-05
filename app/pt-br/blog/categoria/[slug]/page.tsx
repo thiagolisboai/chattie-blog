@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { getAllPostsPt } from '@/lib/posts-pt'
 import { BlogCard } from '@/components/blog-card'
+import { BreadcrumbSchema } from '@/components/breadcrumb-schema'
 import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { RevealObserver } from '@/components/reveal-observer'
@@ -45,6 +46,10 @@ export default async function CategoryPagePt({ params }: Props) {
 
   return (
     <>
+      <BreadcrumbSchema items={[
+        { name: 'Blog', url: 'https://trychattie.com/pt-br/blog' },
+        { name: label, url: `https://trychattie.com/pt-br/blog/categoria/${slug}` },
+      ]} />
       <BlogNav lang="pt-BR" />
       <RevealObserver />
       <ScrollToTopButton />

@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getAllPostsPt } from '@/lib/posts-pt'
+import { AUTHORS } from '@/lib/authors'
 
 const PT_CATEGORIES = ['linkedin', 'social-selling', 'chattie', 'b2b', 'ia-para-vendas', 'comparativos']
 
@@ -44,6 +45,13 @@ export default function sitemapPt(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     },
+    // Author pages
+    ...Object.values(AUTHORS).map((author) => ({
+      url: `https://trychattie.com/pt-br/blog/autor/${author.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
     // Individual posts
     ...posts.map((post) => ({
       url: `https://trychattie.com/pt-br/blog/${post.slug}`,

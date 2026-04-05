@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { ChecklistDownload } from '@/components/checklist-download'
+import { HowToSchema } from '@/components/howto-schema'
+import { BreadcrumbSchema } from '@/components/breadcrumb-schema'
 
 export const metadata: Metadata = {
   title: '12 LinkedIn B2B Message Templates | Chattie',
@@ -111,6 +113,23 @@ function highlightBrackets(text: string) {
 export default function LinkedInConnectionTemplatesPage() {
   return (
     <>
+      <HowToSchema
+        name="LinkedIn Connection Message Templates"
+        description="12 ready-to-use templates for connection, outreach, follow-up, and re-engagement on LinkedIn B2B."
+        url="https://trychattie.com/resources/linkedin-connection-templates"
+        totalTime="PT10M"
+        steps={[
+          { name: 'Choose the template for your conversation stage', text: 'Use connection templates for new contacts, outreach after acceptance, follow-up for no reply, and re-engagement for cold leads.' },
+          { name: 'Personalize with prospect profile data', text: 'Replace bracketed fields with real information: name, company, role, recent posts.' },
+          { name: 'Adjust tone to the prospect profile', text: 'C-level requires more direct language. Founders respond well to peers. SDRs prefer technical context.' },
+          { name: 'Send manually on LinkedIn', text: 'Paste the template in the message box and review before sending — never use automation for mass outreach.' },
+        ]}
+      />
+      <BreadcrumbSchema items={[
+        { name: 'Blog', url: 'https://trychattie.com/blog' },
+        { name: 'Resources', url: 'https://trychattie.com/resources/linkedin-connection-templates' },
+        { name: 'LinkedIn Connection Templates', url: 'https://trychattie.com/resources/linkedin-connection-templates' },
+      ]} />
       <BlogNav lang="en" />
 
       <main style={{ maxWidth: 800, margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>

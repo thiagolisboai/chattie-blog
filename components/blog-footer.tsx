@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface BlogFooterProps {
   lang?: 'pt-BR' | 'en'
@@ -23,10 +24,12 @@ export function BlogFooter({ lang = 'pt-BR' }: BlogFooterProps) {
 
           {/* Logo */}
           <a href="https://trychattie.com" target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
-            <img
+            <Image
               src="/brand/chattie-wordmark.png"
               alt="Chattie"
-              style={{ height: 34, filter: 'invert(1)', display: 'block' }}
+              width={120}
+              height={34}
+              style={{ height: 34, width: 'auto', filter: 'invert(1)', display: 'block' }}
             />
           </a>
 

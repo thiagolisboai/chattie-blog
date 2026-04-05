@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { ChecklistDownload } from '@/components/checklist-download'
+import { HowToSchema } from '@/components/howto-schema'
+import { BreadcrumbSchema } from '@/components/breadcrumb-schema'
 
 export const metadata: Metadata = {
   title: 'Checklist de Prospecção no LinkedIn | Chattie',
@@ -91,6 +93,25 @@ const sections = [
 export default function ChecklistPage() {
   return (
     <>
+      <HowToSchema
+        name="Checklist de Prospecção no LinkedIn B2B"
+        description="30 pontos para organizar seu perfil, abordagem, follow-up e ferramentas no LinkedIn."
+        url="https://trychattie.com/pt-br/recursos/checklist-prospeccao-linkedin"
+        totalTime="PT15M"
+        steps={[
+          { name: 'Perfil como ativo comercial', text: 'Otimize foto, banner, headline e seção Sobre para comunicar valor ao comprador ideal.' },
+          { name: 'Definição do ICP', text: 'Mapeie cargo, setor, tamanho de empresa, dor específica e gatilhos de compra.' },
+          { name: 'Pesquisa do prospect', text: 'Antes de conectar, analise posts recentes, cargo e contexto da empresa do lead.' },
+          { name: 'Mensagem de conexão personalizada', text: 'Envie convite com nota curta e específica, sem pitch — máximo 3 linhas.' },
+          { name: 'Primeira mensagem após conexão', text: 'Inicie com pergunta relevante ao contexto do lead, não com oferta.' },
+          { name: 'Cadência de follow-up', text: 'Aplique 3 a 5 follow-ups espaçados em 3, 7 e 14 dias com valor diferente em cada toque.' },
+        ]}
+      />
+      <BreadcrumbSchema items={[
+        { name: 'Blog', url: 'https://trychattie.com/pt-br/blog' },
+        { name: 'Recursos', url: 'https://trychattie.com/pt-br/recursos/checklist-prospeccao-linkedin' },
+        { name: 'Checklist de Prospecção no LinkedIn', url: 'https://trychattie.com/pt-br/recursos/checklist-prospeccao-linkedin' },
+      ]} />
       <BlogNav lang="pt-BR" />
 
       <main style={{ maxWidth: 800, margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>

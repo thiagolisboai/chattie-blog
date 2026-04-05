@@ -23,9 +23,19 @@ export const metadata: Metadata = {
   },
 }
 
-export default function BlogListPt() {
-  const posts = getAllPostsPt()
-  const [featured, ...rest] = posts
+const POSTS_PER_PAGE = 12
+
+interface Props {
+  searchParams: Promise<{ page?: string }>
+}
+
+export default async function BlogListPt({ searchParams }: Props) {
+  const { page: pageParam } = await searchParams
+  const currentPage = Math.max(1, parseInt(pageParam ?? '1', 10))
+  const allPosts = getAllPostsPt()
+  const totalPages = Math.ceil(Math.max(0, allPosts.length - 1) / POSTS_PER_PAGE)
+  const [featured] = allPosts
+  const rest = allPosts.slice(1 + (currentPage - 1) * POSTS_PER_PAGE, 1 + currentPage * POSTS_PER_PAGE)
 
   return (
     <>
@@ -68,7 +78,7 @@ export default function BlogListPt() {
       </div>
 
       <main style={{ maxWidth: 1200, margin: '0 auto', padding: '3.5rem 1.5rem 5rem' }}>
-        {posts.length === 0 ? (
+        {allPosts.length === 0 ? (
           <div className="card-brutalist" style={{ padding: '3rem', textAlign: 'center' }}>
             <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 900, fontSize: '1.5rem', marginBottom: '0.5rem' }}>Em breve.</p>
             <p style={{ color: '#666' }}>Os primeiros posts estão chegando.</p>
@@ -106,6 +116,27 @@ export default function BlogListPt() {
                 </div>
               ))}
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <nav aria-label="Paginação" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', marginTop: '3rem' }}>
+                {currentPage > 1 && (
+                  <a href={currentPage === 2 ? '/pt-br/blog' : `/pt-br/blog?page=${currentPage - 1}`}
+                    style={{ border: '2px solid #000', padding: '0.45rem 1rem', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none', color: '#000', background: '#fff', boxShadow: '3px 3px 0 #000' }}>
+                    ← Anterior
+                  </a>
+                )}
+                <span style={{ fontSize: '0.85rem', color: '#666', fontWeight: 600 }}>
+                  {currentPage} / {totalPages}
+                </span>
+                {currentPage < totalPages && (
+                  <a href={`/pt-br/blog?page=${currentPage + 1}`}
+                    style={{ border: '2px solid #000', padding: '0.45rem 1rem', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none', color: '#000', background: '#F4B13F', boxShadow: '3px 3px 0 #000' }}>
+                    Próxima →
+                  </a>
+                )}
+              </nav>
+            )}
           </div>
         )}
       </main>

@@ -67,6 +67,7 @@ export function NewsletterCta({ lang = 'pt-BR' }: NewsletterCtaProps) {
 
   return (
     <div
+      id="newsletter"
       style={{
         border: '2px solid #000',
         boxShadow: '4px 4px 0 #000',

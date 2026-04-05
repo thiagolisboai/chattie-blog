@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { ChecklistDownload } from '@/components/checklist-download'
+import { HowToSchema } from '@/components/howto-schema'
+import { BreadcrumbSchema } from '@/components/breadcrumb-schema'
 
 export const metadata: Metadata = {
   title: 'LinkedIn Prospecting Checklist | Chattie',
@@ -91,6 +93,25 @@ const sections = [
 export default function ChecklistPage() {
   return (
     <>
+      <HowToSchema
+        name="LinkedIn B2B Prospecting Checklist"
+        description="30-point checklist to optimize your profile, outreach, follow-up, and tools on LinkedIn."
+        url="https://trychattie.com/resources/linkedin-prospecting-checklist"
+        totalTime="PT15M"
+        steps={[
+          { name: 'Profile as a commercial asset', text: 'Optimize photo, banner, headline and About section to communicate value to your ideal buyer.' },
+          { name: 'Define your ICP', text: 'Map job title, industry, company size, specific pain point, and buying triggers.' },
+          { name: 'Research your prospect', text: 'Before connecting, review recent posts, job history, and company context.' },
+          { name: 'Personalized connection note', text: 'Send a 2–3 line note with specific context — never a blank invite or pitch.' },
+          { name: 'First message after connection', text: 'Start with a relevant question about their context, not an offer.' },
+          { name: 'Follow-up cadence', text: 'Apply 3–5 follow-ups spaced at days 3, 7, and 14 with different value in each touch.' },
+        ]}
+      />
+      <BreadcrumbSchema items={[
+        { name: 'Blog', url: 'https://trychattie.com/blog' },
+        { name: 'Resources', url: 'https://trychattie.com/resources/linkedin-prospecting-checklist' },
+        { name: 'LinkedIn Prospecting Checklist', url: 'https://trychattie.com/resources/linkedin-prospecting-checklist' },
+      ]} />
       <BlogNav lang="en" />
 
       <main style={{ maxWidth: 800, margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>

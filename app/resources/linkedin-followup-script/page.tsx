@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { ChecklistDownload } from '@/components/checklist-download'
+import { HowToSchema } from '@/components/howto-schema'
+import { BreadcrumbSchema } from '@/components/breadcrumb-schema'
 
 export const metadata: Metadata = {
   title: 'LinkedIn B2B Follow-Up Script: 4-Week Cadence | Chattie',
@@ -84,6 +86,23 @@ function highlightBrackets(text: string) {
 export default function LinkedInFollowUpScriptPage() {
   return (
     <>
+      <HowToSchema
+        name="LinkedIn Follow-Up Script for B2B"
+        description="4-week follow-up cadence with ready-made scripts for LinkedIn B2B outreach without being annoying."
+        url="https://trychattie.com/resources/linkedin-followup-script"
+        totalTime="PT20M"
+        steps={[
+          { name: 'Week 1 — First contact', text: 'Send a personalized connection invite without pitch, referencing something specific from the prospect profile.' },
+          { name: 'Week 2 — Follow-up with value', text: 'Share a relevant data point, article, or insight for the prospect\'s problem. Do not repeat the previous approach.' },
+          { name: 'Week 3 — Social proof', text: 'Mention a result from a similar customer and ask a low-commitment question.' },
+          { name: 'Week 4 — Clarity or pause', text: 'Ask if it makes sense to reconnect now or if it\'s better to come back another time. Respect the response.' },
+        ]}
+      />
+      <BreadcrumbSchema items={[
+        { name: 'Blog', url: 'https://trychattie.com/blog' },
+        { name: 'Resources', url: 'https://trychattie.com/resources/linkedin-followup-script' },
+        { name: 'LinkedIn Follow-Up Script', url: 'https://trychattie.com/resources/linkedin-followup-script' },
+      ]} />
       <BlogNav lang="en" />
 
       <main style={{ maxWidth: 800, margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>

@@ -11,33 +11,40 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid email' }, { status: 400 })
   }
 
-  // ── Beehiiv integration (uncomment when ready) ──────────────────────────
-  // const publicationId = process.env.BEEHIIV_PUBLICATION_ID
-  // const apiKey = process.env.BEEHIIV_API_KEY
-  // if (publicationId && apiKey) {
-  //   const res = await fetch(`https://api.beehiiv.com/v2/publications/${publicationId}/subscriptions`, {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-  //     body: JSON.stringify({ email, reactivate_existing: true, send_welcome_email: true, utm_source: 'blog', utm_medium: 'inline', custom_fields: [{ name: 'lang', value: lang }] }),
-  //   })
-  //   if (!res.ok) return NextResponse.json({ error: 'Subscription failed' }, { status: 500 })
-  //   return NextResponse.json({ ok: true })
-  // }
+  // ── Beehiiv integration ──────────────────────────────────────────────────
+  const publicationId = process.env.BEEHIIV_PUBLICATION_ID
+  const apiKey = process.env.BEEHIIV_API_KEY
+  if (publicationId && apiKey) {
+    const res = await fetch(`https://api.beehiiv.com/v2/publications/${publicationId}/subscriptions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        email,
+        reactivate_existing: true,
+        send_welcome_email: true,
+        utm_source: 'blog',
+        utm_medium: 'inline',
+        custom_fields: [{ name: 'lang', value: lang }],
+      }),
+    })
+    if (!res.ok) return NextResponse.json({ error: 'Subscription failed' }, { status: 500 })
+    return NextResponse.json({ ok: true })
+  }
 
-  // ── ConvertKit integration (uncomment when ready) ────────────────────────
+  // ── ConvertKit integration (fallback) ────────────────────────────────────
   // const formId = process.env.CONVERTKIT_FORM_ID
-  // const apiKey = process.env.CONVERTKIT_API_KEY
-  // if (formId && apiKey) {
+  // const ckApiKey = process.env.CONVERTKIT_API_KEY
+  // if (formId && ckApiKey) {
   //   const res = await fetch(`https://api.convertkit.com/v3/forms/${formId}/subscribe`, {
   //     method: 'POST',
   //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify({ api_key: apiKey, email, fields: { lang } }),
+  //     body: JSON.stringify({ api_key: ckApiKey, email, fields: { lang } }),
   //   })
   //   if (!res.ok) return NextResponse.json({ error: 'Subscription failed' }, { status: 500 })
   //   return NextResponse.json({ ok: true })
   // }
 
-  // Placeholder response — remove once a provider is configured
-  console.log(`[subscribe] ${email} (${lang}) — no provider configured yet`)
+  // No provider configured — log and return ok so the form doesn't error visually
+  console.log(`[subscribe] ${email} (${lang}) — set BEEHIIV_PUBLICATION_ID + BEEHIIV_API_KEY to activate`)
   return NextResponse.json({ ok: true })
 }

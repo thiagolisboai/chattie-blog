@@ -163,6 +163,109 @@ const FAQ_DATA: Record<string, FaqItem[]> = {
       a: 'Ferramentas de automação executam sequências predefinidas — enviam X mensagens para Y pessoas em Z dias, independente do contexto de cada conversa. Um AI SDR analisa o que aconteceu: o que o prospect disse, como reagiu, quais sinais emitiu, e ajusta a próxima ação com base nisso. A diferença na qualidade de abordagem é substancial — e o prospect percebe.',
     },
   ],
+  // ── Comparativos PT-BR ────────────────────────────────────────────────────
+  'chattie-vs-expandi': [
+    { q: 'O Expandi é mais seguro que o Waalaxy para minha conta do LinkedIn?', a: 'Tecnicamente sim — o Expandi opera via perfil dedicado no browser, não via extensão de Chrome, o que é menos detectável pelo LinkedIn. Mas ambos automatizam ações que vão contra os Termos de Serviço do LinkedIn. O risco não é zero em nenhum dos dois casos.' },
+    { q: 'O Chattie precisa de integração com o Expandi para funcionar?', a: 'Não. O Chattie funciona de forma independente, diretamente sobre o LinkedIn. Se você usa o Expandi para gerar conexões e primeiros contatos, pode importar manualmente os prospects que mostraram interesse para o Chattie.' },
+    { q: 'O Expandi vale o preço para quem prospecta solo?', a: 'Depende do volume. O Expandi é uma ferramenta projetada para times e agências — o preço reflete isso. Para um founder ou consultor solo que prospecta de forma moderada, o custo raramente se justifica frente às alternativas.' },
+  ],
+  'chattie-vs-waalaxy': [
+    { q: 'O Waalaxy pode banir minha conta do LinkedIn?', a: 'O LinkedIn proíbe automação de ações em seus Termos de Serviço. O Waalaxy opera via extensão de Chrome e tenta simular comportamento humano para reduzir o risco de detecção. O risco existe, mas é gerenciável se você mantém volumes dentro dos limites recomendados.' },
+    { q: 'O Chattie envia mensagens por mim?', a: 'Não. O Chattie é um CRM social — ele organiza suas conversas, mantém contexto e sinaliza quem precisa de follow-up. A mensagem em si é sempre escrita e enviada por você, preservando a autenticidade da conversa.' },
+    { q: 'Qual das duas ferramentas é mais barata para começar?', a: 'O Waalaxy tem plano gratuito com limites de volume, o que o torna acessível para testar. O Chattie tem modelo de preço focado no valor que entrega na gestão de relacionamentos — ideal para quem prioriza qualidade sobre volume.' },
+  ],
+  // ── Chattie use cases ─────────────────────────────────────────────────────
+  'como-founders-usam-o-chattie': [
+    { q: 'O Chattie é certo para mim se eu nunca usei CRM antes?', a: 'Sim. O Chattie foi desenhado para pessoas que não querem aprender um CRM completo. A curva de adoção é baixa porque o produto funciona sobre o LinkedIn — você não muda onde a venda acontece, só adiciona organização em cima.' },
+    { q: 'Preciso ter um volume alto de leads para justificar o uso do Chattie?', a: 'Não. Founders que têm quinze conversas ativas já sentem a diferença porque o custo de perder um lead de alto valor é alto. O ponto de virada para a maioria é quando percebem que já perderam um negócio por falta de follow-up.' },
+    { q: 'O Chattie funciona para outbound ou só para inbound?', a: 'Funciona para os dois. O fluxo de outbound tem estágios próprios (conexão enviada, conectado, primeira mensagem, follow-up). O inbound se beneficia do contexto e do histórico de conversa mantido pelo Chattie.' },
+  ],
+  'como-o-chattie-se-paga': [
+    { q: 'Em quanto tempo o Chattie se paga?', a: 'Para operações com ticket médio acima de R$ 5.000, geralmente entre 1 e 3 meses de uso consistente. O retorno aparece à medida que leads esquecidos são reativados e a taxa de conversão de follow-up aumenta.' },
+    { q: 'Qual a principal economia que o Chattie gera?', a: 'Principalmente tempo e oportunidades perdidas. Um vendedor que gerencia 50 contatos simultâneos sem ferramenta gasta em média 30-40% do tempo apenas procurando contexto de conversas antigas.' },
+    { q: 'O Chattie funciona para operações pequenas (1-2 pessoas)?', a: 'Sim — especialmente para founders e consultores que vendem sozinhos. O principal ganho para pequenas operações é nunca mais perder um lead por esquecimento, o que é extremamente comum sem time dedicado à prospecção.' },
+  ],
+  // ── CRM e Social Selling ─────────────────────────────────────────────────
+  'crm-para-social-selling': [
+    { q: 'O que é CRM para social selling, exatamente?', a: 'É uma ferramenta que organiza conversas comerciais em redes sociais — especialmente LinkedIn — desde o primeiro contato até a qualificação do lead. Ela registra o histórico de interação, categoriza leads por intenção e sinaliza quando é hora de retomar o contato.' },
+    { q: 'Qual a diferença entre CRM social e CRM tradicional?', a: 'O CRM tradicional (Pipedrive, HubSpot) atua com oportunidades formais: propostas, reuniões, negociações. O CRM social atua antes disso — nas conversas informais que ainda não chegaram ao funil, mas que determinam se o lead vai avançar.' },
+    { q: 'O Chattie é um CRM para social selling?', a: 'Sim. O Chattie é um AI SDR para LinkedIn que funciona como CRM social: organiza o inbox, categoriza conversas por estágio, mantém histórico e sinaliza timing de follow-up. Foi construído especificamente para quem usa o LinkedIn como canal de prospecção ativa.' },
+  ],
+  // ── IA para Vendas ────────────────────────────────────────────────────────
+  'ia-para-vendas-b2b': [
+    { q: 'IA vai substituir minha equipe de vendas B2B?', a: 'Em B2B de ciclo longo e ticket significativo, não. O que vai acontecer é que equipes que usam IA vão superar equipes que não usam — em volume de atividade, qualidade de abordagem e precisão de follow-up.' },
+    { q: 'Qual é o investimento mínimo para começar a usar IA em vendas?', a: 'Ferramentas de IA para gestão de prospecção no LinkedIn começam em valores acessíveis para quem vende de forma individual. O critério não deve ser o preço da ferramenta, mas o valor de cada lead que você está perdendo hoje.' },
+    { q: 'O uso de IA em prospecção pode prejudicar minha reputação no LinkedIn?', a: 'Depende de como você usa. IA que automatiza ações em massa no LinkedIn prejudica conta e reputação. IA que organiza seu processo e sugere ações para você executar manualmente não tem esse risco.' },
+  ],
+  // ── LinkedIn Leads ────────────────────────────────────────────────────────
+  'linkedin-para-gerar-leads-qualificados': [
+    { q: 'Quantos leads qualificados dá para gerar por mês no LinkedIn?', a: 'Para founders e SDRs com método consistente, 15 a 40 conversas qualificadas por mês é um número realista sem automação agressiva. O número varia conforme o ICP e a intensidade da operação.' },
+    { q: 'Qual é a diferença entre lead e conexão no LinkedIn?', a: 'Conexão é qualquer pessoa que aceitou seu convite. Lead qualificado é alguém que demonstrou interesse real: respondeu sua mensagem, fez uma pergunta sobre o que você oferece ou sinalizou abertura para conversar.' },
+    { q: 'É melhor gerar leads por conteúdo ou por prospecção ativa?', a: 'Os dois se complementam. Conteúdo atrai e aquece — faz com que quando você aborde, o lead já te conheça. Prospecção ativa gera velocidade — você não espera o lead te encontrar.' },
+  ],
+  // ── LinkedIn para Vendas ──────────────────────────────────────────────────
+  'linkedin-para-vendas-b2b': [
+    { q: 'Quantos seguidores preciso para gerar vendas com autoridade no LinkedIn?', a: 'Não existe número mínimo. Perfis com 500 conexões qualificadas geram mais negócio do que perfis com 10.000 seguidores sem critério. O que importa é a relevância da sua rede para o seu ICP — não o tamanho dela.' },
+    { q: 'Com que frequência devo postar no LinkedIn para construir autoridade em vendas B2B?', a: '2 a 3 vezes por semana é um ritmo sustentável e eficiente. Mais importante do que a frequência é a consistência: aparecer todo mês com conteúdo relevante vale mais do que uma enxurrada de posts por uma semana e sumir por um mês.' },
+    { q: 'Como sei se meu posicionamento no LinkedIn está claro para meu ICP?', a: 'Pergunte para alguém que não te conhece ver seu perfil e dizer em uma frase o que você faz e para quem. Se a resposta for vaga ou errada, o posicionamento precisa de ajuste antes de qualquer esforço de prospecção.' },
+  ],
+  'linkedin-para-vendas-consultivas': [
+    { q: 'Por que o LinkedIn é melhor do que o cold call para vendas consultivas?', a: 'Porque ele permite construir contexto antes do primeiro contato direto. No LinkedIn, o lead já te conhece pelo seu conteúdo, perfil e interações antes de receber uma mensagem — o que reduz resistência e aumenta receptividade.' },
+    { q: 'Quanto tempo devo investir no LinkedIn para vendas consultivas por semana?', a: 'Entre 3 e 5 horas semanais divididas em publicação de conteúdo (1h), interação com leads e comentários (1-2h) e prospecção ativa com mensagens personalizadas (1-2h). Consistência importa mais do que volume semanal.' },
+    { q: 'Devo postar todo dia no LinkedIn para gerar resultado em vendas consultivas?', a: 'Não necessariamente. 2 a 3 publicações por semana com conteúdo relevante superam 7 posts mediocres. O que importa é que o conteúdo reforce seu posicionamento e responda às dores do seu ICP.' },
+  ],
+  'linkedin-para-vendas': [
+    { q: 'Como começar a vender no LinkedIn do zero?', a: 'Comece estruturando seu perfil como argumento comercial (não currículo), defina seu ICP com clareza e inicie conexões com contexto — comentando posts antes de enviar mensagem direta. A primeira semana deve ser de observação e interação, não de pitch.' },
+    { q: 'Qual o melhor horário para enviar mensagens no LinkedIn?', a: 'Terça a quinta entre 8h e 10h da manhã tendem a ter melhores taxas de resposta. Mas o fator mais importante não é o horário — é a relevância da mensagem. Uma mensagem contextualizada às 14h supera uma genérica às 8h.' },
+    { q: 'Quantas mensagens de follow-up devo enviar no LinkedIn?', a: 'Em geral, 2 a 3 follow-ups espaçados (3, 7 e 14 dias) são suficientes. Mais do que isso sem resposta é sinal para pausar e tentar outro canal ou outro momento.' },
+  ],
+  // ── Conceituais PT-BR ─────────────────────────────────────────────────────
+  'o-que-e-social-selling': [
+    { q: 'O que é social selling, em uma frase?', a: 'Social selling é o uso estratégico de redes sociais profissionais — especialmente o LinkedIn — para construir relacionamentos com potenciais clientes e gerar oportunidades de venda de forma natural, sem cold call ou spam.' },
+    { q: 'Social selling funciona para qualquer tipo de empresa B2B?', a: 'Sim, mas funciona melhor em vendas com ticket médio mais alto, ciclo de decisão mais longo e necessidade de confiança antes do fechamento — como consultorias, SaaS, serviços profissionais e qualquer produto que exija uma conversa antes da compra.' },
+    { q: 'Qual a diferença entre social selling e spam no LinkedIn?', a: 'A diferença está na personalização e no timing. Spam é mensagem genérica enviada em volume, sem contexto, empurrando produto logo no primeiro contato. Social selling é abordagem contextualizada, no momento certo, construída sobre uma relação mínima prévia.' },
+  ],
+  'o-que-e-um-crm-social': [
+    { q: 'O que é CRM social, em resumo?', a: 'CRM social é uma ferramenta que organiza conversas comerciais em redes sociais — especialmente o LinkedIn — desde o primeiro contato. Ele registra quem interagiu, o que foi dito, qual o status da conversa e quando fazer follow-up.' },
+    { q: 'CRM social substitui o Pipedrive ou HubSpot?', a: 'Não. Ele complementa. O CRM social atua na fase pré-funil — antes do lead ter uma oportunidade formal. Quando o lead está pronto, ele "sobe" para o CRM tradicional com histórico completo.' },
+    { q: 'Para que tipo de empresa o CRM social faz mais sentido?', a: 'Para qualquer empresa que usa o LinkedIn como canal ativo de prospecção e precisa organizar as conversas que vêm de lá. Funciona especialmente bem para consultorias, SaaS B2B, agências e founders que vendem diretamente.' },
+  ],
+  'vender-no-linkedin-sem-estrategia': [
+    { q: 'Por que minhas mensagens no LinkedIn não recebem resposta?', a: 'As causas mais comuns são: mensagem genérica sem contexto, abordagem muito cedo (sem aquecimento prévio), pitch na primeira mensagem, ou perfil fraco que não sustenta o discurso. Revise um desses pontos por vez.' },
+    { q: 'Como saber se minha abordagem no LinkedIn está funcionando?', a: 'Monitore: taxa de aceite do convite (deve ficar acima de 30%), taxa de resposta à primeira mensagem (meta: acima de 15%), e quantas conversas avançam para reunião. Se algum número está muito baixo, o problema está nessa etapa específica.' },
+    { q: 'Quantas mensagens de follow-up são aceitáveis antes de desistir de um prospect?', a: 'Em geral, 2 a 3 follow-ups são suficientes, com espaçamento de 5 a 10 dias entre cada um. Após o terceiro sem resposta, pause por 30 dias e tente com um ângulo completamente diferente.' },
+  ],
+  // ── EN posts ──────────────────────────────────────────────────────────────
+  'ai-sdr-vs-human-sdr': [
+    { q: 'Should an early-stage startup hire an SDR or use AI tools first?', a: 'Neither — founders should do their own outbound first. You need to understand the conversation before you hire someone to have it or automate it. Once you\'ve personally closed 10-15 deals through outbound, then consider whether the constraint is time (hire an SDR) or process efficiency (augment with AI tools).' },
+    { q: 'What\'s the realistic headcount impact of adding AI SDR tools?', a: 'In fully deployed AI-assisted SDR workflows, teams typically report productivity increases of 40-80% per SDR — meaning one SDR does the work that previously required 1.5-2. Whether that leads to fewer hires or higher quota depends on company stage and growth targets.' },
+    { q: 'Does using AI in sales development damage prospect relationships?', a: 'AI that operates transparently — helping you be more responsive, contextual, and consistent — doesn\'t damage relationships. The risk is in the quality and authenticity of the output, not the presence of AI in the process.' },
+  ],
+  'linkedin-follow-up-b2b': [
+    { q: 'How many times should I follow up with a LinkedIn prospect who isn\'t responding?', a: 'Three touches is a reasonable ceiling for a cold prospect who hasn\'t shown any signal of interest. After that, move to a long-term nurture track — engage with their content occasionally, but stop sending DMs.' },
+    { q: 'What\'s the best LinkedIn follow-up message after a prospect said "not now"?', a: 'Wait at least 6–8 weeks. When you follow up, reference the original conversation and give them a specific reason to revisit it — a new customer result, a changed market condition, or a trigger in their own company.' },
+    { q: 'Should I mention in my follow-up that I\'m following up?', a: 'No. "I\'m following up on my message from last week" adds no value and makes the message feel like a task. Instead, lead with something new — a piece of content, a different angle, or a relevant observation.' },
+  ],
+  'linkedin-prospecting-guide': [
+    { q: 'How many LinkedIn connection requests should I send per day?', a: 'Stay under 20–25 per day to avoid triggering LinkedIn\'s limits. Quality matters more than volume — twenty targeted, personalized connection requests outperform 200 generic ones in both acceptance rate and conversation quality.' },
+    { q: 'Should I use LinkedIn InMail or connection requests for prospecting?', a: 'Start with connection requests — they\'re free and, when targeted correctly, have reasonable acceptance rates. InMail is useful when the prospect is definitively outside your existing network and you can\'t find a warm path in.' },
+    { q: 'What\'s a good LinkedIn response rate to aim for?', a: 'For cold outreach with no prior relationship, 10–20% response rate is solid. With warmer context — you\'ve engaged with their content, you have mutual connections, you reference something specific — 25–35% is achievable.' },
+  ],
+  'linkedin-prospecting-with-ai': [
+    { q: 'Does LinkedIn allow AI prospecting tools?', a: 'LinkedIn\'s Terms of Service prohibit scraping profile data at scale and fully automated actions — mass connection sending and automated message sequences sent without per-message user action. Tools that assist your research and organize conversations without taking automated actions on the platform are generally compliant.' },
+    { q: 'How many LinkedIn messages should I send per day with AI assistance?', a: 'With AI assistance, 10-15 highly personalized, contextually timed messages per day consistently outperform 100 generic ones. If your acceptance rate drops below 30%, the bottleneck is targeting and message relevance, not volume.' },
+    { q: 'What\'s the difference between AI-assisted LinkedIn prospecting and LinkedIn automation?', a: 'LinkedIn automation executes pre-set actions on a schedule regardless of context. AI-assisted prospecting uses intelligence to inform what a human does — you read signals, adapt your message, and decide when to act.' },
+  ],
+  'linkedin-social-selling-guide': [
+    { q: 'What is the LinkedIn Social Selling Index (SSI)?', a: 'The SSI is LinkedIn\'s scoring system that measures how effectively you use the platform for social selling across four pillars: professional brand, finding the right people, engaging with insights, and building relationships. Scores above 70 correlate with significantly better prospecting outcomes.' },
+    { q: 'How long does LinkedIn social selling take to show results?', a: 'Expect 60–90 days before you see consistent inbound pipeline from content. Outreach results can come faster — within the first 2–4 weeks if you\'re targeting correctly and personalizing well. The compounding returns kick in at 6–12 months of consistent effort.' },
+    { q: 'How often should I post on LinkedIn for social selling?', a: 'Two to three times per week is a sustainable baseline for most B2B sellers. Daily is better for reach, but only if you can maintain quality. Dropping from daily to once a week hurts your algorithmic momentum more than posting 3x weekly from the start.' },
+  ],
+  'what-is-an-ai-sdr': [
+    { q: 'Is an AI SDR the same as a sales automation tool?', a: 'Not exactly. Sales automation tools execute pre-defined sequences — they send message A, then B, then C on a fixed schedule, regardless of what happened in between. An AI SDR uses intelligence to adapt: if a prospect engaged with your post, the AI adjusts the next action accordingly.' },
+    { q: 'Can an AI SDR replace a human SDR entirely?', a: 'In high-volume, low-touch sales motions — sub-$5k ACV, transactional buying process, short cycles — autonomous AI SDRs can handle most top-of-funnel work. In consultative B2B sales with complex buying committees and longer cycles, the human SDR remains essential.' },
+    { q: 'How is Chattie different from other AI SDRs?', a: 'Chattie is an assisted AI SDR focused specifically on LinkedIn. It doesn\'t send messages automatically — you write and send every message yourself. What Chattie does: organizes your conversations by pipeline stage, surfaces who needs follow-up, and preserves full conversation context.' },
+  ],
 }
 
 // Slugs that get DefinedTerm schema (conceptual definition posts)

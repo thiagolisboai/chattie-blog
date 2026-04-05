@@ -1,8 +1,10 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
+import { SearchModal } from '@/components/search-modal'
 
 interface BlogNavProps {
   lang?: 'pt-BR' | 'en'
@@ -14,6 +16,7 @@ const CATEGORIES_PT = [
   { label: 'Comparativos', href: '/pt-br/blog/categoria/comparativos' },
   { label: 'Chattie', href: '/pt-br/blog/categoria/chattie' },
   { label: '📋 Checklist', href: '/pt-br/recursos/checklist-prospeccao-linkedin' },
+  { label: '✉ Newsletter', href: '/pt-br/blog#newsletter' },
 ]
 
 const CATEGORIES_EN = [
@@ -22,6 +25,7 @@ const CATEGORIES_EN = [
   { label: 'Comparisons', href: '/blog/category/comparisons' },
   { label: 'AI for Sales', href: '/blog/category/ai-for-sales' },
   { label: '📋 Checklist', href: '/resources/linkedin-prospecting-checklist' },
+  { label: '✉ Newsletter', href: '/blog#newsletter' },
 ]
 
 export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
@@ -63,15 +67,13 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
 
           {/* Logo — fullmark (symbol + wordmark) */}
           <Link href={isPtBr ? ptListingHref : enListingHref} className="flex items-center gap-2.5" style={{ flexShrink: 0 }}>
-            <img
+            <Image
               src="/brand/chattie-fullmark.png"
               alt="Chattie"
-              style={{ height: 30, width: 'auto', maxWidth: 140 }}
-              onError={(e) => {
-                const img = e.target as HTMLImageElement
-                img.src = '/brand/chattie-wordmark.png'
-                img.onerror = () => { img.style.display = 'none' }
-              }}
+              width={140}
+              height={30}
+              style={{ height: 30, width: 'auto' }}
+              priority
             />
             <span
               className="text-xs font-bold border-2 border-black px-2 py-0.5"
@@ -95,8 +97,9 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
             ))}
           </div>
 
-          {/* Right: lang toggle + CTA + hamburger */}
+          {/* Right: search + lang toggle + CTA + hamburger */}
           <div className="flex items-center gap-2.5" style={{ flexShrink: 0 }}>
+            <SearchModal lang={isPtBr ? 'pt-BR' : 'en'} />
             {/* Language toggle pill */}
             <div
               className="flex items-center rounded-full"

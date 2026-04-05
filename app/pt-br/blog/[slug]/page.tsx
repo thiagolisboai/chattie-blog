@@ -5,6 +5,8 @@ import { getAllSlugsPt, getPostBySlugPt, getAllPostsPt } from '@/lib/posts-pt'
 import { getMdxComponents } from '@/components/mdx-components'
 import Image from 'next/image'
 import { ArticleJsonLd } from '@/components/json-ld'
+import { BreadcrumbSchema } from '@/components/breadcrumb-schema'
+import { ShareButtons } from '@/components/share-buttons'
 import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { ReadingProgressBar, ScrollToTopButton } from '@/components/post-ui'
@@ -73,9 +75,14 @@ export default async function BlogPostPt({ params }: Props) {
 
   return (
     <>
-      <ReadingProgressBar />
+      <ReadingProgressBar slug={post.slug} lang="pt-BR" />
       <ScrollToTopButton />
       <ArticleJsonLd post={{ ...post, slug: post.slug }} lang="pt-BR" />
+      <BreadcrumbSchema items={[
+        { name: 'Blog', url: 'https://trychattie.com/pt-br/blog' },
+        { name: post.category, url: `https://trychattie.com/pt-br/blog/categoria/${post.category}` },
+        { name: post.title, url: post.canonicalUrl },
+      ]} />
       <BlogNav lang="pt-BR" />
 
       <main id="main-content" style={{ maxWidth: 760, margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>
@@ -196,14 +203,17 @@ export default async function BlogPostPt({ params }: Props) {
           </aside>
         </div>
 
+        {/* Share */}
+        <ShareButtons url={post.canonicalUrl} title={post.title} lang="pt-BR" />
+
         {/* Footer */}
         <footer style={{ marginTop: '4rem', borderTop: '2px solid #000', paddingTop: '2rem' }}>
           {/* Tags */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '2rem' }}>
             {post.tags?.map((tag) => (
-              <span key={tag} style={{ fontSize: '0.8rem', border: '1px solid #000', padding: '0.2rem 0.6rem' }}>
+              <Link key={tag} href={`/pt-br/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`} style={{ fontSize: '0.8rem', border: '1px solid #000', padding: '0.2rem 0.6rem', textDecoration: 'none', color: '#000', transition: 'background 0.15s' }} className="hover:bg-lavender">
                 #{tag}
-              </span>
+              </Link>
             ))}
           </div>
 
@@ -221,13 +231,15 @@ export default async function BlogPostPt({ params }: Props) {
                 background: '#FAFBF3',
               }}
             >
-              <img
+              <Image
                 src={author.photo}
                 alt={author.name}
-                style={{ width: 72, height: 72, borderRadius: '50%', border: '2px solid #000', objectFit: 'cover', flexShrink: 0 }}
+                width={72}
+                height={72}
+                style={{ borderRadius: '50%', border: '2px solid #000', objectFit: 'cover', flexShrink: 0 }}
               />
               <div>
-                <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 800, fontSize: '1rem', marginBottom: '0.15rem' }}>{author.name}</p>
+                <Link href={`/pt-br/blog/autor/${author.slug}`} style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 800, fontSize: '1rem', marginBottom: '0.15rem', display: 'block', textDecoration: 'none', color: '#000' }} className="hover:text-teal">{author.name}</Link>
                 <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.6rem' }}>{author.rolePt}</p>
                 <p style={{ fontSize: '0.875rem', color: '#444', lineHeight: 1.6 }}>{author.bioPt}</p>
                 <a

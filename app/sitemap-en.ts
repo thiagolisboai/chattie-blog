@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { getAllPostsEn } from '@/lib/posts-en'
+import { AUTHORS } from '@/lib/authors'
 
 export default function sitemapEn(): MetadataRoute.Sitemap {
   const posts = getAllPostsEn()
@@ -40,6 +41,14 @@ export default function sitemapEn(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     },
+    // Author pages
+    ...Object.values(AUTHORS).map((author) => ({
+      url: `https://trychattie.com/blog/author/${author.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
+    // Individual posts
     ...posts.map((post) => ({
       url: `https://trychattie.com/blog/${post.slug}`,
       lastModified: new Date(post.dateModified || post.date),

@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { ChecklistDownload } from '@/components/checklist-download'
+import { HowToSchema } from '@/components/howto-schema'
+import { BreadcrumbSchema } from '@/components/breadcrumb-schema'
 
 export const metadata: Metadata = {
   title: '12 Templates de Mensagem para LinkedIn B2B | Chattie',
@@ -111,6 +113,23 @@ function highlightBrackets(text: string) {
 export default function TemplatesMensagemPage() {
   return (
     <>
+      <HowToSchema
+        name="Templates de Mensagem para LinkedIn B2B"
+        description="12 templates prontos para conexão, abordagem, follow-up e reengajamento no LinkedIn B2B."
+        url="https://trychattie.com/pt-br/recursos/templates-mensagem-linkedin"
+        totalTime="PT10M"
+        steps={[
+          { name: 'Escolha o template pelo estágio da conversa', text: 'Use templates de conexão para novos contatos, abordagem para após aceite, follow-up para sem resposta e reengajamento para leads frios.' },
+          { name: 'Personalize com dados do perfil do lead', text: 'Substitua os campos entre colchetes com informações reais: nome, empresa, cargo, posts recentes do lead.' },
+          { name: 'Ajuste o tom ao perfil do prospect', text: 'C-level exige linguagem mais direta. Founders respondem bem a pares. SDRs preferem contexto técnico.' },
+          { name: 'Envie manualmente no LinkedIn', text: 'Cole o template na caixa de mensagem e revise antes de enviar — nunca use automação para disparos em massa.' },
+        ]}
+      />
+      <BreadcrumbSchema items={[
+        { name: 'Blog', url: 'https://trychattie.com/pt-br/blog' },
+        { name: 'Recursos', url: 'https://trychattie.com/pt-br/recursos/templates-mensagem-linkedin' },
+        { name: 'Templates de Mensagem LinkedIn', url: 'https://trychattie.com/pt-br/recursos/templates-mensagem-linkedin' },
+      ]} />
       <BlogNav lang="pt-BR" />
 
       <main style={{ maxWidth: 800, margin: '0 auto', padding: '3rem 1.5rem 5rem' }}>

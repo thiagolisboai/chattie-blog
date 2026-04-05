@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import type { PostFrontmatter } from '@/lib/posts-pt'
 
 interface BlogCardProps {
@@ -29,16 +30,13 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
       <Link href={`${basePath}/${post.slug}`} className="block group col-span-full">
         <article className="card-brutalist bg-white overflow-hidden blog-featured-card">
           {post.image && (
-            <div className="card-img-wrap blog-featured-img" style={{ borderRight: '2px solid #000', borderBottom: 'none', aspectRatio: '16/9' }}>
-              <img
+            <div className="card-img-wrap blog-featured-img" style={{ borderRight: '2px solid #000', borderBottom: 'none', aspectRatio: '16/9', position: 'relative' }}>
+              <Image
                 src={post.image}
                 alt={post.title}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)',
-                }}
+                fill
+                sizes="(max-width: 900px) 100vw, 50vw"
+                style={{ objectFit: 'cover', transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)' }}
                 className="group-hover:scale-105"
               />
             </div>
@@ -101,16 +99,13 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
     <Link href={`${basePath}/${post.slug}`} className="block group reveal">
       <article className="card-brutalist bg-white h-full flex flex-col" style={{ overflow: 'hidden' }}>
         {post.image && (
-          <div className="card-img-wrap" style={{ aspectRatio: '16/9' }}>
-            <img
+          <div className="card-img-wrap" style={{ aspectRatio: '16/9', position: 'relative' }}>
+            <Image
               src={post.image}
               alt={post.title}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)',
-              }}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              style={{ objectFit: 'cover', transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)' }}
               className="group-hover:scale-105"
             />
           </div>
