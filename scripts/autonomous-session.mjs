@@ -590,6 +590,7 @@ function validateSchema(filePath) {
     const faqSection = body.match(/##\s+(?:FAQ|Perguntas Frequentes)([\s\S]*?)(?:\n##\s|$)/i)?.[1] || ''
     const questionCount = (faqSection.match(/^###\s+/gm) || []).length
       + (faqSection.match(/^\d+\.\s+\*\*/gm) || []).length
+      + (faqSection.match(/^\*\*\d+\./gm) || []).length    // **1. Question** format
       + (faqSection.match(/^>\s*\*\*P:/gm) || []).length
     if (questionCount < 3) {
       log(`❌  T2.9: structuredData="faq" — FAQ tem apenas ${questionCount} pergunta(s) (mínimo 3)`)
