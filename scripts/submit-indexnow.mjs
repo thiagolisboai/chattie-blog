@@ -66,6 +66,9 @@ export async function submitIndexNow(urls) {
   })
 
   return new Promise((resolve) => {
+    let settled = false
+    const done = (v) => { if (!settled) { settled = true; resolve(v) } }
+
     const options = {
       hostname: 'api.indexnow.org',
       path: '/indexnow',
@@ -82,35 +85,38 @@ export async function submitIndexNow(urls) {
         console.log(`✅  IndexNow: ${urls.length} URL(s) submetida(s) (HTTP ${res.statusCode})`)
         urls.forEach(u => console.log(`    - ${u}`))
         logSubmission(urls, 'submitted')
-        resolve('ok')
+        done('ok')
       } else if (res.statusCode === 400) {
         console.warn(`⚠️  IndexNow: requisição inválida (HTTP 400) — verifique o payload`)
-        resolve('error')
+        done('error')
       } else if (res.statusCode === 403) {
         console.warn(`⚠️  IndexNow: chave inválida ou arquivo de chave inacessível (HTTP 403)`)
         console.warn(`   Verifique: ${KEY_LOCATION}`)
-        resolve('error')
+        done('error')
       } else if (res.statusCode === 422) {
         console.warn(`⚠️  IndexNow: URLs inválidas na lista (HTTP 422)`)
-        resolve('error')
+        done('error')
       } else if (res.statusCode === 429) {
         console.warn(`⚠️  IndexNow: rate limit atingido (HTTP 429) — tente novamente mais tarde`)
-        resolve('error')
+        done('error')
       } else {
         console.warn(`⚠️  IndexNow: resposta inesperada HTTP ${res.statusCode}`)
-        resolve('error')
+        done('error')
       }
+      res.resume() // drain response so connection closes cleanly
     })
 
     req.on('error', (e) => {
       console.warn(`⚠️  IndexNow: erro de rede — ${e.message}`)
-      resolve('error')
+      done('error')
     })
 
     req.setTimeout(10000, () => {
-      req.destroy()
-      console.warn('⚠️  IndexNow: timeout (10s)')
-      resolve('error')
+      if (!settled) {
+        req.destroy()
+        console.warn('⚠️  IndexNow: timeout (10s)')
+        done('error')
+      }
     })
 
     req.write(payload)
