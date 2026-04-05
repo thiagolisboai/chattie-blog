@@ -8,4 +8,8 @@ Histórico de posts gerados pelo Dexter, agente de conteúdo autônomo do Chatti
 - Keyword: ia para vendas b2b no linkedin: guia completo 2026
 - Slug: ia-para-vendas-b2b-no-linkedin-guia-completo-2026
 - Palavras: ~4914
+## 2026-04-05 — "LinkedIn para Prospecção B2B: Guia Definitivo de Perfil, Conteúdo e Automação 2026"
+- Keyword: linkedin para prospecção b2b: guia definitivo de perfil, conteúdo e automação 2026
+- Slug: linkedin-para-prospeccao-b2b-guia-definitivo
+- Palavras: ~4574
 - Tipo: PILAR
