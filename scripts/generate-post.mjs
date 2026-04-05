@@ -355,8 +355,14 @@ Responda APENAS com o MDX, começando com --- (frontmatter).`
   console.log(`    Slug: ${slug}`)
   console.log(`    Palavras: ~${wordCount}`)
 
-  if (wordCount < 1400) {
-    console.warn(`⚠️  Post curto (${wordCount} palavras) — mínimo é 1800. Verifique o output.`)
+  // A1: Bloquear post curto — mínimo 1600 palavras (tolerância de 200 abaixo dos 1800 do brief)
+  const MIN_WORDS = 1600
+  if (wordCount < MIN_WORDS) {
+    throw new Error(
+      `Post muito curto: ${wordCount} palavras (mínimo ${MIN_WORDS}). ` +
+      `O modelo não gerou conteúdo suficiente para a keyword "${keyword}". ` +
+      `Tente novamente ou use --keyword diferente.`
+    )
   }
 
   // 8. Ensure image and readTime are in frontmatter

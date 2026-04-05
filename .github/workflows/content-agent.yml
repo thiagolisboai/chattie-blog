@@ -3,12 +3,14 @@
 # Roda automaticamente: seg/qua/sex as 8h BRT (11h UTC)
 # Pode ser disparado manualmente via Actions > Run workflow
 #
-# Secrets necessarios no repositorio (Settings > Secrets > Actions):
+# Secrets necessarios (Settings > Secrets > Actions):
 #   ANTHROPIC_API_KEY   - Anthropic API key
 #   PEXELS_API_KEY      - Pexels API key
 #   BRAVE_API_KEY       - Brave Search API key
 #   GSC_KEY_JSON        - JSON de service account em base64
-#                         Gerar com: base64 -w 0 chattie-blog-tools-XXXXX.json
+#   NOTIFY_EMAIL        - Email para notificacao pos-publicacao (opcional)
+#   MAIL_USERNAME       - Gmail/SMTP username para envio (opcional)
+#   MAIL_PASSWORD       - Gmail App Password para envio (opcional)
 
 name: Dexter
 
@@ -27,9 +29,14 @@ on:
         type: boolean
         default: false
 
+# A4: Apenas uma execucao simultanea por vez
+concurrency:
+  group: dexter-content-agent
+  cancel-in-progress: false
+
 jobs:
   generate-content:
-    name: Generate Blog Post
+    name: Dexter - Gerar Post
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -79,6 +86,16 @@ jobs:
           INPUT_KEYWORD: ${{ github.event.inputs.keyword }}
           INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
 
+      # A6: Salvar o MDX gerado como artifact (disponivel por 7 dias mesmo se commit falhar)
+      - name: Save generated post as artifact
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: dexter-post-${{ github.run_number }}
+          path: content/blog/
+          retention-days: 7
+          if-no-files-found: ignore
+
       - name: Configure git
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
@@ -102,13 +119,36 @@ jobs:
           if [ -n "$TITLE" ]; then
             MSG="content: $TITLE"
           else
-            MSG="content: autonomous session $(date +%Y-%m-%d)"
+            MSG="content: dexter session $(date +%Y-%m-%d)"
           fi
 
           git commit -m "$MSG" -m "Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
-
           git push origin main
           echo "Push concluido - Vercel deploying..."
+
+      # A5: Notificacao por email apos publicacao bem-sucedida
+      - name: Send email notification
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.agent.outputs.title != '' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          to: ${{ secrets.NOTIFY_EMAIL }}
+          from: Dexter <${{ secrets.MAIL_USERNAME }}>
+          subject: "Dexter publicou: ${{ steps.agent.outputs.title }}"
+          body: |
+            O Dexter publicou um novo post no Chattie Blog.
+
+            Titulo: ${{ steps.agent.outputs.title }}
+            Slug:   ${{ steps.agent.outputs.slug }}
+            URL:    https://trychattie.com/pt-br/blog/${{ steps.agent.outputs.slug }}
+
+            Verifique o post e solicite indexacao no GSC se necessario.
+
+            --
+            Dexter - Agente de Conteudo Autonomo do Chattie Blog
 
       - name: Write job summary
         if: always()
@@ -122,6 +162,7 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "- Slug: $SLUG" >> $GITHUB_STEP_SUMMARY
             echo "- URL: https://trychattie.com/pt-br/blog/$SLUG" >> $GITHUB_STEP_SUMMARY
+            echo "- Artifact: dexter-post-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           else
             echo "Nenhum post novo criado nesta sessao." >> $GITHUB_STEP_SUMMARY
           fi

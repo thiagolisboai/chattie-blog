@@ -163,6 +163,57 @@ function selectKeywordFromBacklog() {
   return fallback.length > 0 ? fallback[0].keyword : null
 }
 
+// ─── A2: Validate internal links in generated MDX ────────────────────────────
+
+function validateInternalLinks(filePath) {
+  const content = fs.readFileSync(filePath, 'utf-8')
+  const blogDir = path.join(ROOT, 'content', 'blog')
+
+  // Find all /pt-br/blog/slug links in the MDX body
+  const linkPattern = /\(\/pt-br\/blog\/([\w-]+)\)/g
+  const matches = [...content.matchAll(linkPattern)]
+
+  if (matches.length === 0) {
+    log('⚠️  A2: Nenhum internal link encontrado no post — verifique manualmente')
+    return true // não bloqueia, mas avisa
+  }
+
+  const broken = []
+  for (const match of matches) {
+    const slug = match[1]
+    const targetFile = path.join(blogDir, `${slug}.mdx`)
+    if (!fs.existsSync(targetFile)) {
+      broken.push(`/pt-br/blog/${slug}`)
+    }
+  }
+
+  if (broken.length > 0) {
+    log(`❌  A2: ${broken.length} internal link(s) quebrado(s):`)
+    broken.forEach(l => log(`       ${l}`))
+    return false
+  }
+
+  log(`✅  A2: ${matches.length} internal link(s) validado(s)`)
+  return true
+}
+
+// ─── A3: Session deduplication ────────────────────────────────────────────────
+
+function alreadyPublishedToday() {
+  const logPath = path.join(ROOT, 'docs', 'agent-session-log.md')
+  if (!fs.existsSync(logPath)) return false
+
+  const today = new Date().toISOString().split('T')[0]
+  const content = fs.readFileSync(logPath, 'utf-8')
+
+  // Check if there's already an entry for today
+  if (content.includes(`## ${today}`)) {
+    log(`⚠️  A3: Já foi publicado um post hoje (${today}). Use --force-new para sobrescrever.`)
+    return true
+  }
+  return false
+}
+
 // ─── Step 5: Run source audit ────────────────────────────────────────────────
 
 function runSourceAudit() {
@@ -186,6 +237,11 @@ async function main() {
   if (!process.env.ANTHROPIC_API_KEY) {
     log('❌  ANTHROPIC_API_KEY não configurado. Abortando.')
     process.exit(1)
+  }
+
+  // ── A3: Session deduplication ──
+  if (!FORCE_NEW && alreadyPublishedToday()) {
+    process.exit(2)
   }
 
   // ── Phase 0: Update GSC report ──
@@ -245,11 +301,20 @@ async function main() {
     process.exit(0)
   }
 
-  // ── Phase 4: Source audit ──
+  // ── Phase 4a: Source audit ──
   log('\n🔍  Rodando source-audit no post gerado...')
   const auditPassed = runSourceAudit()
   if (!auditPassed) {
     log('❌  Abortando — corrija as fontes antes de commitar')
+    process.exit(1)
+  }
+
+  // ── Phase 4b: A2 — Validate internal links ──
+  log('\n🔗  Validando internal links...')
+  const linksValid = validateInternalLinks(result.filePath)
+  if (!linksValid) {
+    log('❌  Abortando — internal links quebrados no post gerado')
+    log('   O arquivo foi salvo em content/blog/ para correção manual')
     process.exit(1)
   }
 
