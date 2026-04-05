@@ -19,6 +19,17 @@ function score(post: PostFrontmatter, category: string, tags: string[]): number 
   return s
 }
 
+const catColors: Record<string, { bg: string; color: string }> = {
+  'social-selling': { bg: '#2F6451', color: '#FAFBF3' },
+  'linkedin':       { bg: '#66BAC6', color: '#000' },
+  'chattie':        { bg: '#E57B33', color: '#FAFBF3' },
+  'b2b':            { bg: '#E4C1F9', color: '#000' },
+  'ia-para-vendas': { bg: '#F4B13F', color: '#000' },
+  'ai-for-sales':   { bg: '#F4B13F', color: '#000' },
+  'comparativos':   { bg: '#000', color: '#FAFBF3' },
+  'comparisons':    { bg: '#000', color: '#FAFBF3' },
+}
+
 export function RelatedPosts({ currentSlug, currentCategory, currentTags, allPosts, basePath, lang = 'pt-BR' }: RelatedPostsProps) {
   const isPtBr = lang === 'pt-BR'
 
@@ -32,18 +43,10 @@ export function RelatedPosts({ currentSlug, currentCategory, currentTags, allPos
 
   if (related.length === 0) return null
 
-  const catColors: Record<string, { bg: string; color: string }> = {
-    'linkedin':       { bg: '#2F6451', color: '#FAFBF3' },
-    'social-selling': { bg: '#66BAC6', color: '#000' },
-    'chattie':        { bg: '#E57B33', color: '#FAFBF3' },
-    'b2b':            { bg: '#E4C1F9', color: '#000' },
-    'ia-para-vendas': { bg: '#F4B13F', color: '#000' },
-    'ai-for-sales':   { bg: '#F4B13F', color: '#000' },
-  }
-
   return (
     <section style={{ marginTop: '4rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+      {/* Section header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
         <div style={{ flex: 1, height: 2, background: '#000' }} />
         <p style={{
           fontFamily: "'Sherika', sans-serif",
@@ -56,6 +59,7 @@ export function RelatedPosts({ currentSlug, currentCategory, currentTags, allPos
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem',
+          margin: 0,
         }}>
           <span style={{ display: 'inline-block', width: 18, height: 2, background: 'currentColor' }} />
           {isPtBr ? 'Continue lendo' : 'Continue reading'}
@@ -63,59 +67,56 @@ export function RelatedPosts({ currentSlug, currentCategory, currentTags, allPos
         <div style={{ flex: 1, height: 2, background: '#000' }} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem' }}>
-        {related.map((post) => {
+      {/* Horizontal card list */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        {related.map((post, i) => {
           const cat = catColors[post.category] || { bg: '#B7C3B0', color: '#000' }
           return (
-            <Link key={post.slug} href={`${basePath}/${post.slug}`} style={{ textDecoration: 'none', display: 'block' }} className="group">
-              <article
-                className="card-brutalist"
-                style={{ background: '#fff', height: '100%', overflow: 'hidden' }}
-              >
-                {post.image && (
-                  <div style={{ overflow: 'hidden', borderBottom: '2px solid #000', aspectRatio: '16/9', position: 'relative' }}>
-                    <Image
-                      src={post.image}
-                      alt={post.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      style={{ objectFit: 'cover', transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)' }}
-                      className="group-hover:scale-105"
-                    />
-                  </div>
-                )}
-                <div style={{ padding: '1rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                    <span style={{
-                      fontSize: '0.6rem',
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.08em',
-                      background: cat.bg,
-                      color: cat.color,
-                      padding: '0.15rem 0.4rem',
-                    }}>
-                      {post.category}
-                    </span>
-                    <span style={{ fontSize: '0.7rem', color: '#888' }}>{post.readTime}</span>
-                  </div>
-                  <h3
-                    style={{
-                      fontFamily: "'Sherika', sans-serif",
-                      fontWeight: 800,
-                      fontSize: '0.95rem',
-                      lineHeight: 1.25,
-                      letterSpacing: '-0.01em',
-                      color: '#000',
-                      transition: 'color 0.15s',
-                      margin: 0,
-                    }}
-                    className="group-hover:text-teal"
-                  >
-                    {post.title}
-                  </h3>
+            <Link
+              key={post.slug}
+              href={`${basePath}/${post.slug}`}
+              className="related-card"
+              style={{ animationDelay: `${i * 60}ms` }}
+            >
+              {/* Thumbnail */}
+              {post.image ? (
+                <div className="related-card-img">
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    sizes="96px"
+                    style={{ objectFit: 'cover' }}
+                  />
                 </div>
-              </article>
+              ) : (
+                <div
+                  className="related-card-img"
+                  style={{ background: cat.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <span style={{ fontSize: '1.5rem', opacity: 0.4 }}>✦</span>
+                </div>
+              )}
+
+              {/* Content */}
+              <div className="related-card-content">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  <span style={{
+                    fontSize: '0.65rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.07em',
+                    background: cat.bg,
+                    color: cat.color,
+                    padding: '0.1rem 0.35rem',
+                    flexShrink: 0,
+                  }}>
+                    {post.category}
+                  </span>
+                  <span style={{ fontSize: '0.72rem', color: '#999', flexShrink: 0 }}>{post.readTime}</span>
+                </div>
+                <p className="related-card-title">{post.title}</p>
+              </div>
             </Link>
           )
         })}

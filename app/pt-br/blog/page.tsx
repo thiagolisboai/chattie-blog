@@ -6,6 +6,7 @@ import { BlogFooter } from '@/components/blog-footer'
 import { RevealObserver } from '@/components/reveal-observer'
 import { ScrollToTopButton } from '@/components/post-ui'
 import { NewsletterCta } from '@/components/newsletter-cta'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Blog PT-BR | Chattie',
@@ -71,9 +72,12 @@ export default async function BlogListPt({ searchParams }: Props) {
           >
             Social selling, LinkedIn B2B<br />e IA para vendas.
           </h1>
-          <p style={{ fontSize: '1.05rem', color: '#444', lineHeight: 1.7, maxWidth: 520 }}>
+          <p style={{ fontSize: '1.05rem', color: '#444', lineHeight: 1.7, maxWidth: 520, marginBottom: '1rem' }}>
             Para founders, consultores e operadores B2B que vendem pelo LinkedIn.
           </p>
+          <Link href="/blog" style={{ fontSize: '0.875rem', color: '#2F6451', textDecoration: 'underline', fontWeight: 600 }}>
+            🇺🇸 Read in English →
+          </Link>
         </div>
       </div>
 

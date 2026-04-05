@@ -194,9 +194,9 @@ export default async function BlogPostEn({ params }: Props) {
         {/* Footer */}
         <footer style={{ marginTop: '4rem', borderTop: '2px solid #000', paddingTop: '2rem' }}>
           {/* Tags */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '2.5rem' }}>
             {post.tags?.map((tag) => (
-              <Link key={tag} href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`} style={{ fontSize: '0.8rem', border: '1px solid #000', padding: '0.2rem 0.6rem', textDecoration: 'none', color: '#000', transition: 'background 0.15s' }} className="hover:bg-lavender">
+              <Link key={tag} href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, '-')}`} className="tag-pill">
                 #{tag}
               </Link>
             ))}
@@ -204,34 +204,37 @@ export default async function BlogPostEn({ params }: Props) {
 
           {/* Author card */}
           {author && (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '1.25rem',
-                border: '2px solid #000',
-                boxShadow: '4px 4px 0 rgba(47,100,81,0.3)',
-                padding: '1.5rem',
-                marginBottom: '2rem',
-                background: '#FAFBF3',
-              }}
-            >
-              <Image
-                src={author.photo}
-                alt={author.name}
-                width={72}
-                height={72}
-                style={{ borderRadius: '50%', border: '2px solid #000', objectFit: 'cover', flexShrink: 0 }}
-              />
-              <div>
-                <Link href={`/blog/author/${author.slug}`} style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 800, fontSize: '1rem', marginBottom: '0.15rem', display: 'block', textDecoration: 'none', color: '#000' }} className="hover:text-teal">{author.name}</Link>
-                <p style={{ fontSize: '0.8rem', color: '#666', marginBottom: '0.6rem' }}>{author.role}</p>
-                <p style={{ fontSize: '0.875rem', color: '#444', lineHeight: 1.6 }}>{author.bio}</p>
+            <div className="author-card">
+              <div className="author-card-accent" />
+              <div style={{ padding: '1.5rem 0', flexShrink: 0 }}>
+                <Image
+                  src={author.photo}
+                  alt={author.name}
+                  width={72}
+                  height={72}
+                  style={{ borderRadius: '50%', border: '2px solid #000', objectFit: 'cover', display: 'block' }}
+                />
+              </div>
+              <div className="author-card-body">
+                <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#2F6451', marginBottom: '0.35rem' }}>
+                  About the author
+                </p>
+                <Link href={`/blog/author/${author.slug}`} style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 900, fontSize: '1.05rem', marginBottom: '0.15rem', display: 'block', textDecoration: 'none', color: '#000', letterSpacing: '-0.01em' }} className="hover:text-teal">
+                  {author.name}
+                </Link>
+                <p style={{ fontSize: '0.78rem', color: '#2F6451', fontWeight: 600, marginBottom: '0.6rem' }}>{author.role}</p>
+                <p style={{ fontSize: '0.875rem', color: '#444', lineHeight: 1.65, margin: 0 }}>{author.bio}</p>
                 <a
                   href={author.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ display: 'inline-block', marginTop: '0.6rem', fontSize: '0.78rem', fontWeight: 700, color: '#2F6451', textDecoration: 'none' }}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                    marginTop: '0.75rem', fontSize: '0.8rem', fontWeight: 700,
+                    color: '#FAFBF3', background: '#2F6451', border: '1.5px solid #000',
+                    padding: '0.3rem 0.7rem', textDecoration: 'none', boxShadow: '2px 2px 0 #000',
+                    transition: 'transform 0.1s, box-shadow 0.1s',
+                  }}
                 >
                   LinkedIn →
                 </a>

@@ -28,7 +28,7 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
   if (featured) {
     return (
       <Link href={`${basePath}/${post.slug}`} className="block group col-span-full">
-        <article className="card-brutalist bg-white overflow-hidden blog-featured-card">
+        <article className="blog-post-card bg-white overflow-hidden blog-featured-card">
           {post.image && (
             <div className="card-img-wrap blog-featured-img" style={{ borderRight: '2px solid #000', borderBottom: 'none', aspectRatio: '16/9', position: 'relative' }}>
               <Image
@@ -44,12 +44,12 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
           <div className="blog-featured-content" style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', justifyContent: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
               <span
-                style={{ background: catStyle.bg, color: catStyle.color, fontSize: '0.7rem', fontWeight: 700, padding: '0.2rem 0.6rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}
+                style={{ background: catStyle.bg, color: catStyle.color, fontSize: '0.75rem', fontWeight: 700, padding: '0.2rem 0.6rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}
               >
                 {post.category}
               </span>
-              <span style={{ fontSize: '0.75rem', color: '#777' }}>{post.readTime}</span>
-              <time style={{ fontSize: '0.75rem', color: '#777' }}>
+              <span style={{ fontSize: '0.78rem', color: '#777' }}>{post.readTime}</span>
+              <time style={{ fontSize: '0.78rem', color: '#777' }}>
                 {new Date(post.date).toLocaleDateString(dateLocale, { day: '2-digit', month: 'long', year: 'numeric' })}
               </time>
             </div>
@@ -69,9 +69,9 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
             <p style={{ fontSize: '1rem', color: '#4a4a4a', lineHeight: 1.6 }}>
               {post.excerpt || post.description}
             </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: 'auto' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: 'auto' }}>
               {post.tags?.slice(0, 4).map((tag) => (
-                <span key={tag} style={{ fontSize: '0.75rem', border: '1px solid #000', padding: '0.15rem 0.5rem' }}>
+                <span key={tag} className="tag-pill-inline">
                   #{tag}
                 </span>
               ))}
@@ -97,7 +97,7 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
 
   return (
     <Link href={`${basePath}/${post.slug}`} className="block group reveal">
-      <article className="card-brutalist bg-white h-full flex flex-col" style={{ overflow: 'hidden' }}>
+      <article className="blog-post-card bg-white h-full flex flex-col" style={{ overflow: 'hidden' }}>
         {post.image && (
           <div className="card-img-wrap" style={{ aspectRatio: '16/9', position: 'relative' }}>
             <Image
@@ -113,11 +113,11 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
         <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
             <span
-              style={{ background: catStyle.bg, color: catStyle.color, fontSize: '0.65rem', fontWeight: 700, padding: '0.18rem 0.5rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}
+              style={{ background: catStyle.bg, color: catStyle.color, fontSize: '0.75rem', fontWeight: 700, padding: '0.18rem 0.5rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}
             >
               {post.category}
             </span>
-            <span style={{ fontSize: '0.72rem', color: '#888' }}>{post.readTime}</span>
+            <span style={{ fontSize: '0.75rem', color: '#888' }}>{post.readTime}</span>
           </div>
           <h2
             style={{
@@ -127,6 +127,7 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
               lineHeight: 1.2,
               letterSpacing: '-0.01em',
               transition: 'color 0.15s',
+              color: '#000',
             }}
             className="group-hover:text-teal"
           >
@@ -137,7 +138,7 @@ export function BlogCard({ post, basePath = '/pt-br/blog', featured = false, lan
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: 'auto' }}>
             {post.tags?.slice(0, 2).map((tag) => (
-              <span key={tag} style={{ fontSize: '0.7rem', border: '1px solid #000', padding: '0.1rem 0.4rem' }}>
+              <span key={tag} className="tag-pill-inline">
                 #{tag}
               </span>
             ))}

@@ -378,6 +378,124 @@ body {
   .prose > p:first-of-type { font-size: 1.05rem; }
 }
 
+/* ─── Blog post card — hover teal brutalista ─── */
+.blog-post-card {
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  transition: transform 0.15s cubic-bezier(0.16,1,0.3,1), box-shadow 0.15s cubic-bezier(0.16,1,0.3,1), border-color 0.15s;
+}
+.blog-post-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #2F6451;
+  border-color: #2F6451;
+}
+
+/* ─── Related posts — horizontal card ─── */
+.related-card {
+  display: flex;
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  background: #fff;
+  overflow: hidden;
+  text-decoration: none;
+  color: #000;
+  transition: transform 0.15s cubic-bezier(0.16,1,0.3,1), box-shadow 0.15s, border-color 0.15s;
+}
+.related-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 #2F6451;
+  border-color: #2F6451;
+}
+.related-card:hover .related-card-title {
+  color: #2F6451;
+}
+.related-card-img {
+  width: 96px;
+  min-height: 80px;
+  flex-shrink: 0;
+  position: relative;
+  border-right: 2px solid #000;
+  overflow: hidden;
+}
+.related-card-content {
+  padding: 0.75rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 0;
+}
+.related-card-title {
+  font-family: 'Sherika', sans-serif;
+  font-weight: 800;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #000;
+  transition: color 0.15s;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* ─── Tag pill — subtle visual distinction ─── */
+.tag-pill {
+  font-size: 0.78rem;
+  border: 1px solid rgba(0,0,0,0.2);
+  padding: 0.2rem 0.55rem;
+  background: rgba(0,0,0,0.04);
+  color: #555;
+  text-decoration: none;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  display: inline-block;
+  line-height: 1.4;
+}
+.tag-pill:hover {
+  background: rgba(47,100,81,0.08);
+  border-color: #2F6451;
+  color: #2F6451;
+}
+.tag-pill-inline {
+  font-size: 0.72rem;
+  border: 1px solid rgba(0,0,0,0.15);
+  padding: 0.12rem 0.4rem;
+  background: rgba(0,0,0,0.04);
+  color: #666;
+  display: inline-block;
+}
+
+/* ─── Author card in post ─── */
+.author-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0 #2F6451;
+  padding: 0;
+  margin-bottom: 2rem;
+  background: #FAFBF3;
+  overflow: hidden;
+}
+.author-card-accent {
+  width: 6px;
+  flex-shrink: 0;
+  background: #2F6451;
+  align-self: stretch;
+  min-height: 100%;
+}
+.author-card-body {
+  padding: 1.5rem 1.5rem 1.5rem 0;
+  flex: 1;
+}
+@media (max-width: 480px) {
+  .related-card-img { width: 72px; }
+  .author-card { gap: 0.75rem; }
+  .author-card-body { padding: 1rem 1rem 1rem 0; }
+}
+
 /* ─── Footer column links ─── */
 .footer-col-link {
   display: block;
