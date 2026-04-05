@@ -72,6 +72,43 @@ O par deve aparecer em "Pares completos" — não em "Links quebrados".
 
 ---
 
+## FASE 4 — Verificação de fontes (obrigatório antes de publicar)
+
+**Toda estatística ou dado externo citado num post deve ser verificado** antes do commit.
+
+### Verificar durante a escrita
+
+1. Buscar a fonte original via Brave Search: `[stat] [fonte] [ano] site oficial`
+2. Confirmar que o número está na fonte primária (não em blogs que citam outros blogs)
+3. Se não encontrar: remover o número ou usar linguagem sem atribuição falsa
+
+### Rodar após escrever um post
+
+```bash
+node scripts/source-audit.mjs
+```
+
+Se retornar fontes suspeitas (exit code 1), corrigir antes do commit.
+O audit também roda automaticamente no `npm run build`.
+
+### Fontes aprovadas
+
+LinkedIn, McKinsey & Company, HubSpot, Salesforce, Gartner, Forrester, TRA
+
+### Fontes proibidas
+
+Aberdeen Group, Sales Benchmark Index, Datanyze, CSO Insights, Sirius Decisions
+
+### Se não tiver fonte verificável
+
+- Remover o número específico
+- Usar: "Benchmarks de outbound B2B indicam..." (sem atribuição)
+- Usar: "É comum que equipes percam..." (estimativa sem número)
+
+Guia completo: `docs/source-guidelines.md`
+
+---
+
 ## Criar um post PT-BR
 
 **Via Claude Code (agentic):** salvar em `/content/blog/[slug].mdx`

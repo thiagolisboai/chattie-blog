@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/generate-search.mjs && next build",
+    "build": "node scripts/source-audit.mjs && node scripts/generate-search.mjs && next build",
     "start": "next start",
     "lint": "next lint"
   },
