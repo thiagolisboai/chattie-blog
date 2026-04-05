@@ -147,6 +147,38 @@ node scripts/content-diversity-audit.mjs
 
 ---
 
+## FASE 6 — Update loop (manutenção de posts existentes)
+
+Rodar no início de cada sessão para identificar posts que precisam de atualização:
+
+```bash
+node scripts/update-audit.mjs
+```
+
+### Gatilhos de atualização obrigatória
+
+- Post em queda no GSC (aparece no relatório `docs/gsc-insights.md`)
+- Título ou description com ano desatualizado
+- Post com mais de 6 meses sem `dateModified`
+
+### Após atualizar um post
+
+```bash
+node scripts/set-date-modified.mjs [slug] [data]
+```
+
+**Regra:** nunca atualizar `dateModified` sem fazer pelo menos uma mudança real no conteúdo.
+
+### Cadência mínima por tipo
+
+- Ferramentas e comparativos: revisão a cada **3 meses**
+- Guias passo a passo: revisão a cada **6 meses**
+- Posts conceituais: revisão a cada **12 meses**
+
+Workflow completo: `docs/update-workflow.md`
+
+---
+
 ## Criar um post PT-BR
 
 **Via Claude Code (agentic):** salvar em `/content/blog/[slug].mdx`
