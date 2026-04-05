@@ -42,7 +42,7 @@ export function SearchModal({ lang = 'pt-BR' }: { lang?: 'pt-BR' | 'en' }) {
   useEffect(() => {
     if (!open || posts.length > 0) return
     setLoading(true)
-    fetch('/api/posts.json')
+    fetch('/api/search')
       .then((r) => r.json())
       .then((data) => { setPosts(data.posts ?? []); setLoading(false) })
       .catch(() => setLoading(false))

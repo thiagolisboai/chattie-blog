@@ -139,23 +139,6 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
           {/* Desktop nav — center */}
           <div className="hidden lg:flex items-center gap-6" style={{ flex: 1, justifyContent: 'center' }}>
 
-            {/* Blog home link */}
-            <Link
-              href={isPtBr ? ptListingHref : enListingHref}
-              className="text-sm font-semibold transition-colors"
-              style={{
-                color: (pathname === ptListingHref || pathname === enListingHref) ? '#E57B33' : '#333',
-                textDecoration: 'none',
-                position: 'relative',
-                paddingBottom: '2px',
-              }}
-            >
-              {isPtBr ? 'Artigos' : 'Articles'}
-              {(pathname === ptListingHref || pathname === enListingHref) && (
-                <span style={{ position: 'absolute', bottom: -2, left: 0, right: 0, height: 2, background: '#E57B33', display: 'block' }} />
-              )}
-            </Link>
-
             {/* Categories dropdown */}
             <div
               ref={catRef}
@@ -224,6 +207,36 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
             >
               Newsletter
             </a>
+
+            {/* Checklist — external resource */}
+            <Link
+              href={isPtBr ? '/pt-br/recursos/checklist-prospeccao-linkedin' : '/resources/linkedin-prospecting-checklist'}
+              style={{
+                fontSize: '0.8rem',
+                fontWeight: 800,
+                color: '#000',
+                textDecoration: 'none',
+                border: '1.5px solid #000',
+                padding: '0.3rem 0.7rem',
+                letterSpacing: '0.02em',
+                transition: 'background 0.12s, color 0.12s',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+              }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget as HTMLAnchorElement
+                el.style.background = '#000'
+                el.style.color = '#FAFBF3'
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget as HTMLAnchorElement
+                el.style.background = 'transparent'
+                el.style.color = '#000'
+              }}
+            >
+              📋 {isPtBr ? 'Checklist' : 'Checklist'}
+            </Link>
           </div>
 
           {/* Right: search + lang toggle + CTA + hamburger */}
@@ -303,26 +316,6 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-              <Link
-                href={isPtBr ? ptListingHref : enListingHref}
-                style={{
-                  padding: '0.8rem 0',
-                  fontSize: '0.95rem',
-                  fontWeight: 600,
-                  color: '#000',
-                  borderBottom: '1px solid rgba(0,0,0,0.1)',
-                  borderLeft: '3px solid transparent',
-                  paddingLeft: '0.75rem',
-                  textDecoration: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                {isPtBr ? 'Artigos' : 'Articles'}
-                <span style={{ color: '#999', fontSize: '0.9rem' }}>→</span>
-              </Link>
-
               {/* Mobile: categories section header */}
               <p style={{
                 padding: '0.7rem 0.75rem 0.3rem',
@@ -381,6 +374,25 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
                 Newsletter
                 <span style={{ color: '#ccc', fontSize: '0.9rem' }}>→</span>
               </a>
+
+              <Link
+                href={isPtBr ? '/pt-br/recursos/checklist-prospeccao-linkedin' : '/resources/linkedin-prospecting-checklist'}
+                style={{
+                  padding: '0.8rem 0.75rem',
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  color: '#000',
+                  borderBottom: '1px solid rgba(0,0,0,0.1)',
+                  borderLeft: '3px solid transparent',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                📋 Checklist
+                <span style={{ color: '#ccc', fontSize: '0.9rem' }}>→</span>
+              </Link>
 
               <a
                 href="https://trychattie.com"

@@ -57,25 +57,41 @@ export default async function BlogListEn({ searchParams }: Props) {
       >
         <div className="grain-overlay" />
         <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <p className="eyebrow" style={{ color: '#2F6451' }}>Blog EN</p>
+          <p className="eyebrow" style={{ color: '#2F6451' }}>Blog in English</p>
           <h1
             style={{
               fontFamily: "'Sherika', sans-serif",
               fontWeight: 900,
-              fontSize: 'clamp(2.5rem, 5vw, 4rem)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(2.2rem, 4.2vw, 3.5rem)',
+              lineHeight: 1.08,
               letterSpacing: '-0.03em',
-              marginBottom: '1rem',
-              maxWidth: 700,
+              marginBottom: '1.25rem',
+              maxWidth: 560,
             }}
           >
-            Social selling, B2B LinkedIn<br />and AI for sales.
+            LinkedIn B2B and social selling for people who actually sell.
           </h1>
-          <p style={{ fontSize: '1.05rem', color: '#444', lineHeight: 1.7, maxWidth: 520, marginBottom: '1rem' }}>
-            For founders, consultants and B2B operators who sell on LinkedIn.
+          <p style={{ fontSize: '1rem', color: '#555', lineHeight: 1.75, maxWidth: 480, marginBottom: '1.75rem' }}>
+            Practical insights on prospecting, AI for sales, and social selling —
+            for B2B founders and consultants.
           </p>
-          <Link href="/pt-br/blog" style={{ fontSize: '0.875rem', color: '#2F6451', textDecoration: 'underline', fontWeight: 600 }}>
-            🇧🇷 Ler em Português →
+          <Link
+            href="/pt-br/blog"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              fontSize: '0.82rem',
+              fontWeight: 700,
+              color: '#2F6451',
+              textDecoration: 'none',
+              border: '1.5px solid #2F6451',
+              padding: '0.35rem 0.85rem',
+              letterSpacing: '0.02em',
+              transition: 'background 0.15s, color 0.15s',
+            }}
+          >
+            🇧🇷 Ler em Português
           </Link>
         </div>
       </div>

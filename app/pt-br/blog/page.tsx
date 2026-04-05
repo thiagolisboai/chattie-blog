@@ -58,25 +58,41 @@ export default async function BlogListPt({ searchParams }: Props) {
         <div className="grain-overlay" />
 
         <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <p className="eyebrow" style={{ color: '#2F6451' }}>Blog PT-BR</p>
+          <p className="eyebrow" style={{ color: '#2F6451' }}>Blog em Português</p>
           <h1
             style={{
               fontFamily: "'Sherika', sans-serif",
               fontWeight: 900,
-              fontSize: 'clamp(2.5rem, 5vw, 4rem)',
-              lineHeight: 1.05,
+              fontSize: 'clamp(2.2rem, 4.2vw, 3.5rem)',
+              lineHeight: 1.08,
               letterSpacing: '-0.03em',
-              marginBottom: '1rem',
-              maxWidth: 700,
+              marginBottom: '1.25rem',
+              maxWidth: 560,
             }}
           >
-            Social selling, LinkedIn B2B<br />e IA para vendas.
+            Social selling e LinkedIn B2B para quem vende de verdade.
           </h1>
-          <p style={{ fontSize: '1.05rem', color: '#444', lineHeight: 1.7, maxWidth: 520, marginBottom: '1rem' }}>
-            Para founders, consultores e operadores B2B que vendem pelo LinkedIn.
+          <p style={{ fontSize: '1rem', color: '#555', lineHeight: 1.75, maxWidth: 480, marginBottom: '1.75rem' }}>
+            Insights práticos sobre prospecção, IA para vendas e social selling —
+            para founders e consultores B2B.
           </p>
-          <Link href="/blog" style={{ fontSize: '0.875rem', color: '#2F6451', textDecoration: 'underline', fontWeight: 600 }}>
-            🇺🇸 Read in English →
+          <Link
+            href="/blog"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              fontSize: '0.82rem',
+              fontWeight: 700,
+              color: '#2F6451',
+              textDecoration: 'none',
+              border: '1.5px solid #2F6451',
+              padding: '0.35rem 0.85rem',
+              letterSpacing: '0.02em',
+              transition: 'background 0.15s, color 0.15s',
+            }}
+          >
+            🇺🇸 Read in English
           </Link>
         </div>
       </div>
