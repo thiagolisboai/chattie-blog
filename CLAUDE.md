@@ -45,6 +45,33 @@ Guia de setup: `/docs/gsc-setup.md`
 
 ---
 
+## FASE 3 — Pipeline de tradução
+
+**Antes de criar um post EN**, rodar:
+
+```bash
+node scripts/translation-audit.mjs
+```
+
+Isso mostra: pares completos, posts PT-BR sem par EN (com prioridade), posts EN órfãos e links quebrados.
+
+### Regras de tradução
+
+- **Adaptar, não traduzir** — exemplos globais, fontes em inglês, tom ajustado
+- Criar par EN somente para posts PT-BR com prioridade **Alta** no backlog
+- Ao criar EN: preencher `ptSlug` no novo post EN e `enSlug` no post PT-BR correspondente
+- Workflow completo: `docs/translation-workflow.md`
+
+### Verificar depois de criar/editar um par
+
+```bash
+node scripts/translation-audit.mjs
+```
+
+O par deve aparecer em "Pares completos" — não em "Links quebrados".
+
+---
+
 ## Criar um post PT-BR
 
 **Via Claude Code (agentic):** salvar em `/content/blog/[slug].mdx`
