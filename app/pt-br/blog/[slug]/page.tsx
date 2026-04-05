@@ -223,13 +223,15 @@ export default async function BlogPostPt({ params }: Props) {
             <div className="author-card">
               <div className="author-card-accent" />
               <div style={{ padding: '1.5rem 0', flexShrink: 0 }}>
-                <Image
-                  src={author.photo}
-                  alt={author.name}
-                  width={72}
-                  height={72}
-                  style={{ borderRadius: '50%', border: '2px solid #000', objectFit: 'cover', display: 'block' }}
-                />
+                <Link href={`/pt-br/blog/autor/${author.slug}`} style={{ display: 'block' }}>
+                  <Image
+                    src={author.photo}
+                    alt={author.name}
+                    width={72}
+                    height={72}
+                    style={{ borderRadius: '50%', border: '2px solid #000', objectFit: 'cover', display: 'block' }}
+                  />
+                </Link>
               </div>
               <div className="author-card-body">
                 <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#2F6451', marginBottom: '0.35rem' }}>

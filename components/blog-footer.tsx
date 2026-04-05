@@ -24,7 +24,7 @@ export function BlogFooter({ lang = 'pt-BR' }: BlogFooterProps) {
         <div className="footer-inner-grid">
 
           {/* Logo */}
-          <a href="https://trychattie.com" target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
+          <a href={isPtBr ? 'https://trychattie.com/pt-br' : 'https://trychattie.com'} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
             <Image
               src="/brand/chattie-wordmark.png"
               alt="Chattie"
@@ -50,8 +50,8 @@ export function BlogFooter({ lang = 'pt-BR' }: BlogFooterProps) {
             <div>
               <h4 style={colHead}>{isPtBr ? 'Produto' : 'Product'}</h4>
               <Col links={[
-                { label: isPtBr ? 'Conhecer o Chattie' : 'Try Chattie', href: 'https://trychattie.com', external: true },
-                { label: isPtBr ? 'Preços' : 'Pricing', href: 'https://trychattie.com/#pricing', external: true },
+                { label: isPtBr ? 'Conhecer o Chattie' : 'Try Chattie', href: isPtBr ? 'https://trychattie.com/pt-br' : 'https://trychattie.com', external: true },
+                { label: isPtBr ? 'Preços' : 'Pricing', href: isPtBr ? 'https://trychattie.com/pt-br#pricing' : 'https://trychattie.com/#pricing', external: true },
                 { label: 'LinkedIn', href: 'https://www.linkedin.com/company/trychattie', external: true },
               ]} />
             </div>

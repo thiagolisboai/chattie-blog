@@ -208,34 +208,14 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
               Newsletter
             </a>
 
-            {/* Checklist — external resource */}
+            {/* Checklist */}
             <Link
               href={isPtBr ? '/pt-br/recursos/checklist-prospeccao-linkedin' : '/resources/linkedin-prospecting-checklist'}
-              style={{
-                fontSize: '0.8rem',
-                fontWeight: 800,
-                color: '#000',
-                textDecoration: 'none',
-                border: '1.5px solid #000',
-                padding: '0.3rem 0.7rem',
-                letterSpacing: '0.02em',
-                transition: 'background 0.12s, color 0.12s',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.3rem',
-              }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLAnchorElement
-                el.style.background = '#000'
-                el.style.color = '#FAFBF3'
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLAnchorElement
-                el.style.background = 'transparent'
-                el.style.color = '#000'
-              }}
+              style={{ fontSize: '0.875rem', fontWeight: 600, color: '#333', textDecoration: 'none', transition: 'color 0.15s' }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = '#000' }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = '#333' }}
             >
-              📋 {isPtBr ? 'Checklist' : 'Checklist'}
+              {isPtBr ? 'Checklist' : 'Checklist'}
             </Link>
           </div>
 
@@ -265,7 +245,7 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
 
             {/* CTA */}
             <a
-              href="https://trychattie.com"
+              href={isPtBr ? 'https://trychattie.com/pt-br' : 'https://trychattie.com'}
               className="hidden sm:inline-flex items-center text-sm font-bold border-2 border-black text-cream rounded-full btn-nav-cta"
               style={{ background: '#E57B33', padding: '0.4rem 1.1rem', minHeight: 38, color: '#FAFBF3' }}
             >
@@ -395,7 +375,7 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
               </Link>
 
               <a
-                href="https://trychattie.com"
+                href={isPtBr ? 'https://trychattie.com/pt-br' : 'https://trychattie.com'}
                 style={{
                   marginTop: '1rem',
                   background: '#E57B33',

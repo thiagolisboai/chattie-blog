@@ -2,6 +2,9 @@ import { getAllPostsPt } from '@/lib/posts-pt'
 import { getAllPostsEn } from '@/lib/posts-en'
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-static'
+export const revalidate = false
+
 export async function GET() {
   const pt = getAllPostsPt().map((p) => ({
     slug: p.slug,
