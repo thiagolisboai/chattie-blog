@@ -137,6 +137,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # IndexNow: notifica Bing/Yandex para o post EN
+      - name: Submit EN URL to IndexNow
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.generator.outputs.en_slug != '' }}
+        run: node scripts/submit-indexnow.mjs --slug=${{ steps.generator.outputs.en_slug }} --lang=en
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        continue-on-error: true
+
       - name: Write job summary
         if: always()
         run: |

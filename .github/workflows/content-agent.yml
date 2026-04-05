@@ -190,6 +190,14 @@ jobs:
           GSC_KEY_FILE: /tmp/gsc-key.json
           GSC_SITE_URL: https://trychattie.com/
 
+      # IndexNow: notifica Bing, Yandex e outros motores instantaneamente
+      - name: Submit URL to IndexNow
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.agent.outputs.slug != '' && steps.agent.outputs.mode != 'pr' }}
+        run: node scripts/submit-indexnow.mjs --slug=${{ steps.agent.outputs.slug }}
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        continue-on-error: true
+
       # T1.3: Criar draft de newsletter no Beehiiv
       - name: Create Beehiiv newsletter draft
         if: ${{ github.event.inputs.dry_run != 'true' && steps.agent.outputs.slug != '' && steps.agent.outputs.mode != 'pr' }}
