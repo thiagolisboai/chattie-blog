@@ -115,29 +115,25 @@ jobs:
 
           git push origin "$BRANCH"
 
+          printf '## Adaptação EN — Dexter\n\n' > /tmp/pr-body.md
+          printf '**Post PT-BR:** `/pt-br/blog/%s`\n' "$PT_SLUG" >> /tmp/pr-body.md
+          printf '**Post EN gerado:** `/blog/%s`\n' "$EN_SLUG" >> /tmp/pr-body.md
+          printf '**URL:** https://trychattie.com/blog/%s\n\n' "$EN_SLUG" >> /tmp/pr-body.md
+          printf '### Checklist de revisao\n' >> /tmp/pr-body.md
+          printf '- [ ] Tom ajustado para audience global (nao apenas Brasil)\n' >> /tmp/pr-body.md
+          printf '- [ ] Exemplos brasileiros substituidos por globais\n' >> /tmp/pr-body.md
+          printf '- [ ] Fontes em ingles verificadas\n' >> /tmp/pr-body.md
+          printf '- [ ] slug e canonicalUrl corretos (`/blog/%s`)\n' "$EN_SLUG" >> /tmp/pr-body.md
+          printf '- [ ] ptSlug aponta para `%s`\n' "$PT_SLUG" >> /tmp/pr-body.md
+          printf '- [ ] FAQ relevante para ICP internacional\n' >> /tmp/pr-body.md
+          printf '- [ ] CTA aponta para https://trychattie.com/en\n\n' >> /tmp/pr-body.md
+          printf 'Aprovar este PR publica o post EN automaticamente via Vercel.\n\n' >> /tmp/pr-body.md
+          printf '_Gerado por Dexter - C2 Fase C_\n\n' >> /tmp/pr-body.md
+          printf 'Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\n' >> /tmp/pr-body.md
+
           gh pr create \
             --title "Dexter (EN): $TITLE" \
-            --body "## Adaptação EN — Dexter
-
-**Post PT-BR:** \`/pt-br/blog/$PT_SLUG\`
-**Post EN gerado:** \`/blog/$EN_SLUG\`
-**URL:** https://trychattie.com/blog/$EN_SLUG
-
-### Checklist de revisao
-- [ ] Tom ajustado para audience global (não apenas Brasil)
-- [ ] Exemplos brasileiros substituidos por globais
-- [ ] Fontes em inglês verificadas
-- [ ] slug e canonicalUrl corretos (\`/blog/$EN_SLUG\`)
-- [ ] ptSlug aponta para \`$PT_SLUG\`
-- [ ] FAQ relevante para ICP internacional
-- [ ] CTA aponta para https://trychattie.com/en
-
-Aprovar este PR publica o post EN automaticamente via Vercel.
-
----
-_Gerado por Dexter — C2 Fase C_
-
-Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+            --body-file /tmp/pr-body.md
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
