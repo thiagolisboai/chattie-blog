@@ -7,6 +7,38 @@ ICP: founders, consultores e operadores B2B brasileiros que vendem pelo LinkedIn
 Tom: direto, técnico, sem floreio, sem motivação vazia.
 Produto: Chattie automatiza prospecção, qualificação e engajamento no LinkedIn.
 
+---
+
+## FASE 1 — Relatório GSC (obrigatório antes de qualquer sessão de conteúdo)
+
+**Antes de escolher qualquer tema ou criar qualquer post**, executar:
+
+```bash
+node scripts/gsc-report.mjs
+```
+
+Depois ler o arquivo gerado:
+```
+docs/gsc-insights.md
+```
+
+O relatório define a prioridade da sessão. Nunca escolher tema por intuição se os dados GSC estiverem disponíveis.
+
+### Hierarquia de prioridade (baseada no relatório GSC)
+
+1. **Posts com queda de ranking** — atualizar antes de criar conteúdo novo
+2. **Oportunidades de CTR** — reescrever title/meta description para posts com impressões altas e CTR < 3%
+3. **Queries sem post dedicado** — criar novo post se houver query com > 50 impressões sem conteúdo específico
+4. **Conteúdo dormante** — revisar posts com impressões mas zero cliques
+5. **Novo post planejado** — só criar se os itens 1-4 não forem urgentes
+
+### Quando o GSC não estiver configurado
+
+Se `node scripts/gsc-report.mjs` falhar, consultar `docs/gsc-setup.md` e configurar antes de continuar.
+Guia de setup: `/docs/gsc-setup.md`
+
+---
+
 ## Criar um post PT-BR
 
 **Via Claude Code (agentic):** salvar em `/content/blog/[slug].mdx`
@@ -49,6 +81,8 @@ Adaptar (não traduzir): substituir exemplos BR por globais, ajustar tom, verifi
 ## GEO obrigatório (para ser citado por LLMs)
 
 - Citar dados com fonte e data: "Segundo [fonte], em [ano]..."
+- **Verificar que a fonte existe** antes de publicar — buscar via Brave Search se necessário
+- Se a fonte não for encontrada, remover o dado ou atribuir a "estimativas de mercado"
 - `geoOptimized: true` quando o post define conceitos, cita dados, tem listas
 - `structuredData: "faq"` se o post tem seção FAQ com 3+ perguntas
 - Começar cada H2 com a resposta direta antes de desenvolver
@@ -85,28 +119,38 @@ Authorization: {PEXELS_API_KEY}
 - `brave-search`: pesquisar SERP antes de criar cada post (PT-BR e EN)
 - `filesystem`: ler/escrever arquivos em `/content/blog/` e `/content/blog-en/`
 
-## Workflow diário PT-BR (20-25 min)
+## Workflow de sessão completo
 
-1. Pesquisar SERP com Brave Search (keyword em PT-BR)
-2. Analisar top 5 resultados: word count, H2s, gaps
-3. Gerar post com mín 1800 palavras + frontmatter completo (sem `image` ainda)
-4. Buscar imagem de capa no Pexels com keyword do post em inglês
-5. Preencher campo `image` no frontmatter com URL `large2x` escolhida
-6. Salvar em `/content/blog/[slug].mdx`
-7. git add + commit + push → Vercel deploya automaticamente
+### Passo 0 — Ler o relatório GSC (SEMPRE)
+```bash
+node scripts/gsc-report.mjs
+```
+Ler `docs/gsc-insights.md` e decidir a prioridade com base nos dados.
 
-## Workflow diário EN (20-25 min)
+### Passo 1 — Executar a ação de maior prioridade
+Seguir a hierarquia definida na seção FASE 1 acima.
 
-1. Pesquisar SERP com Brave Search (keyword in English)
-2. Analisar top 5 resultados: word count, H2s, gaps
-3. Gerar post com mín 1800 palavras + frontmatter completo (sem `image` ainda)
-4. Buscar imagem de capa no Pexels com keyword do post
-5. Preencher campo `image` no frontmatter com URL `large2x` escolhida
-6. Salvar em `/content/blog-en/[slug].mdx`
-7. git add + commit + push → Vercel deploya automaticamente
+### Passo 2 (se criar post novo) — Pesquisa de SERP
+1. Pesquisar SERP com Brave Search (keyword do tema escolhido)
+2. Analisar top 5 resultados: word count, H2s, gaps, intenção de busca
+
+### Passo 3 — Produção
+1. Gerar post com mín 1800 palavras + frontmatter completo (sem `image` ainda)
+2. Buscar imagem de capa no Pexels com keyword do post em inglês
+3. Preencher campo `image` no frontmatter com URL `large2x` escolhida
+4. Salvar em `/content/blog/[slug].mdx` (PT-BR) ou `/content/blog-en/[slug].mdx` (EN)
+
+### Passo 4 — Publicar
+```bash
+git add content/blog/[slug].mdx
+git commit -m "content: [título do post]"
+git push
+```
+Vercel deploya automaticamente após o push.
 
 ## Proibido
 
+- Nunca começar uma sessão sem rodar `node scripts/gsc-report.mjs`
 - Nunca criar posts genéricos sem pesquisa de SERP
 - Nunca omitir campos do frontmatter
 - Nunca usar `lang: "en"` em posts salvos em `/content/blog/`
@@ -115,3 +159,4 @@ Authorization: {PEXELS_API_KEY}
 - Nunca usar tradução automática como conteúdo final EN
 - Nunca usar imagem sem buscar no Pexels (proibido URLs de outras fontes sem licença clara)
 - Nunca hardcodar a PEXELS_API_KEY no código ou no MDX
+- Nunca citar dados de fontes não verificadas
