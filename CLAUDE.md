@@ -109,6 +109,44 @@ Guia completo: `docs/source-guidelines.md`
 
 ---
 
+## FASE 5 — Diversificação de conteúdo
+
+Rodar para ver a distribuição atual de schemas e categorias:
+
+```bash
+node scripts/content-diversity-audit.mjs
+```
+
+### Tipos de conteúdo e structuredData
+
+| Tipo de post | structuredData | Schema JSON-LD gerado |
+|-------------|---------------|----------------------|
+| Artigo informacional | `"faq"` | Article + FAQ |
+| Guia passo a passo | `"faq"` | Article + HowTo + FAQ |
+| Definição conceitual | `"faq"` | Article + DefinedTerm + FAQ |
+| Comparativo de ferramentas | `"comparison"` | Article + ItemList + FAQ |
+
+### Regras de diversidade
+
+- **Mínimo 50%** dos posts com schema rico além de Article (HowTo, DefinedTerm, ItemList)
+- **Máximo 80%** dos posts numa única categoria
+- Todo comparativo de ferramenta usa `structuredData: "comparison"` no frontmatter
+- Novos posts de conceito ("o que é X") devem ser adicionados a `DEFINED_TERMS` em `json-ld.tsx`
+- Novos guias passo a passo devem ser adicionados a `HOWTO_SLUGS` em `json-ld.tsx`
+- Novos comparativos devem ser adicionados a `COMPARISON_SLUGS` em `json-ld.tsx`
+
+### Metas de distribuição de categorias
+
+| Categoria | Meta |
+|-----------|------|
+| linkedin | 30–45% |
+| social-selling | 30–45% |
+| comparativos | 8–15% |
+| chattie | 5–15% |
+| ia-para-vendas | 5–15% (novo — criar posts nessa categoria) |
+
+---
+
 ## Criar um post PT-BR
 
 **Via Claude Code (agentic):** salvar em `/content/blog/[slug].mdx`

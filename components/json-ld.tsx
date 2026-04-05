@@ -19,6 +19,7 @@ interface ArticleJsonLdProps {
 
 // Slugs that get HowTo schema (step-by-step guides)
 const HOWTO_SLUGS: Record<string, { steps: string[] }> = {
+  // PT-BR
   'follow-up-linkedin-b2b': {
     steps: [
       'Defina a cadência: 1º follow-up em 3-5 dias, 2º em 7-10 dias, 3º em 14 dias',
@@ -58,6 +59,28 @@ const HOWTO_SLUGS: Record<string, { steps: string[] }> = {
       'Engaje nos posts dos prospects antes de abordar diretamente',
       'Aborde com valor — compartilhe insight relevante antes de oferecer produto',
       'Mantenha cadência de follow-up com CRM social',
+    ],
+  },
+  // EN
+  'linkedin-prospecting-guide': {
+    steps: [
+      'Define your ICP with precision: job title, company size, industry, specific pain',
+      'Optimize your LinkedIn profile to convert prospect visits into connections',
+      'Research the prospect: read their recent posts and activity before connecting',
+      'Send a personalized connection request with specific context — never a blank invite',
+      'Wait for the connection to be accepted before sending any sales message',
+      'Open with a relevant question or insight about their specific context — not a pitch',
+      'Maintain conversation history and follow-up cadence with a social CRM like Chattie',
+    ],
+  },
+  'linkedin-follow-up-b2b': {
+    steps: [
+      'Define your cadence: 1st follow-up in 3–5 days, 2nd in 7–10 days, 3rd in 14 days',
+      'Review the full context of the last conversation before writing',
+      'Open with a reference to the previous topic — never send "just checking in"',
+      'Add value: share relevant content, data, or a useful insight for the lead',
+      'Close with an open-ended, low-commitment question',
+      'Use Chattie to automate reminders and keep conversation history organized',
     ],
   },
 }
@@ -268,6 +291,29 @@ const FAQ_DATA: Record<string, FaqItem[]> = {
   ],
 }
 
+// Comparison slugs get ItemList schema (product/tool comparisons)
+type ComparisonItem = { name: string; description: string; url: string }
+const COMPARISON_SLUGS: Record<string, { items: ComparisonItem[] }> = {
+  'chattie-vs-expandi': {
+    items: [
+      { name: 'Chattie', description: 'AI SDR para LinkedIn — organiza conversas, mantém contexto e sinaliza follow-ups sem automação agressiva na plataforma', url: 'https://trychattie.com' },
+      { name: 'Expandi', description: 'Ferramenta de automação de LinkedIn com sequências personalizadas, lógica condicional e relatórios para times de SDR', url: 'https://expandi.io' },
+    ],
+  },
+  'chattie-vs-waalaxy': {
+    items: [
+      { name: 'Chattie', description: 'AI SDR para LinkedIn — organiza conversas, mantém contexto e sinaliza follow-ups sem automação agressiva na plataforma', url: 'https://trychattie.com' },
+      { name: 'Waalaxy', description: 'Ferramenta de automação LinkedIn + email multicanal com sequências automáticas e plano gratuito com limites de volume', url: 'https://waalaxy.com' },
+    ],
+  },
+  'ai-sdr-vs-human-sdr': {
+    items: [
+      { name: 'AI SDR', description: 'Software de inteligência artificial para prospecção e desenvolvimento de vendas — escala atividades repetitivas e libera SDRs para conversas de maior valor', url: 'https://trychattie.com' },
+      { name: 'Human SDR', description: 'Sales Development Representative — profissional essencial para julgamento contextual, conversas consultivas e ciclos de venda complexos', url: 'https://trychattie.com/blog/ai-sdr-vs-human-sdr' },
+    ],
+  },
+}
+
 // Slugs that get DefinedTerm schema (conceptual definition posts)
 const DEFINED_TERMS: Record<string, { name: string; description: string }> = {
   'o-que-e-social-selling': {
@@ -349,6 +395,25 @@ export function ArticleJsonLd({ post, lang = 'pt-BR' }: ArticleJsonLdProps) {
     ],
   }
 
+  // ItemList schema for comparison posts
+  const comparisonData = post.slug ? COMPARISON_SLUGS[post.slug] : undefined
+  const comparisonSchema = comparisonData
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: post.title,
+        description: post.description,
+        numberOfItems: comparisonData.items.length,
+        itemListElement: comparisonData.items.map((item, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: item.name,
+          description: item.description,
+          url: item.url,
+        })),
+      }
+    : null
+
   // HowTo schema for step-by-step posts
   const howtoData = post.slug ? HOWTO_SLUGS[post.slug] : undefined
   const howtoSchema = howtoData
@@ -404,6 +469,9 @@ export function ArticleJsonLd({ post, lang = 'pt-BR' }: ArticleJsonLdProps) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(baseSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      {comparisonSchema && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(comparisonSchema) }} />
+      )}
       {howtoSchema && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howtoSchema) }} />
       )}
