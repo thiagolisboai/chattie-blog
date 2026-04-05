@@ -1,0 +1,138 @@
+# Chattie Content Agent — Geração autônoma de posts
+#
+# Roda automaticamente: seg/qua/sex às 8h BRT (11h UTC)
+# Pode ser disparado manualmente via Actions → Run workflow
+#
+# Secrets necessários no repositório (Settings → Secrets → Actions):
+#   ANTHROPIC_API_KEY   — Anthropic API key
+#   PEXELS_API_KEY      — Pexels API key
+#   BRAVE_API_KEY       — Brave Search API key
+#   GSC_KEY_JSON        — Conteúdo do arquivo JSON de service account (base64)
+#                         Gerar com: base64 -w 0 chattie-blog-tools-XXXXX.json
+
+name: Content Agent
+
+on:
+  schedule:
+    - cron: '0 11 * * 1,3,5'   # seg/qua/sex 8h BRT = 11h UTC
+  workflow_dispatch:             # disparo manual via GitHub UI
+    inputs:
+      keyword:
+        description: 'Keyword específica (deixe vazio para usar o backlog)'
+        required: false
+        type: string
+      dry_run:
+        description: 'Dry run (gera mas não commita)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  generate-content:
+    name: Generate Blog Post
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: write   # necessário para git push
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      # ── 2. Setup Node.js ──────────────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ── 3. Install dependencies ───────────────────────────────────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 4. Setup GSC service account key ─────────────────────────────────────
+      - name: Setup GSC key file
+        run: |
+          echo "${{ secrets.GSC_KEY_JSON }}" | base64 -d > /tmp/gsc-key.json
+          echo "GSC key file created"
+        env:
+          GSC_KEY_JSON: ${{ secrets.GSC_KEY_JSON }}
+
+      # ── 5. Run autonomous session ─────────────────────────────────────────────
+      - name: Run content agent
+        id: agent
+        run: |
+          ARGS=""
+          if [ -n "${{ github.event.inputs.keyword }}" ]; then
+            ARGS="--keyword=\"${{ github.event.inputs.keyword }}\""
+          fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          node scripts/autonomous-session.mjs $ARGS
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          BRAVE_API_KEY: ${{ secrets.BRAVE_API_KEY }}
+          GSC_KEY_FILE: /tmp/gsc-key.json
+          GSC_SITE_URL: https://trychattie.com/
+
+      # ── 6. Configure git identity ────────────────────────────────────────────
+      - name: Configure git
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          git config user.name "Chattie Content Agent"
+          git config user.email "content-agent@trychattie.com"
+
+      # ── 7. Commit and push changes ────────────────────────────────────────────
+      - name: Commit and push
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          # Stage all changed content files
+          git add content/blog/
+          git add docs/keyword-backlog.md
+          git add docs/gsc-insights.md
+          git add docs/agent-session-log.md
+
+          # Check if there's anything to commit
+          if git diff --staged --quiet; then
+            echo "Nada para commitar — blog em dia."
+            exit 0
+          fi
+
+          # Build commit message
+          TITLE="${{ steps.agent.outputs.title }}"
+          SLUG="${{ steps.agent.outputs.slug }}"
+
+          if [ -n "$TITLE" ]; then
+            MSG="content: $TITLE"
+          else
+            MSG="content: autonomous session $(date +%Y-%m-%d)"
+          fi
+
+          git commit -m "$MSG
+
+Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+
+          git push origin main
+          echo "✅ Push concluído — Vercel deploying..."
+
+      # ── 8. Summary ────────────────────────────────────────────────────────────
+      - name: Write job summary
+        if: always()
+        run: |
+          echo "## Chattie Content Agent" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ steps.agent.outputs.title }}" ]; then
+            echo "✅ **Post publicado:** ${{ steps.agent.outputs.title }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- Slug: \`${{ steps.agent.outputs.slug }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- URL: https://trychattie.com/pt-br/blog/${{ steps.agent.outputs.slug }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ Nenhum post novo criado nesta sessão." >> $GITHUB_STEP_SUMMARY
+          fi
