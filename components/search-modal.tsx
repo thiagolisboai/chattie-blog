@@ -98,23 +98,23 @@ export function SearchModal({ lang = 'pt-BR' }: { lang?: 'pt-BR' | 'en' }) {
           alignItems: 'center',
           gap: '0.4rem',
           background: 'none',
-          border: '1.5px solid rgba(0,0,0,0.2)',
+          border: '2px solid #000',
           padding: '0.3rem 0.65rem',
           cursor: 'pointer',
-          fontSize: '0.78rem',
-          fontWeight: 600,
-          color: '#555',
-          borderRadius: 4,
+          fontSize: '0.8rem',
+          fontWeight: 700,
+          color: '#000',
+          borderRadius: 0,
           flexShrink: 0,
-          transition: 'border-color 0.15s, color 0.15s',
+          transition: 'transform 0.12s cubic-bezier(0.16,1,0.3,1), box-shadow 0.12s cubic-bezier(0.16,1,0.3,1)',
         }}
         onMouseEnter={(e) => {
-          ;(e.currentTarget as HTMLButtonElement).style.borderColor = '#000'
-          ;(e.currentTarget as HTMLButtonElement).style.color = '#000'
+          ;(e.currentTarget as HTMLButtonElement).style.transform = 'translate(-1px,-1px)'
+          ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '2px 2px 0 #000'
         }}
         onMouseLeave={(e) => {
-          ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(0,0,0,0.2)'
-          ;(e.currentTarget as HTMLButtonElement).style.color = '#555'
+          ;(e.currentTarget as HTMLButtonElement).style.transform = 'translate(0,0)'
+          ;(e.currentTarget as HTMLButtonElement).style.boxShadow = 'none'
         }}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
@@ -126,12 +126,13 @@ export function SearchModal({ lang = 'pt-BR' }: { lang?: 'pt-BR' | 'en' }) {
       {/* Backdrop + Modal */}
       {open && (
         <div
+          className="search-backdrop-enter"
           style={{
             position: 'fixed',
             inset: 0,
             zIndex: 999,
-            background: 'rgba(0,0,0,0.55)',
-            backdropFilter: 'blur(4px)',
+            background: 'rgba(0,0,0,0.6)',
+            backdropFilter: 'blur(6px)',
             display: 'flex',
             alignItems: 'flex-start',
             justifyContent: 'center',
@@ -143,6 +144,7 @@ export function SearchModal({ lang = 'pt-BR' }: { lang?: 'pt-BR' | 'en' }) {
             role="dialog"
             aria-modal="true"
             aria-label={isPtBr ? 'Busca' : 'Search'}
+            className="search-modal-enter"
             style={{
               background: '#FAFBF3',
               border: '2px solid #000',
@@ -210,20 +212,29 @@ export function SearchModal({ lang = 'pt-BR' }: { lang?: 'pt-BR' | 'en' }) {
                       display: 'block',
                       padding: '0.9rem 1.25rem',
                       borderBottom: '1px solid rgba(0,0,0,0.08)',
+                      borderLeft: '3px solid transparent',
                       textDecoration: 'none',
                       color: '#000',
-                      transition: 'background 0.1s',
+                      transition: 'background 0.12s, border-left-color 0.12s',
                     }}
-                    onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = '#F4F4F0' }}
-                    onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = 'none' }}
+                    onMouseEnter={(e) => {
+                      const el = e.currentTarget as HTMLAnchorElement
+                      el.style.background = '#FAFBF3'
+                      el.style.borderLeftColor = '#2F6451'
+                    }}
+                    onMouseLeave={(e) => {
+                      const el = e.currentTarget as HTMLAnchorElement
+                      el.style.background = 'transparent'
+                      el.style.borderLeftColor = 'transparent'
+                    }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', background: cat.bg, color: cat.color, padding: '0.15rem 0.45rem' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', background: cat.bg, color: cat.color, padding: '0.15rem 0.45rem' }}>
                         {post.category}
                       </span>
-                      <span style={{ fontSize: '0.68rem', color: '#888' }}>{post.readTime}</span>
+                      <span style={{ fontSize: '0.75rem', color: '#888' }}>{post.readTime}</span>
                       {post.lang !== lang && (
-                        <span style={{ fontSize: '0.62rem', fontWeight: 700, color: '#888', border: '1px solid #ccc', padding: '0.1rem 0.35rem' }}>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#888', border: '1.5px solid #ccc', padding: '0.1rem 0.35rem' }}>
                           {post.lang === 'en' ? 'EN' : 'PT-BR'}
                         </span>
                       )}
@@ -231,7 +242,7 @@ export function SearchModal({ lang = 'pt-BR' }: { lang?: 'pt-BR' | 'en' }) {
                     <p style={{ fontFamily: "'Sherika', sans-serif", fontWeight: 800, fontSize: '0.95rem', lineHeight: 1.2, margin: '0 0 0.25rem' }}>
                       {post.title}
                     </p>
-                    <p style={{ fontSize: '0.8rem', color: '#666', margin: 0, lineHeight: 1.5 }}>
+                    <p style={{ fontSize: '0.82rem', color: '#666', margin: 0, lineHeight: 1.5 }}>
                       {post.description.slice(0, 100)}…
                     </p>
                   </Link>
@@ -240,7 +251,7 @@ export function SearchModal({ lang = 'pt-BR' }: { lang?: 'pt-BR' | 'en' }) {
             </div>
 
             {/* Footer hint */}
-            <div style={{ padding: '0.6rem 1.25rem', borderTop: '1px solid rgba(0,0,0,0.08)', display: 'flex', gap: '1rem', fontSize: '0.72rem', color: '#aaa' }}>
+            <div style={{ padding: '0.6rem 1.25rem', borderTop: '2px solid #000', display: 'flex', gap: '1rem', fontSize: '0.75rem', color: '#888', background: 'rgba(0,0,0,0.02)' }}>
               <span>↵ {isPtBr ? 'selecionar' : 'select'}</span>
               <span>ESC {isPtBr ? 'fechar' : 'close'}</span>
               <span>⌘K {isPtBr ? 'abrir/fechar' : 'toggle'}</span>

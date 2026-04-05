@@ -43,13 +43,18 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
   // Close menu on route change
   useEffect(() => { setMenuOpen(false) }, [pathname])
 
+  const isActive = (href: string) => {
+    if (href.includes('#')) return false
+    return pathname === href || pathname.startsWith(href + '/')
+  }
+
   const navBg: React.CSSProperties = scrolled
     ? {
-        background: 'rgba(250, 251, 243, 0.92)',
+        background: 'rgba(250, 251, 243, 0.94)',
         backdropFilter: 'blur(18px)',
         WebkitBackdropFilter: 'blur(18px)',
-        boxShadow: '0 2px 20px rgba(0,0,0,0.07)',
-        borderBottomColor: 'rgba(0,0,0,0.07)',
+        boxShadow: '0 4px 0 #000',
+        borderBottomColor: '#000',
       }
     : { background: '#FAFBF3', borderBottomColor: '#000' }
 
@@ -85,16 +90,36 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
 
           {/* Desktop category links */}
           <div className="hidden lg:flex items-center gap-5" style={{ flex: 1, justifyContent: 'center' }}>
-            {categories.map((cat) => (
-              <Link
-                key={cat.href}
-                href={cat.href}
-                className="text-sm font-semibold transition-colors hover:text-rust"
-                style={{ color: pathname === cat.href ? '#E57B33' : '#333' }}
-              >
-                {cat.label}
-              </Link>
-            ))}
+            {categories.map((cat) => {
+              const active = isActive(cat.href)
+              return (
+                <Link
+                  key={cat.href}
+                  href={cat.href}
+                  className="text-sm font-semibold transition-colors"
+                  style={{
+                    color: active ? '#E57B33' : '#333',
+                    position: 'relative',
+                    paddingBottom: '2px',
+                    textDecoration: 'none',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!active) (e.currentTarget as HTMLAnchorElement).style.color = '#000'
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!active) (e.currentTarget as HTMLAnchorElement).style.color = '#333'
+                  }}
+                >
+                  {cat.label}
+                  {active && (
+                    <span style={{
+                      position: 'absolute', bottom: -2, left: 0, right: 0,
+                      height: 2, background: '#E57B33', display: 'block',
+                    }} />
+                  )}
+                </Link>
+              )
+            })}
           </div>
 
           {/* Right: search + lang toggle + CTA + hamburger */}
@@ -166,6 +191,7 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
         {/* Mobile dropdown menu */}
         {menuOpen && (
           <div
+            className="mobile-menu-open"
             style={{
               background: '#FAFBF3',
               borderTop: '2px solid #000',
@@ -173,26 +199,32 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-              {categories.map((cat, i) => (
-                <Link
-                  key={cat.href}
-                  href={cat.href}
-                  style={{
-                    padding: '0.8rem 0',
-                    fontSize: '0.95rem',
-                    fontWeight: 600,
-                    color: pathname === cat.href ? '#E57B33' : '#000',
-                    borderBottom: i < categories.length - 1 ? '1px solid rgba(0,0,0,0.1)' : 'none',
-                    textDecoration: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  {cat.label}
-                  <span style={{ color: '#999', fontSize: '0.9rem' }}>→</span>
-                </Link>
-              ))}
+              {categories.map((cat, i) => {
+                const active = isActive(cat.href)
+                return (
+                  <Link
+                    key={cat.href}
+                    href={cat.href}
+                    style={{
+                      padding: '0.8rem 0',
+                      fontSize: '0.95rem',
+                      fontWeight: active ? 800 : 600,
+                      color: active ? '#E57B33' : '#000',
+                      borderBottom: i < categories.length - 1 ? '1px solid rgba(0,0,0,0.1)' : 'none',
+                      borderLeft: active ? '3px solid #E57B33' : '3px solid transparent',
+                      paddingLeft: '0.75rem',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      transition: 'border-left-color 0.15s',
+                    }}
+                  >
+                    {cat.label}
+                    <span style={{ color: active ? '#E57B33' : '#999', fontSize: '0.9rem' }}>→</span>
+                  </Link>
+                )
+              })}
               <a
                 href="https://trychattie.com"
                 style={{

@@ -16,6 +16,7 @@ export function BlogFooter({ lang = 'pt-BR' }: BlogFooterProps) {
       padding: '3.5rem 1.5rem 2rem',
       overflow: 'hidden',
       position: 'relative',
+      borderTop: '4px solid #E57B33',
     }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1 }}>
 

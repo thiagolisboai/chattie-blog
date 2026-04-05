@@ -70,20 +70,31 @@ export function NewsletterCta({ lang = 'pt-BR' }: NewsletterCtaProps) {
       id="newsletter"
       style={{
         border: '2px solid #000',
-        boxShadow: '4px 4px 0 #000',
-        background: '#FAFBF3',
-        padding: '2rem',
+        boxShadow: '6px 6px 0 #E57B33',
+        background: '#000',
+        padding: '2rem 2.25rem',
         margin: '2rem 0',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      {/* Decorative accent corner */}
+      <div aria-hidden="true" style={{
+        position: 'absolute', top: 0, right: 0,
+        width: 80, height: 80,
+        background: '#E57B33',
+        clipPath: 'polygon(100% 0, 100% 100%, 0 0)',
+        opacity: 0.25,
+      }} />
+
       <p
         style={{
           fontFamily: "'Sherika', sans-serif",
           fontWeight: 700,
-          fontSize: '0.65rem',
+          fontSize: '0.75rem',
           textTransform: 'uppercase',
           letterSpacing: '0.13em',
-          color: '#2F6451',
+          color: '#66BAC6',
           marginBottom: '0.6rem',
           display: 'flex',
           alignItems: 'center',
@@ -98,15 +109,16 @@ export function NewsletterCta({ lang = 'pt-BR' }: NewsletterCtaProps) {
         style={{
           fontFamily: "'Sherika', sans-serif",
           fontWeight: 900,
-          fontSize: 'clamp(1.15rem, 2.5vw, 1.4rem)',
-          lineHeight: 1.2,
+          fontSize: 'clamp(1.15rem, 2.5vw, 1.5rem)',
+          lineHeight: 1.15,
           letterSpacing: '-0.02em',
           marginBottom: '0.5rem',
+          color: '#FAFBF3',
         }}
       >
         {t.heading}
       </p>
-      <p style={{ fontSize: '0.9rem', color: '#555', marginBottom: '1.25rem', lineHeight: 1.5 }}>
+      <p style={{ fontSize: '0.9rem', color: 'rgba(250,251,243,0.65)', marginBottom: '1.5rem', lineHeight: 1.5 }}>
         {t.body}
       </p>
 
@@ -116,8 +128,9 @@ export function NewsletterCta({ lang = 'pt-BR' }: NewsletterCtaProps) {
             background: '#2F6451',
             color: '#FAFBF3',
             padding: '0.75rem 1rem',
-            fontWeight: 600,
+            fontWeight: 700,
             fontSize: '0.9rem',
+            border: '2px solid #66BAC6',
           }}
         >
           {t.success}
@@ -132,50 +145,69 @@ export function NewsletterCta({ lang = 'pt-BR' }: NewsletterCtaProps) {
             placeholder={t.placeholder}
             style={{
               flex: '1 1 200px',
-              border: '2px solid #000',
-              padding: '0.6rem 0.85rem',
+              border: '2px solid #333',
+              padding: '0.65rem 0.85rem',
               fontSize: '0.9rem',
-              background: '#fff',
+              background: '#1a1a1a',
               outline: 'none',
+              color: '#FAFBF3',
               fontFamily: "var(--font-barlow, 'Barlow'), sans-serif",
+              transition: 'border-color 0.15s',
             }}
+            onFocus={(e) => { (e.currentTarget as HTMLInputElement).style.borderColor = '#66BAC6' }}
+            onBlur={(e) => { (e.currentTarget as HTMLInputElement).style.borderColor = '#333' }}
           />
           <button
             type="submit"
             disabled={status === 'loading'}
             style={{
-              background: status === 'loading' ? '#888' : '#E57B33',
-              color: '#FAFBF3',
-              border: '2px solid #000',
-              padding: '0.6rem 1.25rem',
+              background: status === 'loading' ? '#444' : '#F4B13F',
+              color: '#000',
+              border: '2px solid #F4B13F',
+              padding: '0.65rem 1.25rem',
               fontFamily: "'Sherika', sans-serif",
               fontWeight: 800,
               fontSize: '0.85rem',
               cursor: status === 'loading' ? 'not-allowed' : 'pointer',
               whiteSpace: 'nowrap',
-              boxShadow: '2px 2px 0 #000',
-              transition: 'transform 0.1s, box-shadow 0.1s',
+              boxShadow: status === 'loading' ? 'none' : '3px 3px 0 rgba(244,177,63,0.4)',
+              transition: 'transform 0.1s, box-shadow 0.1s, background 0.1s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
             }}
             onMouseEnter={(e) => {
               if (status !== 'loading') {
                 ;(e.currentTarget as HTMLButtonElement).style.transform = 'translate(-1px,-1px)'
-                ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '3px 3px 0 #000'
+                ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '4px 4px 0 rgba(244,177,63,0.5)'
               }
             }}
             onMouseLeave={(e) => {
               ;(e.currentTarget as HTMLButtonElement).style.transform = 'translate(0,0)'
-              ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '2px 2px 0 #000'
+              ;(e.currentTarget as HTMLButtonElement).style.boxShadow = status === 'loading' ? 'none' : '3px 3px 0 rgba(244,177,63,0.4)'
             }}
           >
+            {status === 'loading' && (
+              <span style={{
+                display: 'inline-block', width: 14, height: 14,
+                border: '2px solid rgba(0,0,0,0.3)', borderTopColor: '#000',
+                borderRadius: '50%',
+                animation: 'spin 0.7s linear infinite',
+              }} />
+            )}
             {status === 'loading' ? t.btnLoading : t.btn}
           </button>
           {status === 'error' && (
-            <p style={{ width: '100%', color: '#c0392b', fontSize: '0.82rem', marginTop: '0.25rem' }}>
+            <p style={{ width: '100%', color: '#ff6b6b', fontSize: '0.82rem', marginTop: '0.25rem' }}>
               {t.error}
             </p>
           )}
         </form>
       )}
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+      `}</style>
     </div>
   )
 }
