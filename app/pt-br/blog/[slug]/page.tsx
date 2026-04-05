@@ -324,7 +324,7 @@ export default async function BlogPostPt({ params }: Props) {
                   {cta.body}
                 </p>
                 <CtaButton
-                  href="https://trychattie.com"
+                  href="https://trychattie.com/pt-br"
                   label={cta.btn}
                   gaLabel={`post_cta_pt_${post.slug}`}
                 >

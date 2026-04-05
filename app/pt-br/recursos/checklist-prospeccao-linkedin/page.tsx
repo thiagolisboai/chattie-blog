@@ -234,7 +234,7 @@ export default function ChecklistPage() {
             Follow-up, organização de leads e histórico de conversa — tudo no piloto automático.
           </p>
           <a
-            href="https://trychattie.com"
+            href="https://trychattie.com/pt-br"
             target="_blank"
             rel="noopener noreferrer"
             className="btn-cta-post"

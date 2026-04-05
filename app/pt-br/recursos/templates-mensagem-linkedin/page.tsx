@@ -255,7 +255,7 @@ export default function TemplatesMensagemPage() {
             O Chattie registra abertura, resposta e contexto de cada conversa — sem sair do LinkedIn.
           </p>
           <a
-            href="https://trychattie.com"
+            href="https://trychattie.com/pt-br"
             target="_blank"
             rel="noopener noreferrer"
             className="btn-cta-post"

@@ -387,7 +387,7 @@ export default function ScriptFollowUpPage() {
             O Chattie organiza seus leads, lembra os follow-ups e mantém o contexto de cada conversa — sem precisar de planilha ou memória fotográfica.
           </p>
           <a
-            href="https://trychattie.com"
+            href="https://trychattie.com/pt-br"
             target="_blank"
             rel="noopener noreferrer"
             className="btn-cta-post"
