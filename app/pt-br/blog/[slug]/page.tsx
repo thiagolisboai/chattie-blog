@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { MDXRemote } from 'next-mdx-remote/rsc'
+import remarkGfm from 'remark-gfm'
 import { getAllSlugsPt, getPostBySlugPt, getAllPostsPt } from '@/lib/posts-pt'
 import { getMdxComponents } from '@/components/mdx-components'
 import Image from 'next/image'
@@ -193,7 +194,7 @@ export default async function BlogPostPt({ params }: Props) {
 
             {/* Article */}
             <article className="prose">
-              <MDXRemote source={post.content} components={getMdxComponents()} />
+              <MDXRemote source={post.content} components={getMdxComponents()} options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} />
             </article>
           </div>
 

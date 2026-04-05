@@ -34,35 +34,25 @@ export function BlogFooter({ lang = 'pt-BR' }: BlogFooterProps) {
             />
           </a>
 
-          {/* 4 columns */}
+          {/* 3 columns */}
           <div className="footer-cols">
+
+            <div>
+              <h4 style={colHead}>Blog</h4>
+              <Col links={[
+                { label: isPtBr ? 'Artigos PT-BR' : 'PT-BR Articles', href: '/pt-br/blog', external: false },
+                { label: isPtBr ? 'Artigos EN' : 'EN Articles', href: '/blog', external: false },
+                { label: 'LinkedIn', href: isPtBr ? '/pt-br/blog/categoria/linkedin' : '/blog/category/linkedin', external: false },
+                { label: 'Social Selling', href: isPtBr ? '/pt-br/blog/categoria/social-selling' : '/blog/category/social-selling', external: false },
+              ]} />
+            </div>
 
             <div>
               <h4 style={colHead}>{isPtBr ? 'Produto' : 'Product'}</h4>
               <Col links={[
-                { label: isPtBr ? 'Como funciona' : 'How it works', href: 'https://trychattie.com/#como-funciona', external: true },
-                { label: 'Sandbox', href: 'https://trychattie.com/#sandbox', external: true },
+                { label: isPtBr ? 'Conhecer o Chattie' : 'Try Chattie', href: 'https://trychattie.com', external: true },
                 { label: isPtBr ? 'Preços' : 'Pricing', href: 'https://trychattie.com/#pricing', external: true },
-                { label: 'Changelog', href: 'https://trychattie.com', external: true },
-              ]} />
-            </div>
-
-            <div>
-              <h4 style={colHead}>{isPtBr ? 'Empresa' : 'Company'}</h4>
-              <Col links={[
-                { label: isPtBr ? 'Sobre nós' : 'About us', href: 'https://trychattie.com', external: true },
-                { label: 'Blog', href: isPtBr ? '/pt-br/blog' : '/blog', external: false },
                 { label: 'LinkedIn', href: 'https://www.linkedin.com/company/trychattie', external: true },
-              ]} />
-            </div>
-
-            <div>
-              <h4 style={colHead}>{isPtBr ? 'Recursos' : 'Resources'}</h4>
-              <Col links={[
-                { label: isPtBr ? 'Artigos PT-BR' : 'PT-BR Articles', href: '/pt-br/blog', external: false },
-                { label: isPtBr ? 'Artigos EN' : 'EN Articles', href: '/blog', external: false },
-                { label: 'LinkedIn', href: '/pt-br/blog/categoria/linkedin', external: false },
-                { label: 'Social Selling', href: '/pt-br/blog/categoria/social-selling', external: false },
               ]} />
             </div>
 
@@ -71,7 +61,6 @@ export function BlogFooter({ lang = 'pt-BR' }: BlogFooterProps) {
               <Col links={[
                 { label: isPtBr ? 'Privacidade' : 'Privacy', href: 'https://trychattie.com/privacy', external: true },
                 { label: isPtBr ? 'Termos' : 'Terms', href: 'https://trychattie.com/terms', external: true },
-                { label: 'Cookies', href: 'https://trychattie.com/cookies', external: true },
               ]} />
             </div>
 
@@ -130,7 +119,7 @@ export function BlogFooter({ lang = 'pt-BR' }: BlogFooterProps) {
         }
         .footer-cols {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(3, 1fr);
           gap: 2rem;
         }
         .footer-col-link { color: #ccc; text-decoration: none; font-size: 0.875rem; display: block; margin-bottom: 0.5rem; transition: color 0.15s; }

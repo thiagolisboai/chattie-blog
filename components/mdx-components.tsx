@@ -87,6 +87,16 @@ export function getMdxComponents(): MDXComponents {
         {alt && <figcaption className="text-sm text-gray-600 mt-2 text-center">{alt}</figcaption>}
       </figure>
     ),
+    table: (props) => (
+      <div style={{ overflowX: 'auto', margin: '2rem 0' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', border: '2px solid #000', fontSize: '0.9rem' }} {...props} />
+      </div>
+    ),
+    thead: (props) => <thead style={{ background: '#000', color: '#FAFBF3' }} {...props} />,
+    tbody: (props) => <tbody {...props} />,
+    tr: (props) => <tr style={{ borderBottom: '1px solid #ddd' }} {...props} />,
+    th: (props) => <th style={{ padding: '0.65rem 1rem', textAlign: 'left', fontFamily: "'Sherika', sans-serif", fontWeight: 800, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', borderRight: '1px solid #333', whiteSpace: 'nowrap' }} {...props} />,
+    td: (props) => <td style={{ padding: '0.6rem 1rem', borderRight: '1px solid #e5e5e5', verticalAlign: 'top', lineHeight: 1.5 }} {...props} />,
     hr: () => <hr className="border-2 border-black my-8" />,
     strong: (props) => <strong className="font-black" {...props} />,
   }
