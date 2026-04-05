@@ -27,9 +27,6 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: 'GoogleOther',       allow: ALLOWED },
       { userAgent: 'Amazonbot',         allow: ALLOWED },
     ],
-    sitemap: [
-      'https://trychattie.com/sitemap-pt-br.xml',
-      'https://trychattie.com/sitemap-en.xml',
-    ],
+    sitemap: ['https://trychattie.com/sitemap.xml'],
   }
 }
