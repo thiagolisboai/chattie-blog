@@ -12,4 +12,8 @@ Histórico de posts gerados pelo Dexter, agente de conteúdo autônomo do Chatti
 - Keyword: linkedin para prospecção b2b: guia definitivo de perfil, conteúdo e automação 2026
 - Slug: linkedin-para-prospeccao-b2b-guia-definitivo
 - Palavras: ~4574
+## 2026-04-05 — "Social Selling B2B: Metodologia Completa para Prospectar e Fechar Clientes no LinkedIn 2026"
+- Keyword: social selling b2b: metodologia completa para prospectar e fechar clientes no linkedin 2026
+- Slug: social-selling-b2b-metodologia-completa-linkedin-2026
+- Palavras: ~5745
 - Tipo: PILAR
