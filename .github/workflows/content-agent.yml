@@ -1,4 +1,4 @@
-# Chattie Content Agent - Geracao autonoma de posts
+# Dexter - Agente de conteudo autonomo do Chattie Blog
 #
 # Roda automaticamente: seg/qua/sex as 8h BRT (11h UTC)
 # Pode ser disparado manualmente via Actions > Run workflow
@@ -10,7 +10,7 @@
 #   GSC_KEY_JSON        - JSON de service account em base64
 #                         Gerar com: base64 -w 0 chattie-blog-tools-XXXXX.json
 
-name: Content Agent
+name: Dexter
 
 on:
   schedule:
@@ -59,7 +59,7 @@ jobs:
         env:
           GSC_KEY_JSON: ${{ secrets.GSC_KEY_JSON }}
 
-      - name: Run content agent
+      - name: Run Dexter
         id: agent
         run: |
           ARGS=""
@@ -82,8 +82,8 @@ jobs:
       - name: Configure git
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
-          git config user.name "Chattie Content Agent"
-          git config user.email "content-agent@trychattie.com"
+          git config user.name "Dexter"
+          git config user.email "dexter@trychattie.com"
 
       - name: Commit and push
         if: ${{ github.event.inputs.dry_run != 'true' }}
@@ -113,7 +113,7 @@ jobs:
       - name: Write job summary
         if: always()
         run: |
-          echo "## Chattie Content Agent" >> $GITHUB_STEP_SUMMARY
+          echo "## Dexter" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           TITLE="${{ steps.agent.outputs.title }}"
           SLUG="${{ steps.agent.outputs.slug }}"

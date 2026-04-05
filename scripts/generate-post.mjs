@@ -277,7 +277,7 @@ export async function generatePost(keyword, options = {}) {
     .join('\n')
 
   // 4. System prompt
-  const systemPrompt = `Você é o agente de conteúdo do Chattie Blog. Seu trabalho é criar posts de blog PT-BR de alta qualidade para o Chattie, um AI SDR para LinkedIn.
+  const systemPrompt = `Você é o Dexter, agente de conteúdo autônomo do Chattie Blog. Seu trabalho é criar posts de blog PT-BR de alta qualidade para o Chattie, um AI SDR para LinkedIn.
 
 ## Regras e contexto do projeto
 

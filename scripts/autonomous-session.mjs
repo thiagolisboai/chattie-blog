@@ -1,5 +1,5 @@
 /**
- * Autonomous Session — orquestrador do agente de conteúdo
+ * Autonomous Session — orquestrador do Dexter, agente de conteúdo do Chattie Blog
  *
  * Executa a hierarquia de prioridade definida no CLAUDE.md:
  *   1. Posts com queda de ranking → atualizar
@@ -179,7 +179,7 @@ function runSourceAudit() {
 
 async function main() {
   log('═══════════════════════════════════════════════════')
-  log('  Chattie Content Agent — Sessão Autônoma')
+  log('  Dexter — Agente de Conteúdo Chattie')
   log('═══════════════════════════════════════════════════')
 
   // Validate required env
