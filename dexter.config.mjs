@@ -65,14 +65,14 @@ export default {
      *   "pr"     — cria Pull Request para revisão humana antes de publicar
      *   "dry-run"— gera o post mas não salva nem commita (útil para testar)
      */
-    mode: 'pr',
+    mode: 'direct',
 
     /**
      * Execuções agendadas (cron) sempre usam PR mode, independente de `mode`.
      * Recomendado: true — evita publicação automática sem revisão.
      * false → execuções agendadas seguem o `mode` acima.
      */
-    scheduledRunsRequireReview: true,
+    scheduledRunsRequireReview: false,
 
     /**
      * URL de destino do CTA final em todos os posts gerados.

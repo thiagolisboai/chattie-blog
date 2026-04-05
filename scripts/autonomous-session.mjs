@@ -798,7 +798,7 @@ async function main() {
   // Write session log
   const today = new Date().toISOString().split('T')[0]
   const logPath = path.join(ROOT, 'docs', 'agent-session-log.md')
-  const logEntry = `\n## ${today} — "${result.title}"\n- Keyword: ${keyword}\n- Slug: ${result.slug}\n- Palavras: ~${result.wordCount}\n- Backlinks: ${backlinkedSlugs.join(', ') || 'nenhum'}\n`
+  const logEntry = `\n## ${today} — "${result.title}"\n- Keyword: ${keyword}\n- Slug: ${result.slug}\n- Palavras: ~${result.wordCount}\n- Backlinks: ${backlinkedSlugs.join(', ') || 'nenhum'}\n${POST_TYPE === 'pillar' ? '- Tipo: PILAR\n' : ''}`
   fs.appendFileSync(logPath, logEntry, 'utf-8')
 
   // C5: PR mode — create branch + PR instead of committing to main
@@ -858,5 +858,10 @@ async function main() {
 main().catch(err => {
   console.error(`\n❌  Erro fatal: ${err.message}`)
   console.error(err.stack)
+  // Persist error to log so failed sessions are traceable
+  try {
+    const errorEntry = `\n## ERRO ${new Date().toISOString().split('T')[0]} — ${err.message.slice(0, 120)}\n- Stack: ${err.stack?.split('\n')[1]?.trim() || 'n/a'}\n`
+    fs.appendFileSync(path.join(ROOT, 'docs', 'agent-session-log.md'), errorEntry, 'utf-8')
+  } catch { /* nao bloquear o exit */ }
   process.exit(1)
 })

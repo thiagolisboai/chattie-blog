@@ -537,7 +537,15 @@ function cleanMdxOutput(raw) {
   if (cleaned.startsWith('```mdx')) cleaned = cleaned.slice(6)
   else if (cleaned.startsWith('```')) cleaned = cleaned.slice(3)
   if (cleaned.endsWith('```')) cleaned = cleaned.slice(0, -3)
-  return cleaned.trim()
+  cleaned = cleaned.trim()
+
+  // Strip {#anchor-id} from headings — MDX parses {} as JSX, breaking the build
+  cleaned = cleaned.replace(/^(#{1,6}\s+.+?) \{#[^}]+\}$/gm, '$1')
+
+  // Fix model sometimes merging hr separator with heading: "---## Heading" → "---\n\n## Heading"
+  cleaned = cleaned.replace(/^---##\s+/gm, '---\n\n## ')
+
+  return cleaned
 }
 
 // ─── Core function ────────────────────────────────────────────────────────────

@@ -152,7 +152,7 @@ export async function callAnthropic(systemPrompt, userPrompt, options = {}) {
     try {
       const { config } = await import('./load-config.mjs')
       capUSD = config.budget?.maxCostPerSessionUSD ?? 0
-    } catch { /* ignore — no cap if config unavailable */ }
+    } catch (e) { console.warn(`⚠️  Budget cap: config indisponível (${e.message}) — sem limite de custo`) }
   }
   if (capUSD > 0 && _sessionCostUSD >= capUSD) {
     throw new Error(
