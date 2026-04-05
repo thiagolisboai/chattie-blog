@@ -76,13 +76,15 @@ export function getMdxComponents(): MDXComponents {
         </a>
       )
     },
-    img: ({ src, alt, ...props }) => (
+    img: ({ src, alt }) => (
       <figure className="my-6">
-        <img
-          src={src}
-          alt={alt}
-          className="w-full border-2 border-black shadow-[4px_4px_0_black]"
-          {...props}
+        <Image
+          src={src ?? ''}
+          alt={alt ?? ''}
+          width={0}
+          height={0}
+          sizes="100vw"
+          className="w-full h-auto border-2 border-black shadow-[4px_4px_0_black]"
         />
         {alt && <figcaption className="text-sm text-gray-600 mt-2 text-center">{alt}</figcaption>}
       </figure>

@@ -104,10 +104,12 @@ export function BlogFooter({ lang = 'pt-BR' }: BlogFooterProps) {
           maskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)',
         }}
       >
-        <img
+        <Image
           src="/brand/chattie-wordmark.png"
           alt=""
-          style={{ width: '100%', height: 'auto', filter: 'invert(1)', opacity: 0.18, display: 'block' }}
+          fill
+          sizes="100%"
+          style={{ objectFit: 'contain', objectPosition: 'left', filter: 'invert(1)', opacity: 0.18 }}
         />
       </div>
 
