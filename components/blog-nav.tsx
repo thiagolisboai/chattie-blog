@@ -152,7 +152,7 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
             {/* Categories dropdown */}
             <div
               ref={catRef}
-              style={{ position: 'relative', paddingBottom: 6 }}
+              style={{ position: 'relative', alignSelf: 'stretch', display: 'flex', alignItems: 'center' }}
               onMouseEnter={() => setCatOpen(true)}
               onMouseLeave={() => setCatOpen(false)}
             >
