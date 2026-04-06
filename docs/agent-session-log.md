@@ -17,3 +17,9 @@ Histórico de posts gerados pelo Dexter, agente de conteúdo autônomo do Chatti
 - Slug: social-selling-b2b-metodologia-completa-linkedin-2026
 - Palavras: ~5745
 - Tipo: PILAR
+
+## 2026-04-06 — "Mensagem de Conexão LinkedIn: 12 Exemplos Reais para B2B (e o que não enviar)"
+- Keyword: mensagem de conexão LinkedIn exemplos
+- Slug: mensagem-de-conexao-linkedin-exemplos
+- Palavras: ~2722
+- Backlinks: como-prospectar-clientes-no-linkedin, linkedin-para-vendas-b2b, vender-no-linkedin-sem-estrategia

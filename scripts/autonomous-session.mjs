@@ -673,13 +673,16 @@ function validateSchema(filePath) {
       log('❌  T2.9: structuredData="faq" mas nenhuma seção ## FAQ encontrada no post')
       return false
     }
-    // Count FAQ questions (### or **Q:** or numbered patterns)
+    // Count FAQ questions (### or **Q:** or numbered patterns or plain **bold?** lines)
     // Use \n## [^#] to match only H2 headings (not H3+ which start with ###)
-    const faqSection = body.match(/##\s+(?:FAQ|Perguntas Frequentes)([\s\S]*?)(?:\n##\s|$)/i)?.[1] || ''
+    // The FAQ heading may have a suffix like "## FAQ — Perguntas frequentes" so we match
+    // up to the next ## heading (look for \n\n## or \n## boundary)
+    const faqSection = body.match(/##\s+FAQ[\s\S]*?(?=\n##\s|\n\n##\s|$)/i)?.[0] || ''
     const questionCount = (faqSection.match(/^###\s+/gm) || []).length
       + (faqSection.match(/^\d+\.\s+\*\*/gm) || []).length
       + (faqSection.match(/^\*\*\d+\./gm) || []).length    // **1. Question** format
       + (faqSection.match(/^>\s*\*\*P:/gm) || []).length
+      + (faqSection.match(/^\*\*[^*]+\*\*\s*$/gm) || []).length  // **Bold question?** standalone line
     if (questionCount < 3) {
       log(`❌  T2.9: structuredData="faq" — FAQ tem apenas ${questionCount} pergunta(s) (mínimo 3)`)
       return false

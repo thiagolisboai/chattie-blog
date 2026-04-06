@@ -1,6 +1,6 @@
-# GSC Insights — 2026-04-05
-> Período analisado: **2026-03-03 → 2026-04-02** (30 dias)
-> Comparativo vs período anterior: **2026-02-01 → 2026-03-03**
+# GSC Insights — 2026-04-06
+> Período analisado: **2026-03-04 → 2026-04-03** (30 dias)
+> Comparativo vs período anterior: **2026-02-02 → 2026-03-04**
 
 ---
 
@@ -9,9 +9,9 @@
 | Métrica | Valor |
 |---------|-------|
 | Total de cliques | 0 |
-| Total de impressões | 18 |
+| Total de impressões | 17 |
 | CTR médio | 0.0% |
-| Posição média | 7.9 |
+| Posição média | 8.1 |
 | Páginas com dados | 2 |
 
 ## 🎯 Oportunidades de CTR (impressões altas, cliques baixos)
@@ -43,7 +43,7 @@ _O domínio aparece nessas buscas mas provavelmente sem post específico._
 
 | Página | Posição atual | Variação |
 |--------|--------------|---------|
-| /blog/ | 5.4 | -2.9 posições |
+| /blog/ | 5.8 | -3.3 posições |
 
 ---
 ## ✅ Ações Recomendadas para Esta Sessão
@@ -51,9 +51,9 @@ _O domínio aparece nessas buscas mas provavelmente sem post específico._
 > Baseado nos dados acima, priorize nesta ordem:
 
 1. Sem oportunidades críticas de CTR no momento.
-2. **Atualizar** `/blog/` — caiu 2.9 posições
+2. **Atualizar** `/blog/` — caiu 3.3 posições
 3. Sem queries sem post identificadas.
 4. Sem conteúdo dormante crítico.
 
 ---
-_Gerado automaticamente por `scripts/gsc-report.mjs` em 05/04/2026, 13:52:28_
+_Gerado automaticamente por `scripts/gsc-report.mjs` em 06/04/2026, 10:11:02_
