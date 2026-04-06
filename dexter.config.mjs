@@ -401,8 +401,16 @@ export default {
     /**
      * Delay entre chamadas à Brave Search para evitar rate limiting.
      * Em milissegundos.
+     * Aumente para 2000+ se a conta Brave estiver atingindo limites frequentemente.
      */
     searchDelayMs: 1000,
+
+    /**
+     * Número máximo de posts publicados por dia (proteção contra esgotamento de cota Brave).
+     * O agente verifica o session log e aborta com exit 2 se o limite for atingido.
+     * 1 = padrão seguro para plano Brave gratuito (2.000 buscas/mês).
+     */
+    maxDailyPosts: 1,
 
     /**
      * Delay entre chamadas de snippet optimization (entre seções H2).

@@ -455,16 +455,22 @@ function validateInternalLinks(filePath) {
 
 // ─── A3: Session deduplication ────────────────────────────────────────────────
 
-function alreadyPublishedToday() {
+function countPublishedToday() {
   const logPath = path.join(ROOT, 'docs', 'agent-session-log.md')
-  if (!fs.existsSync(logPath)) return false
+  if (!fs.existsSync(logPath)) return 0
 
   const today = new Date().toISOString().split('T')[0]
   const content = fs.readFileSync(logPath, 'utf-8')
 
-  // Check if there's already an entry for today
-  if (content.includes(`## ${today}`)) {
-    log(`⚠️  A3: Já foi publicado um post hoje (${today}). Use --force-new para sobrescrever.`)
+  // Count entries for today (each starts with "## YYYY-MM-DD")
+  return (content.match(new RegExp(`## ${today}`, 'g')) || []).length
+}
+
+function alreadyPublishedToday() {
+  const maxDaily = config.budget?.maxDailyPosts ?? 1
+  const count = countPublishedToday()
+  if (count >= maxDaily) {
+    log(`⚠️  A3: ${count} post(s) já publicado(s) hoje (limite: ${maxDaily}). Use --force-new para sobrescrever.`)
     return true
   }
   return false
@@ -720,22 +726,30 @@ async function main() {
 
   // ── Brave Search health check ──
   // Realiza uma query de teste ANTES de qualquer geração.
-  // Status que abortam: auth-error, rate-limit, network-error, no-key (quando grounding ativo)
+  // Política de falha:
+  //   auth-error   → FATAL: key inválida ou expirada. Corrija antes de rodar.
+  //   rate-limit   → DEGRADED: cota esgotada. Continua sem SERP (sem qualidade de grounding).
+  //   network-error→ DEGRADED: problema de rede transitório. Continua sem SERP.
+  //   no-key       → DEGRADED se groundingVerify=true; avisa e continua.
   const braveStatus = await checkBraveSearch()
-  const braveRequired = config.quality.groundingVerify  // grounding sem SERP = claims não verificados
-  const FATAL_BRAVE = ['auth-error', 'rate-limit', 'network-error']
-  if (FATAL_BRAVE.includes(braveStatus)) {
-    log(`❌  Abortando sessão — Brave Search indisponível (${braveStatus}).`)
-    log('    Verifique BRAVE_API_KEY, cota e conectividade antes de tentar novamente.')
+  if (braveStatus === 'auth-error') {
+    log('❌  Abortando sessão — BRAVE_API_KEY inválida ou expirada (HTTP 401/403).')
+    log('    Verifique o secret BRAVE_API_KEY no GitHub Actions e renove se necessário.')
     process.exit(1)
   }
-  if (braveStatus === 'no-key' && braveRequired) {
-    log('❌  Abortando — groundingVerify=true requer BRAVE_API_KEY para verificar claims.')
-    log('    Configure BRAVE_API_KEY ou desative quality.groundingVerify em dexter.config.mjs.')
-    process.exit(1)
+  if (braveStatus === 'rate-limit') {
+    log('⚠️  Brave Search: rate limit atingido (HTTP 429) — continuando sem análise SERP.')
+    log('    Grounding e análise competitiva desativados nesta sessão.')
+    log('    Dica: reduza budget.serpResultsCount ou a frequência do cron.')
+  }
+  if (braveStatus === 'network-error') {
+    log('⚠️  Brave Search: erro de rede transitório — continuando sem análise SERP.')
+  }
+  if (braveStatus === 'no-key') {
+    log('⚠️  BRAVE_API_KEY ausente — SERP analysis e grounding desativados nesta sessão.')
   }
   if (braveStatus === 'degraded') {
-    log('⚠️  Brave Search em modo degraded — continuando, mas análise SERP pode ser incompleta')
+    log('⚠️  Brave Search em modo degraded — análise SERP pode ser incompleta.')
   }
 
   // Print active config on startup

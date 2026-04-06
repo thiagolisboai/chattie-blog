@@ -73,7 +73,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - name: Install dependencies
@@ -81,8 +81,13 @@ jobs:
 
       - name: Setup GSC key file
         run: |
-          echo "$GSC_KEY_JSON" | base64 -d > /tmp/gsc-key.json
-          echo "GSC key file created"
+          if [ -n "$GSC_KEY_JSON" ]; then
+            echo "$GSC_KEY_JSON" | base64 -d > /tmp/gsc-key.json
+            echo "GSC key file created"
+          else
+            echo '{}' > /tmp/gsc-key.json
+            echo "GSC_KEY_JSON not set — GSC report will be skipped"
+          fi
         env:
           GSC_KEY_JSON: ${{ secrets.GSC_KEY_JSON }}
 
@@ -109,6 +114,14 @@ jobs:
           # Nota: PR mode para crons e configuração geral é controlado por dexter.config.mjs
           # O script autonomous-session.mjs lê o config e decide o modo automaticamente.
           node scripts/autonomous-session.mjs $ARGS
+          EXIT_CODE=$?
+          # Exit 2 = "nada a fazer" (blog em dia, backlog vazio, canibalização detectada)
+          # Não é um erro — é um resultado válido. Sair com 0 para não marcar a run como falha.
+          if [ $EXIT_CODE -eq 2 ]; then
+            echo "ℹ️  Dexter: nenhuma ação necessária nesta sessão (exit 2 → success)"
+            exit 0
+          fi
+          exit $EXIT_CODE
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
