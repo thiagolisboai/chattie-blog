@@ -47,7 +47,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - name: Install dependencies
@@ -55,8 +55,13 @@ jobs:
 
       - name: Setup GSC key file
         run: |
-          echo "$GSC_KEY_JSON" | base64 -d > /tmp/gsc-key.json
-          echo "GSC key file created"
+          if [ -n "$GSC_KEY_JSON" ]; then
+            echo "$GSC_KEY_JSON" | base64 -d > /tmp/gsc-key.json
+            echo "GSC key file created"
+          else
+            echo '{}' > /tmp/gsc-key.json
+            echo "GSC_KEY_JSON not set — feedback loop will run without GSC data"
+          fi
         env:
           GSC_KEY_JSON: ${{ secrets.GSC_KEY_JSON }}
 
