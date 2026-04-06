@@ -28,11 +28,25 @@ const CATEGORIES_EN = [
   { label: 'Chattie', href: '/blog/category/chattie' },
 ]
 
+const RESOURCES_PT = [
+  { label: 'Checklist de Prospecção', href: '/pt-br/recursos/checklist-prospeccao-linkedin', icon: '📋' },
+  { label: 'Templates de Mensagem', href: '/pt-br/recursos/templates-mensagem-linkedin', icon: '💬' },
+  { label: 'Script de Follow-up', href: '/pt-br/recursos/script-follow-up-linkedin', icon: '📝' },
+]
+
+const RESOURCES_EN = [
+  { label: 'Prospecting Checklist', href: '/resources/linkedin-prospecting-checklist', icon: '📋' },
+  { label: 'Connection Templates', href: '/resources/linkedin-connection-templates', icon: '💬' },
+  { label: 'Follow-up Script', href: '/resources/linkedin-followup-script', icon: '📝' },
+]
+
 export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [catOpen, setCatOpen] = useState(false)
+  const [resOpen, setResOpen] = useState(false)
   const catRef = useRef<HTMLDivElement>(null)
+  const resRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
   const isPtBr = lang === 'pt-BR'
 
@@ -43,9 +57,9 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
   }, [])
 
   // Close menu on route change
-  useEffect(() => { setMenuOpen(false); setCatOpen(false) }, [pathname])
+  useEffect(() => { setMenuOpen(false); setCatOpen(false); setResOpen(false) }, [pathname])
 
-  // Close dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
     if (!catOpen) return
     const onClickOutside = (e: MouseEvent) => {
@@ -57,6 +71,17 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
     return () => document.removeEventListener('mousedown', onClickOutside)
   }, [catOpen])
 
+  useEffect(() => {
+    if (!resOpen) return
+    const onClickOutside = (e: MouseEvent) => {
+      if (resRef.current && !resRef.current.contains(e.target as Node)) {
+        setResOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', onClickOutside)
+    return () => document.removeEventListener('mousedown', onClickOutside)
+  }, [resOpen])
+
   const isActive = (href: string) => {
     return pathname === href || pathname.startsWith(href + '/')
   }
@@ -64,6 +89,11 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
   const isCategoryActive = () => {
     const cats = isPtBr ? CATEGORIES_PT : CATEGORIES_EN
     return cats.some((c) => isActive(c.href))
+  }
+
+  const isResourceActive = () => {
+    const res = isPtBr ? RESOURCES_PT : RESOURCES_EN
+    return res.some((r) => isActive(r.href))
   }
 
   const navBg: React.CSSProperties = scrolled
@@ -80,6 +110,8 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
   const enListingHref = '/blog'
   const categories = isPtBr ? CATEGORIES_PT : CATEGORIES_EN
   const catLabel = isPtBr ? 'Categorias' : 'Categories'
+  const resources = isPtBr ? RESOURCES_PT : RESOURCES_EN
+  const resLabel = isPtBr ? 'Recursos gratuitos' : 'Free resources'
 
   return (
     <>
@@ -88,6 +120,39 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
           from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
           to   { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
+        .res-dropdown {
+          position: absolute;
+          top: calc(100% + 2px);
+          left: 50%;
+          transform: translateX(-50%);
+          background: #FAFBF3;
+          border: 2px solid #000;
+          box-shadow: 6px 6px 0 #000;
+          min-width: 230px;
+          z-index: 200;
+          animation: catDropDown 0.2s cubic-bezier(0.34,1.2,0.64,1) both;
+        }
+        .res-dropdown a {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          padding: 0.75rem 1.1rem;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #333;
+          text-decoration: none;
+          border-bottom: 1px solid rgba(0,0,0,0.07);
+          transition: background 0.12s, color 0.12s, transform 0.12s, border-left-color 0.12s;
+          border-left: 3px solid transparent;
+        }
+        .res-dropdown a:last-child { border-bottom: none; }
+        .res-dropdown a:hover {
+          background: #fff;
+          color: #000;
+          border-left-color: #F4B13F;
+          transform: translateX(3px);
+        }
+        .res-dropdown a.active { color: #E57B33; font-weight: 800; border-left-color: #E57B33; }
         .cat-dropdown {
           position: absolute;
           top: calc(100% + 2px);
@@ -218,15 +283,65 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
               Newsletter
             </a>
 
-            {/* Checklist */}
-            <Link
-              href={isPtBr ? '/pt-br/recursos/checklist-prospeccao-linkedin' : '/resources/linkedin-prospecting-checklist'}
-              style={{ fontSize: '0.875rem', fontWeight: 600, color: '#333', textDecoration: 'none', transition: 'color 0.15s' }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = '#000' }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = '#333' }}
+            {/* Resources dropdown */}
+            <div
+              ref={resRef}
+              style={{ position: 'relative', alignSelf: 'stretch', display: 'flex', alignItems: 'center' }}
+              onMouseEnter={() => setResOpen(true)}
+              onMouseLeave={() => setResOpen(false)}
             >
-              {isPtBr ? 'Checklist' : 'Checklist'}
-            </Link>
+              <button
+                onClick={() => setResOpen((v) => !v)}
+                aria-expanded={resOpen}
+                aria-haspopup="true"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  color: isResourceActive() ? '#E57B33' : '#333',
+                  padding: '0 0 2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.3rem',
+                  position: 'relative',
+                  transition: 'color 0.15s',
+                }}
+                onMouseEnter={(e) => { if (!isResourceActive()) (e.currentTarget as HTMLButtonElement).style.color = '#000' }}
+                onMouseLeave={(e) => { if (!isResourceActive()) (e.currentTarget as HTMLButtonElement).style.color = '#333' }}
+              >
+                {resLabel}
+                <span style={{
+                  display: 'inline-block',
+                  width: 0, height: 0,
+                  borderLeft: '4px solid transparent',
+                  borderRight: '4px solid transparent',
+                  borderTop: `4px solid ${isResourceActive() ? '#E57B33' : 'currentColor'}`,
+                  transition: 'transform 0.15s',
+                  transform: resOpen ? 'rotate(180deg)' : 'none',
+                  marginTop: 2,
+                }} />
+                {isResourceActive() && (
+                  <span style={{ position: 'absolute', bottom: -2, left: 0, right: 0, height: 2, background: '#E57B33', display: 'block' }} />
+                )}
+              </button>
+
+              {resOpen && (
+                <div className="res-dropdown">
+                  {resources.map((r) => (
+                    <Link
+                      key={r.href}
+                      href={r.href}
+                      className={isActive(r.href) ? 'active' : ''}
+                    >
+                      <span>{r.icon}</span>
+                      {r.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Right: search + lang toggle + CTA + hamburger */}
@@ -365,24 +480,47 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
                 <span style={{ color: '#ccc', fontSize: '0.9rem' }}>→</span>
               </a>
 
-              <Link
-                href={isPtBr ? '/pt-br/recursos/checklist-prospeccao-linkedin' : '/resources/linkedin-prospecting-checklist'}
-                style={{
-                  padding: '0.8rem 0.75rem',
-                  fontSize: '0.9rem',
-                  fontWeight: 700,
-                  color: '#000',
-                  borderBottom: '1px solid rgba(0,0,0,0.1)',
-                  borderLeft: '3px solid transparent',
-                  textDecoration: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                📋 Checklist
-                <span style={{ color: '#ccc', fontSize: '0.9rem' }}>→</span>
-              </Link>
+              <p style={{
+                padding: '0.7rem 0.75rem 0.3rem',
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                color: '#999',
+                borderBottom: '1px solid rgba(0,0,0,0.08)',
+                marginBottom: 0,
+              }}>
+                {resLabel}
+              </p>
+
+              {resources.map((r, i) => {
+                const active = isActive(r.href)
+                return (
+                  <Link
+                    key={r.href}
+                    href={r.href}
+                    style={{
+                      padding: '0.7rem 0',
+                      fontSize: '0.9rem',
+                      fontWeight: active ? 800 : 600,
+                      color: active ? '#E57B33' : '#000',
+                      borderBottom: i < resources.length - 1 ? '1px solid rgba(0,0,0,0.08)' : '1px solid rgba(0,0,0,0.1)',
+                      borderLeft: active ? '3px solid #E57B33' : '3px solid transparent',
+                      paddingLeft: '1.25rem',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      {r.icon} {r.label}
+                    </span>
+                    <span style={{ color: active ? '#E57B33' : '#ccc', fontSize: '0.9rem' }}>→</span>
+                  </Link>
+                )
+              })}
 
               <a
                 href={isPtBr ? 'https://trychattie.com/pt-br' : 'https://trychattie.com'}
