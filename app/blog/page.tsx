@@ -11,15 +11,15 @@ import { BlogHeroSymbols } from '@/components/blog-hero-symbols'
 import type { PostFrontmatter } from '@/lib/posts-pt'
 
 export const metadata: Metadata = {
-  title: 'Blog | Chattie',
-  description: 'Insights on social selling, B2B LinkedIn and AI for sales — for founders and operators who sell on LinkedIn.',
+  title: 'LinkedIn B2B & Social Selling Blog | Chattie',
+  description: 'Practical insights on LinkedIn prospecting, social selling and AI for sales — for B2B founders and consultants who sell on LinkedIn.',
   alternates: {
     canonical: 'https://trychattie.com/blog',
     languages: { en: 'https://trychattie.com/blog' },
   },
   openGraph: {
-    title: 'Blog | Chattie',
-    description: 'Insights on social selling, B2B LinkedIn and AI for sales.',
+    title: 'LinkedIn B2B & Social Selling Blog | Chattie',
+    description: 'Practical insights on LinkedIn prospecting, social selling and AI for sales.',
     url: 'https://trychattie.com/blog',
     locale: 'en_US',
     type: 'website',
@@ -48,6 +48,7 @@ export default async function BlogListEn({ searchParams }: Props) {
 
       {/* Hero header */}
       <div
+        className="blog-listing-hero"
         style={{
           background: `#FAFBF3 url('/brand/orange-gradient-bg.png') no-repeat top right / 50%`,
           borderBottom: '2px solid #000',
@@ -131,7 +132,7 @@ export default async function BlogListEn({ searchParams }: Props) {
                 <div style={{ flex: 1, height: 2, background: '#000' }} />
               </div>
             )}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+            <div className="blog-grid-auto" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
               {rest.map((post, i) => (
                 <div key={post.slug} style={{ transitionDelay: `${(i % 3) * 60}ms` }}>
                   <BlogCard post={post as unknown as PostFrontmatter} basePath="/blog" lang="en" />

@@ -514,6 +514,27 @@ body {
   .hero-symbols-col { display: none !important; }
 }
 
+/* ─── Blog listing hero — responsive ─── */
+@media (max-width: 640px) {
+  /* Tighter hero padding on mobile */
+  .blog-listing-hero {
+    padding: 2.5rem 1.25rem 2rem !important;
+  }
+  /* Prevent long words from breaking layout */
+  .blog-listing-hero h1 {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+/* ─── Blog post grid — responsive ─── */
+@media (max-width: 480px) {
+  /* Post card grid becomes single column */
+  .blog-grid-auto {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* ─── Footer column links ─── */
 .footer-col-link {
   display: block;

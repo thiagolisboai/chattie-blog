@@ -10,15 +10,15 @@ import { BlogHeroSymbols } from '@/components/blog-hero-symbols'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Blog PT-BR | Chattie',
-  description: 'Insights sobre social selling, LinkedIn B2B e IA para vendas — para founders e consultores brasileiros.',
+  title: 'Blog LinkedIn B2B e Social Selling | Chattie',
+  description: 'Insights práticos sobre prospecção no LinkedIn, social selling e IA para vendas — para founders e consultores B2B brasileiros.',
   alternates: {
     canonical: 'https://trychattie.com/pt-br/blog',
     languages: { 'pt-BR': 'https://trychattie.com/pt-br/blog' },
   },
   openGraph: {
-    title: 'Blog | Chattie',
-    description: 'Insights sobre social selling, LinkedIn B2B e IA para vendas.',
+    title: 'Blog LinkedIn B2B e Social Selling | Chattie',
+    description: 'Insights práticos sobre prospecção no LinkedIn, social selling e IA para vendas.',
     url: 'https://trychattie.com/pt-br/blog',
     locale: 'pt_BR',
     type: 'website',
@@ -47,6 +47,7 @@ export default async function BlogListPt({ searchParams }: Props) {
 
       {/* Hero header */}
       <div
+        className="blog-listing-hero"
         style={{
           background: `#FAFBF3 url('/brand/orange-gradient-bg.png') no-repeat top right / 50%`,
           borderBottom: '2px solid #000',
@@ -133,6 +134,7 @@ export default async function BlogListPt({ searchParams }: Props) {
 
             {/* Grid */}
             <div
+              className="blog-grid-auto"
               style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
