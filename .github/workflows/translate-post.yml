@@ -52,7 +52,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - name: Install dependencies
@@ -60,8 +60,13 @@ jobs:
 
       - name: Setup GSC key file
         run: |
-          echo "$GSC_KEY_JSON" | base64 -d > /tmp/gsc-key.json
-          echo "GSC key file created"
+          if [ -n "$GSC_KEY_JSON" ]; then
+            echo "$GSC_KEY_JSON" | base64 -d > /tmp/gsc-key.json
+            echo "GSC key file created"
+          else
+            echo '{}' > /tmp/gsc-key.json
+            echo "GSC_KEY_JSON not set — GSC clicks check will be skipped (fallback mode active)"
+          fi
         env:
           GSC_KEY_JSON: ${{ secrets.GSC_KEY_JSON }}
 
@@ -76,6 +81,14 @@ jobs:
             ARGS="$ARGS --dry-run"
           fi
           node scripts/generate-post-en.mjs $ARGS
+          EXIT_CODE=$?
+          # Exit 2 = nenhum candidato elegível (critério não atingido ainda)
+          # Não é um erro — é um resultado esperado para blog novo. Marcar como sucesso.
+          if [ $EXIT_CODE -eq 2 ]; then
+            echo "ℹ️  Dexter EN: nenhum candidato elegível nesta sessão (exit 2 → success)"
+            exit 0
+          fi
+          exit $EXIT_CODE
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}

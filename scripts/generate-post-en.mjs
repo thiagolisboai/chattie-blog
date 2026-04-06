@@ -32,9 +32,16 @@ const DRY_RUN  = process.argv.includes('--dry-run')
 const slugArg  = process.argv.find(a => a.startsWith('--slug='))
 const FORCE_SLUG = slugArg ? slugArg.split('=').slice(1).join('=') : null
 
-// Minimum clicks for a PT-BR post to qualify for EN adaptation
-const MIN_CLICKS  = 50
-const MIN_AGE_DAYS = 45
+// ── Tier 1: critério ideal (blog maduro, dados GSC disponíveis) ────────────────
+const MIN_CLICKS   = 50   // cliques em 45 dias via GSC
+const MIN_AGE_DAYS = 45   // dias desde a publicação
+
+// ── Tier 2: fallback para blog novo (sem dados GSC suficientes) ────────────────
+// Ativado quando Tier 1 não retorna nenhum candidato.
+// Seleciona o post PT-BR mais antigo sem par EN — sem exigir cliques mínimos.
+// Garante que o agente sempre entrega ao menos um post EN por execução.
+const FALLBACK_MIN_AGE_DAYS = 0   // qualquer post publicado é elegível no fallback
+const FALLBACK_MIN_CLICKS   = 0   // sem exigência de cliques no fallback
 
 // ─── Load .env.local ─────────────────────────────────────────────────────────
 
@@ -124,8 +131,22 @@ async function getPostClicks(slug) {
 
 // ─── Find EN generation candidates ───────────────────────────────────────────
 
+/**
+ * Estratégia de dois níveis para blog em qualquer fase de maturidade:
+ *
+ * Tier 1 — critério ideal (blog maduro):
+ *   Post PT-BR publicado há >45 dias E com >50 cliques via GSC.
+ *   Garante qualidade máxima: só adapta posts comprovadamente relevantes.
+ *
+ * Tier 2 — fallback (blog novo / GSC ainda sem dados):
+ *   Ativado quando Tier 1 retorna 0 candidatos.
+ *   Seleciona o post PT-BR mais antigo sem par EN, sem exigir cliques.
+ *   Garante que o agente nunca fica bloqueado esperando dados GSC.
+ *
+ * Exit 2 só ocorre se não há NENHUM post PT-BR sem par EN (blog 100% traduzido).
+ */
 async function findCandidates() {
-  if (!fs.existsSync(BLOG_DIR)) return []
+  if (!fs.existsSync(BLOG_DIR)) return { candidates: [], tier: 0 }
   if (!fs.existsSync(BLOG_EN_DIR)) fs.mkdirSync(BLOG_EN_DIR, { recursive: true })
 
   // Get all EN posts to know which PT-BR posts already have a pair
@@ -135,29 +156,53 @@ async function findCandidates() {
       .map(f => f.replace('.mdx', ''))
   )
 
-  const candidates = []
-
+  // Build pool of all PT-BR posts without EN pair
+  const pool = []
   for (const file of fs.readdirSync(BLOG_DIR).filter(f => f.endsWith('.mdx'))) {
     const slug = file.replace('.mdx', '')
     const filePath = path.join(BLOG_DIR, file)
     const { fm } = parseFm(filePath)
 
-    // Skip if EN pair already exists (check enSlug field or matching EN slug)
+    // Skip if EN pair already exists
     if (fm.enSlug || existingEnSlugs.has(slug) || existingEnSlugs.has(`${slug}-en`)) continue
 
-    // Check post age
     const publishDate = fm.date || fm.publishedAt?.split('T')[0]
-    if (!publishDate || daysBetween(publishDate) < MIN_AGE_DAYS) continue
+    if (!publishDate) continue
 
     // Check clicks via GSC
     const clicks = await getPostClicks(slug)
-    console.log(`   ${slug}: ${clicks ?? 'n/a'} cliques`)
-    if (clicks !== null && clicks < MIN_CLICKS) continue
+    const age = daysBetween(publishDate)
+    console.log(`   ${slug}: ${clicks ?? 'n/a'} cliques, ${age} dias`)
 
-    candidates.push({ slug, filePath, fm, clicks, publishDate })
+    pool.push({ slug, filePath, fm, clicks, publishDate, age })
   }
 
-  return candidates
+  if (pool.length === 0) {
+    console.log('✅  Todos os posts PT-BR já têm par EN. Nada a fazer.')
+    return { candidates: [], tier: 0 }
+  }
+
+  // ── Tier 1: critério ideal ─────────────────────────────────────────────────
+  const tier1 = pool.filter(p =>
+    p.age >= MIN_AGE_DAYS &&
+    (p.clicks === null || p.clicks >= MIN_CLICKS) // null = GSC indisponível, não bloqueia
+  )
+
+  if (tier1.length > 0) {
+    console.log(`\n✅  Tier 1: ${tier1.length} candidato(s) com critério ideal (>=${MIN_AGE_DAYS} dias, >=${MIN_CLICKS} cliques)`)
+    return { candidates: tier1, tier: 1 }
+  }
+
+  // ── Tier 2: fallback (blog novo / sem dados GSC) ────────────────────────────
+  console.log(`\n⚠️  Tier 1: nenhum candidato elegível (critério: >=${MIN_AGE_DAYS} dias + >=${MIN_CLICKS} cliques)`)
+  console.log('   → Ativando Tier 2 (fallback): selecionando post mais antigo sem par EN...')
+
+  // Sort by age descending (oldest first) — mais provável de ter recebido alguma indexação
+  const tier2 = [...pool].sort((a, b) => b.age - a.age)
+  const best = tier2[0]
+  console.log(`   → Candidato Tier 2: "${best.slug}" (${best.age} dias, ${best.clicks ?? 'n/a'} cliques)`)
+
+  return { candidates: [best], tier: 2 }
 }
 
 // ─── Pexels image fetch (EN keywords) ────────────────────────────────────────
@@ -345,18 +390,23 @@ async function main() {
     target = { slug: FORCE_SLUG, filePath, fm, clicks: '(forçado)' }
     console.log(`🎯  Slug forçado: ${FORCE_SLUG}`)
   } else {
-    console.log(`\n🔍  Buscando candidatos (>${MIN_CLICKS} cliques em ${MIN_AGE_DAYS} dias)...`)
-    const candidates = await findCandidates()
+    console.log(`\n🔍  Buscando candidatos (Tier 1: >=${MIN_CLICKS} cliques em >=${MIN_AGE_DAYS} dias)...`)
+    const { candidates, tier } = await findCandidates()
 
     if (candidates.length === 0) {
-      console.log(`ℹ️  Nenhum post PT-BR elegível para adaptação EN ainda.`)
-      console.log(`   Criteria: >${MIN_CLICKS} cliques em ${MIN_AGE_DAYS} dias, sem par EN.`)
+      console.log(`ℹ️  Todos os posts PT-BR já têm par EN. Nada a fazer.`)
       process.exit(2)
     }
 
-    // Pick the one with most clicks
-    target = candidates.sort((a, b) => (b.clicks || 0) - (a.clicks || 0))[0]
-    console.log(`🎯  Candidato selecionado: ${target.slug} (${target.clicks} cliques)`)
+    if (tier === 1) {
+      // Tier 1: pick the post with most clicks (proven demand)
+      target = candidates.sort((a, b) => (b.clicks || 0) - (a.clicks || 0))[0]
+      console.log(`🎯  [Tier 1] Candidato selecionado: ${target.slug} (${target.clicks} cliques, ${target.age} dias)`)
+    } else {
+      // Tier 2 fallback: already pre-selected (oldest without EN pair)
+      target = candidates[0]
+      console.log(`🎯  [Tier 2 fallback] Candidato selecionado: ${target.slug} (${target.age} dias, ${target.clicks ?? 'n/a'} cliques)`)
+    }
   }
 
   // Check if EN pair already exists
