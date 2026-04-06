@@ -84,31 +84,41 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
   return (
     <>
       <style>{`
+        @keyframes catDropDown {
+          from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+          to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
         .cat-dropdown {
           position: absolute;
-          top: calc(100% + 8px);
+          top: calc(100% + 2px);
           left: 50%;
           transform: translateX(-50%);
           background: #FAFBF3;
           border: 2px solid #000;
-          box-shadow: 4px 4px 0 #000;
-          min-width: 220px;
+          box-shadow: 6px 6px 0 #000;
+          min-width: 230px;
           z-index: 200;
-          animation: menuSlideDown 0.18s cubic-bezier(0.34,1.2,0.64,1) both;
+          animation: catDropDown 0.2s cubic-bezier(0.34,1.2,0.64,1) both;
         }
         .cat-dropdown a {
-          display: block;
-          padding: 0.6rem 1rem;
+          display: flex;
+          align-items: center;
+          padding: 0.75rem 1.1rem;
           font-size: 0.875rem;
           font-weight: 600;
           color: #333;
           text-decoration: none;
-          border-bottom: 1px solid rgba(0,0,0,0.08);
-          transition: background 0.1s, color 0.1s, border-left 0.1s;
+          border-bottom: 1px solid rgba(0,0,0,0.07);
+          transition: background 0.12s, color 0.12s, transform 0.12s, border-left-color 0.12s;
           border-left: 3px solid transparent;
         }
         .cat-dropdown a:last-child { border-bottom: none; }
-        .cat-dropdown a:hover { background: #fff; color: #000; border-left-color: #2F6451; }
+        .cat-dropdown a:hover {
+          background: #fff;
+          color: #000;
+          border-left-color: #2F6451;
+          transform: translateX(3px);
+        }
         .cat-dropdown a.active { color: #E57B33; font-weight: 800; border-left-color: #E57B33; }
       `}</style>
 
@@ -142,7 +152,7 @@ export function BlogNav({ lang = 'pt-BR' }: BlogNavProps) {
             {/* Categories dropdown */}
             <div
               ref={catRef}
-              style={{ position: 'relative' }}
+              style={{ position: 'relative', paddingBottom: 6 }}
               onMouseEnter={() => setCatOpen(true)}
               onMouseLeave={() => setCatOpen(false)}
             >

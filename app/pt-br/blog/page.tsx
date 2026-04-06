@@ -6,6 +6,7 @@ import { BlogFooter } from '@/components/blog-footer'
 import { RevealObserver } from '@/components/reveal-observer'
 import { ScrollToTopButton } from '@/components/post-ui'
 import { NewsletterCta } from '@/components/newsletter-cta'
+import { BlogHeroSymbols } from '@/components/blog-hero-symbols'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
@@ -47,9 +48,9 @@ export default async function BlogListPt({ searchParams }: Props) {
       {/* Hero header */}
       <div
         style={{
-          background: `#FAFBF3 url('/brand/orange-gradient-bg.png') no-repeat top right / 45%`,
+          background: `#FAFBF3 url('/brand/orange-gradient-bg.png') no-repeat top right / 50%`,
           borderBottom: '2px solid #000',
-          padding: '5rem 1.5rem 4rem',
+          padding: '4rem 1.5rem 3rem',
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -57,43 +58,51 @@ export default async function BlogListPt({ searchParams }: Props) {
         {/* Grain */}
         <div className="grain-overlay" />
 
-        <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <p className="eyebrow" style={{ color: '#2F6451' }}>Blog em Português</p>
-          <h1
-            style={{
-              fontFamily: "'Sherika', sans-serif",
-              fontWeight: 900,
-              fontSize: 'clamp(2.2rem, 4.2vw, 3.5rem)',
-              lineHeight: 1.08,
-              letterSpacing: '-0.03em',
-              marginBottom: '1.25rem',
-              maxWidth: 560,
-            }}
-          >
-            Social selling e LinkedIn B2B para quem vende de verdade.
-          </h1>
-          <p style={{ fontSize: '1rem', color: '#555', lineHeight: 1.75, maxWidth: 480, marginBottom: '1.75rem' }}>
-            Insights práticos sobre prospecção, IA para vendas e social selling —
-            para founders e consultores B2B.
-          </p>
-          <Link
-            href="/blog"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              fontSize: '0.82rem',
-              fontWeight: 700,
-              color: '#2F6451',
-              textDecoration: 'none',
-              border: '1.5px solid #2F6451',
-              padding: '0.35rem 0.85rem',
-              letterSpacing: '0.02em',
-              transition: 'background 0.15s, color 0.15s',
-            }}
-          >
-            🇺🇸 Read in English
-          </Link>
+        <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          {/* Left: text */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p className="eyebrow" style={{ color: '#2F6451' }}>Blog em Português</p>
+            <h1
+              style={{
+                fontFamily: "'Sherika', sans-serif",
+                fontWeight: 900,
+                fontSize: 'clamp(2.2rem, 4.2vw, 3.5rem)',
+                lineHeight: 1.08,
+                letterSpacing: '-0.03em',
+                marginBottom: '1.25rem',
+                maxWidth: 560,
+              }}
+            >
+              Social selling e LinkedIn B2B para quem vende de verdade.
+            </h1>
+            <p style={{ fontSize: '1rem', color: '#555', lineHeight: 1.75, maxWidth: 480, marginBottom: '1.75rem' }}>
+              Insights práticos sobre prospecção, IA para vendas e social selling —
+              para founders e consultores B2B.
+            </p>
+            <Link
+              href="/blog"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                color: '#2F6451',
+                textDecoration: 'none',
+                border: '1.5px solid #2F6451',
+                padding: '0.35rem 0.85rem',
+                letterSpacing: '0.02em',
+                transition: 'background 0.15s, color 0.15s',
+              }}
+            >
+              🇺🇸 Read in English
+            </Link>
+          </div>
+
+          {/* Right: brand symbols */}
+          <div className="hero-symbols-col" style={{ width: 360, flexShrink: 0 }}>
+            <BlogHeroSymbols />
+          </div>
         </div>
       </div>
 

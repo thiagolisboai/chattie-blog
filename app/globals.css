@@ -496,6 +496,24 @@ body {
   .author-card-body { padding: 1rem 1rem 1rem 0; }
 }
 
+/* ─── Hero symbols: float animation ─── */
+@keyframes symFloat {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
+}
+.sf1 { animation: symFloat 3.0s ease-in-out infinite alternate; }
+.sf2 { animation: symFloat 3.5s ease-in-out 0.5s infinite alternate; }
+.sf3 { animation: symFloat 2.8s ease-in-out 1.0s infinite alternate; }
+.sf4 { animation: symFloat 3.8s ease-in-out 0.3s infinite alternate; }
+.sf5 { animation: symFloat 2.6s ease-in-out 0.8s infinite alternate; }
+.sf6 { animation: symFloat 3.2s ease-in-out 1.3s infinite alternate; }
+.sf7 { animation: symFloat 4.0s ease-in-out 0.1s infinite alternate; }
+
+/* ─── Hero symbols column — hide below 768px ─── */
+@media (max-width: 768px) {
+  .hero-symbols-col { display: none !important; }
+}
+
 /* ─── Footer column links ─── */
 .footer-col-link {
   display: block;
