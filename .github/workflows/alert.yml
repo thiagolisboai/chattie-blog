@@ -1,0 +1,117 @@
+# Milestone & Anomaly Alert — Dexter
+#
+# Roda diariamente às 9h BRT (12h UTC).
+# Só envia email quando milestones novos ou anomalias são detectados.
+# Nunca bloqueia o workflow (exit 0 sempre).
+#
+# Secrets necessários:
+#   GSC_KEY_JSON     — Service account JSON em base64
+#   ALERT_EMAIL_TO   — Destinatário do alerta (ex: thiago@trychattie.com)
+#   ALERT_EMAIL_FROM — Remetente (ex: dexter@trychattie.com)
+#   ALERT_SMTP_HOST  — Host SMTP (ex: smtp.gmail.com)
+#   ALERT_SMTP_PORT  — Porta SMTP (ex: 587)
+#   ALERT_SMTP_USER  — Usuário SMTP
+#   ALERT_SMTP_PASS  — Senha SMTP / App Password
+
+name: Dexter - Milestone & Anomaly Alert
+
+on:
+  schedule:
+    - cron: '0 12 * * *'   # Every day at 9h BRT (12h UTC)
+  workflow_dispatch:
+
+concurrency:
+  group: dexter-alert
+  cancel-in-progress: false
+
+jobs:
+  alert:
+    name: Check Milestones & Anomalies
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup GSC key file
+        run: |
+          if [ -n "$GSC_KEY_JSON" ]; then
+            echo "$GSC_KEY_JSON" | base64 -d > /tmp/gsc-key.json
+            echo "GSC key file created"
+          else
+            echo '{}' > /tmp/gsc-key.json
+            echo "GSC_KEY_JSON not set — GSC data will be skipped"
+          fi
+        env:
+          GSC_KEY_JSON: ${{ secrets.GSC_KEY_JSON }}
+
+      - name: Run GSC report (latest data)
+        run: node scripts/gsc-report.mjs || echo "GSC report failed — continuing with cached data"
+        env:
+          GSC_KEY_FILE: /tmp/gsc-key.json
+          GSC_SITE_URL: https://trychattie.com/
+        continue-on-error: true
+
+      - name: Run milestone alert
+        id: alert
+        run: node scripts/milestone-alert.mjs
+        env:
+          GSC_KEY_FILE: /tmp/gsc-key.json
+          GSC_SITE_URL: https://trychattie.com/
+
+      - name: Send alert email
+        if: steps.alert.outputs.has_alerts == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.ALERT_SMTP_HOST }}
+          server_port: ${{ secrets.ALERT_SMTP_PORT }}
+          username: ${{ secrets.ALERT_SMTP_USER }}
+          password: ${{ secrets.ALERT_SMTP_PASS }}
+          subject: ${{ steps.alert.outputs.subject }}
+          to: ${{ secrets.ALERT_EMAIL_TO }}
+          from: Dexter <${{ secrets.ALERT_EMAIL_FROM }}>
+          body: file://.dexter-alert-body.txt
+
+      - name: Commit updated milestone state
+        run: |
+          git config user.name "Dexter"
+          git config user.email "dexter@trychattie.com"
+          git add docs/milestone-state.json
+          if git diff --staged --quiet; then
+            echo "Milestone state unchanged."
+            exit 0
+          fi
+          git commit -m "monitor: milestone state $(date +%Y-%m-%d)" \
+            -m "Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+          git push origin main
+
+      - name: Write job summary
+        if: always()
+        run: |
+          echo "## Dexter - Milestone & Anomaly Alert" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          HAS_ALERTS="${{ steps.alert.outputs.has_alerts }}"
+          if [ "$HAS_ALERTS" = "true" ]; then
+            echo "**Alertas enviados:** ${{ steps.alert.outputs.subject }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- Milestones: ${{ steps.alert.outputs.milestone_count }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Anomalias: ${{ steps.alert.outputs.anomaly_count }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Nenhum alerta — tudo estável." >> $GITHUB_STEP_SUMMARY
+          fi
