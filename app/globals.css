@@ -567,15 +567,10 @@ body {
   flex-shrink: 0;
 }
 
-/* ─── Scroll-to-top button — mobile safe area ─── */
+/* ─── Scroll-to-top button ─── */
 .scroll-top-btn {
   bottom: 20px !important;
   right: 20px !important;
-}
-@media (max-width: 640px) {
-  .scroll-top-btn {
-    bottom: 76px !important;
-  }
 }
 
 /* ─── Nav active link indicator ─── */

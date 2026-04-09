@@ -91,6 +91,8 @@ export function ScrollToTopButton() {
       className="scroll-top-btn"
       style={{
         position: 'fixed',
+        bottom: 20,
+        right: 20,
         width: 50,
         height: 50,
         background: '#F4B13F',
