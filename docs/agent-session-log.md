@@ -23,3 +23,9 @@ Histórico de posts gerados pelo Dexter, agente de conteúdo autônomo do Chatti
 - Slug: mensagem-de-conexao-linkedin-exemplos
 - Palavras: ~2722
 - Backlinks: como-prospectar-clientes-no-linkedin, linkedin-para-vendas-b2b, vender-no-linkedin-sem-estrategia
+
+## 2026-04-10 — "Pitch de Prospecção LinkedIn: Como Estruturar, Personalizar e Converter em 2026"
+- Keyword: pitch de prospecção LinkedIn
+- Slug: pitch-de-prospeccao-linkedin
+- Palavras: ~2886
+- Backlinks: como-abordar-prospects-no-linkedin, ia-para-vendas-b2b-no-linkedin-guia-completo-2026, o-que-e-um-ai-sdr
