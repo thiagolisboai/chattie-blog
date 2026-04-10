@@ -668,16 +668,18 @@ function validateSchema(filePath) {
   const body = content.slice(fmMatch[0].length)
 
   if (schema === 'faq') {
-    // Must have a FAQ section
-    if (!body.match(/^##\s+FAQ/im) && !body.match(/^##\s+Perguntas Frequentes/im)) {
-      log('❌  T2.9: structuredData="faq" mas nenhuma seção ## FAQ encontrada no post')
+    // Must have a FAQ section — accept all common Portuguese/English heading variations:
+    // "## FAQ", "## FAQ — Perguntas frequentes", "## Perguntas frequentes sobre X",
+    // "## Dúvidas Frequentes", "## Perguntas e Respostas", "## Frequently Asked Questions"
+    const FAQ_HEADING_RE = /^##\s+.*(FAQ|Perguntas|Dúvidas|Respostas|Frequently Asked)/im
+    if (!body.match(FAQ_HEADING_RE)) {
+      log('❌  T2.9: structuredData="faq" mas nenhuma seção FAQ encontrada no post')
+      log('         Headings aceitos: "## FAQ", "## Perguntas frequentes", "## Dúvidas Frequentes"')
       return false
     }
-    // Count FAQ questions (### or **Q:** or numbered patterns or plain **bold?** lines)
-    // Use \n## [^#] to match only H2 headings (not H3+ which start with ###)
-    // The FAQ heading may have a suffix like "## FAQ — Perguntas frequentes" so we match
-    // up to the next ## heading (look for \n\n## or \n## boundary)
-    const faqSection = body.match(/##\s+FAQ[\s\S]*?(?=\n##\s|\n\n##\s|$)/i)?.[0] || ''
+    // Extract FAQ section regardless of heading variation
+    // Stop at the next H2 (## ) but not H3+ (### )
+    const faqSection = body.match(/^##\s+.*(FAQ|Perguntas|Dúvidas|Respostas|Frequently Asked)[\s\S]*?(?=\n## [^#]|\n\n## [^#]|$)/im)?.[0] || ''
     const questionCount = (faqSection.match(/^###\s+/gm) || []).length
       + (faqSection.match(/^\d+\.\s+\*\*/gm) || []).length
       + (faqSection.match(/^\*\*\d+\./gm) || []).length    // **1. Question** format
