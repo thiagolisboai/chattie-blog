@@ -677,14 +677,19 @@ function validateSchema(filePath) {
       log('         Headings aceitos: "## FAQ", "## Perguntas frequentes", "## Dúvidas Frequentes"')
       return false
     }
-    // Extract FAQ section regardless of heading variation
-    // Stop at the next H2 (## ) but not H3+ (### )
-    const faqSection = body.match(/^##\s+.*(FAQ|Perguntas|Dúvidas|Respostas|Frequently Asked)[\s\S]*?(?=\n## [^#]|\n\n## [^#]|$)/im)?.[0] || ''
+    // Extract FAQ section regardless of heading variation.
+    // Strategy: grab everything from the FAQ heading to end of string (greedy),
+    // then strip everything from the next H2 onwards. Avoids the m-flag + $ conflict
+    // where $ would mean "end of line" instead of "end of string", making [\s\S]*?
+    // stop immediately after the heading.
+    const faqRaw = body.match(/##\s+.*(FAQ|Perguntas|Dúvidas|Respostas|Frequently Asked)[\s\S]*/i)?.[0] || ''
+    const faqSection = faqRaw.replace(/\n## [^#][\s\S]*$/, '')
     const questionCount = (faqSection.match(/^###\s+/gm) || []).length
       + (faqSection.match(/^\d+\.\s+\*\*/gm) || []).length
       + (faqSection.match(/^\*\*\d+\./gm) || []).length    // **1. Question** format
       + (faqSection.match(/^>\s*\*\*P:/gm) || []).length
-      + (faqSection.match(/^\*\*[^*]+\*\*\s*$/gm) || []).length  // **Bold question?** standalone line
+      + (faqSection.match(/^\*\*[^*?]+[?]\*\*\s*$/gm) || []).length  // **Question?** standalone
+      + (faqSection.match(/^\*\*[^*]+\*\*\s*$/gm) || []).length      // **Bold statement** standalone
     if (questionCount < 3) {
       log(`❌  T2.9: structuredData="faq" — FAQ tem apenas ${questionCount} pergunta(s) (mínimo 3)`)
       return false
