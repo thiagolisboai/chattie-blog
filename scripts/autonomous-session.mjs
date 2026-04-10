@@ -214,11 +214,13 @@ function getCriticalUpdates() {
 
 // ─── Step 4: Select next keyword from backlog ─────────────────────────────────
 
-function selectKeywordFromBacklog() {
+function selectKeywordFromBacklog(excludeKeywords = []) {
   const p = path.join(ROOT, 'docs', 'keyword-backlog.md')
   if (!fs.existsSync(p)) return null
 
-  const raw = fs.readFileSync(p, 'utf-8')
+  const raw = fs.readFileSync(p, 'utf-8').trim()
+  if (!raw) return null // empty file guard
+
   const lines = raw.split('\n')
 
   // Parse table rows: | Keyword | Intenção | Competição | Prioridade | Status |
@@ -232,15 +234,17 @@ function selectKeywordFromBacklog() {
         intent:     cols[1],
         competition: cols[2],
         priority:   cols[3],
-        status:     cols[4],
+        status:     cols[4].toLowerCase(),
       }
     })
     .filter(Boolean)
 
   // Filter: Alta prioridade, não publicado, Baixa ou Média competição
+  // status check: starts with "pendente" to handle trailing backtick/slug annotations
   const eligible = rows.filter(r =>
     r.priority.toLowerCase().includes('alta') &&
-    r.status.toLowerCase() === 'pendente' &&
+    r.status.startsWith('pendente') &&
+    !excludeKeywords.includes(r.keyword) &&
     (r.competition.toLowerCase().includes('baixa') ||
      r.competition.toLowerCase().includes('média') ||
      r.competition.toLowerCase().includes('media') ||
@@ -249,10 +253,11 @@ function selectKeywordFromBacklog() {
 
   if (eligible.length > 0) return eligible[0].keyword
 
-  // Fallback: any Alta priority pending keyword
+  // Fallback: any Alta priority pending keyword not in exclusion list
   const fallback = rows.filter(r =>
     r.priority.toLowerCase().includes('alta') &&
-    r.status.toLowerCase() === 'pendente'
+    r.status.startsWith('pendente') &&
+    !excludeKeywords.includes(r.keyword)
   )
 
   return fallback.length > 0 ? fallback[0].keyword : null
@@ -821,18 +826,52 @@ async function main() {
     }
   }
 
-  // ── Phase 2b: T3.13 — Keyword cannibalization check ──
-  const cannibal = config.intelligence.cannibalCheck ? checkCannibalization(keyword) : null
-  if (cannibal) {
-    log(`⚠️  T3.13: Canibalização detectada! Keyword "${keyword}" tem ${Math.round(cannibal.score * 100)}% de sobreposição com:`)
-    log(`          "${cannibal.title}" → content/blog/${cannibal.slug}.mdx`)
-    log(`   Recomendação: atualize o post existente em vez de criar um novo.`)
-    log(`   Execute: node scripts/update-post.mjs --slug=${cannibal.slug}`)
-    log(`   Para ignorar e criar assim mesmo, use --force-new`)
-    if (!FORCE_NEW) {
+  // ── Phase 2b: T3.13 — Keyword cannibalization check (with backlog retry) ──
+  // If the selected keyword cannibalizes an existing post, try the next one in
+  // the backlog (up to MAX_CANNIBAL_TRIES) before giving up with exit 2.
+  // This prevents permanent blocking when a recently committed post covers the
+  // top-priority keyword.
+  const MAX_CANNIBAL_TRIES = 5
+  const skippedByCannibal = []
+
+  if (!kwArg && config.intelligence.cannibalCheck && !FORCE_NEW) {
+    let cannibal = checkCannibalization(keyword)
+    while (cannibal) {
+      log(`⚠️  T3.13: Canibalização detectada! Keyword "${keyword}" tem ${Math.round(cannibal.score * 100)}% de sobreposição com:`)
+      log(`          "${cannibal.title}" → content/blog/${cannibal.slug}.mdx`)
+      log(`   Execute: node scripts/update-post.mjs --slug=${cannibal.slug}`)
+      skippedByCannibal.push(keyword)
+
+      if (skippedByCannibal.length >= MAX_CANNIBAL_TRIES) {
+        log(`ℹ️  T3.13: ${MAX_CANNIBAL_TRIES} keywords consecutivas canibalizaram posts existentes.`)
+        log('   Atualize o backlog ou use --force-new para criar mesmo com sobreposição.')
+        process.exit(2)
+      }
+
+      // Try next eligible keyword from backlog
+      const next = selectKeywordFromBacklog(skippedByCannibal)
+      if (!next) {
+        log('ℹ️  T3.13: Sem mais keywords elegíveis no backlog sem canibalização.')
+        process.exit(2)
+      }
+
+      log(`➡️  T3.13: Tentando próxima keyword: "${next}"`)
+      keyword = next
+      cannibal = checkCannibalization(keyword)
+    }
+
+    if (skippedByCannibal.length > 0) {
+      log(`✅  T3.13: Keyword selecionada após ${skippedByCannibal.length} tentativa(s): "${keyword}"`)
+    }
+  } else if (kwArg && config.intelligence.cannibalCheck && !FORCE_NEW) {
+    // Keyword was passed explicitly — check once, warn but don't retry
+    const cannibal = checkCannibalization(keyword)
+    if (cannibal) {
+      log(`⚠️  T3.13: Canibalização detectada! Keyword "${keyword}" tem ${Math.round(cannibal.score * 100)}% de sobreposição com:`)
+      log(`          "${cannibal.title}" → content/blog/${cannibal.slug}.mdx`)
+      log(`   Para ignorar, use --force-new`)
       process.exit(2)
     }
-    log('   --force-new ativo — prosseguindo com criação mesmo com canibalização')
   }
 
   // ── Phase 3: Generate post ──

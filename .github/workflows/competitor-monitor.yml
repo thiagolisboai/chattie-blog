@@ -51,7 +51,8 @@ jobs:
         run: |
           git config user.name "Dexter"
           git config user.email "dexter@trychattie.com"
-          git add docs/competitor-report.md docs/competitors.md
+          [ -f docs/competitor-report.md ] && git add docs/competitor-report.md || true
+          [ -f docs/competitors.md ]       && git add docs/competitors.md       || true
           if git diff --staged --quiet; then
             echo "Sem mudanças no relatório."
             exit 0
