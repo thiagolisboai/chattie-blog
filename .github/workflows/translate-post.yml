@@ -80,8 +80,10 @@ jobs:
           if [ "$INPUT_DRY_RUN" = "true" ]; then
             ARGS="$ARGS --dry-run"
           fi
-          node scripts/generate-post-en.mjs $ARGS
-          EXIT_CODE=$?
+          # set -e é ativo por padrão no GitHub Actions — usar || para capturar exit code
+          # sem que o shell termine antes de chegarmos no bloco de mapeamento.
+          EXIT_CODE=0
+          node scripts/generate-post-en.mjs $ARGS || EXIT_CODE=$?
           # Exit 2 = nenhum candidato elegível (critério não atingido ainda)
           # Não é um erro — é um resultado esperado para blog novo. Marcar como sucesso.
           if [ $EXIT_CODE -eq 2 ]; then

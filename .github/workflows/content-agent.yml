@@ -113,8 +113,10 @@ jobs:
           fi
           # Nota: PR mode para crons e configuração geral é controlado por dexter.config.mjs
           # O script autonomous-session.mjs lê o config e decide o modo automaticamente.
-          node scripts/autonomous-session.mjs $ARGS
-          EXIT_CODE=$?
+          # set -e é ativo por padrão no GitHub Actions — usar || para capturar exit code
+          # sem que o shell termine antes de chegarmos no bloco de mapeamento.
+          EXIT_CODE=0
+          node scripts/autonomous-session.mjs $ARGS || EXIT_CODE=$?
           # Exit 2 = "nada a fazer" (blog em dia, backlog vazio, canibalização detectada)
           # Não é um erro — é um resultado válido. Sair com 0 para não marcar a run como falha.
           if [ $EXIT_CODE -eq 2 ]; then
