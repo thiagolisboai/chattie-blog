@@ -1,0 +1,113 @@
+# Bulk Submit — submete todas as URLs do blog ao Google e Bing/IndexNow de uma vez
+#
+# Use para acelerar indexação após publicar vários posts ou quando o GSC
+# mostrar muitas páginas "Discovered - currently not indexed".
+#
+# Execução apenas manual (workflow_dispatch).
+# Secrets necessários:
+#   GSC_KEY_JSON    — service account JSON em base64 (mesma do content-agent.yml)
+#   INDEXNOW_KEY    — chave IndexNow (mesma do content-agent.yml)
+
+name: Bulk Submit — Google + IndexNow
+
+on:
+  workflow_dispatch:
+    inputs:
+      targets:
+        description: 'Quais posts submeter'
+        required: false
+        type: choice
+        default: 'all'
+        options:
+          - all
+          - pt-only
+          - en-only
+      dry_run:
+        description: 'Dry run (lista URLs sem submeter)'
+        required: false
+        type: boolean
+        default: false
+      skip_google:
+        description: 'Pular Google Indexing API'
+        required: false
+        type: boolean
+        default: false
+      skip_indexnow:
+        description: 'Pular IndexNow (Bing/Yandex)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  bulk-submit:
+    name: Bulk Submit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup GSC key file
+        run: |
+          if [ -n "$GSC_KEY_JSON" ]; then
+            echo "$GSC_KEY_JSON" | base64 -d > /tmp/gsc-key.json
+            echo "GSC key file created"
+          else
+            echo '{}' > /tmp/gsc-key.json
+            echo "GSC_KEY_JSON not set — Google Indexing API will be skipped"
+          fi
+        env:
+          GSC_KEY_JSON: ${{ secrets.GSC_KEY_JSON }}
+
+      - name: Build args
+        id: args
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.targets }}" = "pt-only" ]; then
+            ARGS="--pt-only"
+          elif [ "${{ github.event.inputs.targets }}" = "en-only" ]; then
+            ARGS="--en-only"
+          fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          echo "flags=$ARGS" >> $GITHUB_OUTPUT
+
+      # Google Indexing API — 200 req/dia por service account
+      - name: Submit to Google Indexing API
+        if: ${{ github.event.inputs.skip_google != 'true' }}
+        run: node scripts/submit-indexing-bulk.mjs ${{ steps.args.outputs.flags }}
+        env:
+          GSC_KEY_FILE: /tmp/gsc-key.json
+          GSC_SITE_URL: https://trychattie.com/
+        continue-on-error: true
+
+      # IndexNow — notifica Bing, Yandex e outros motores instantaneamente
+      - name: Submit to IndexNow (Bing/Yandex)
+        if: ${{ github.event.inputs.skip_indexnow != 'true' }}
+        run: node scripts/indexnow-bulk.mjs ${{ steps.args.outputs.flags }}
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        continue-on-error: true
+
+      - name: Write job summary
+        if: always()
+        run: |
+          echo "## Bulk Submit" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Targets: ${{ github.event.inputs.targets }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Dry run: ${{ github.event.inputs.dry_run }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Skip Google: ${{ github.event.inputs.skip_google }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Skip IndexNow: ${{ github.event.inputs.skip_indexnow }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Cheque os logs acima para ver quais URLs foram submetidas." >> $GITHUB_STEP_SUMMARY

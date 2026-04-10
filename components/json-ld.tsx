@@ -18,6 +18,44 @@ interface ArticleJsonLdProps {
     slug?: string
   }
   lang?: string
+  /** Raw MDX/markdown content — used to dynamically extract FAQ Q&A when the
+   *  slug isn't in the hardcoded FAQ_DATA dictionary (e.g. new Dexter posts). */
+  postContent?: string
+}
+
+type FaqPair = { q: string; a: string }
+
+/**
+ * Extracts FAQ Q&A pairs from raw MDX content.
+ * Supports the format: **Question?**\n\nAnswer or **Question?**\nAnswer
+ */
+function extractFaqFromContent(content: string): FaqPair[] {
+  const FAQ_HEADING_RE = /##\s+.*(FAQ|Perguntas|Dúvidas|Respostas|Frequently Asked)/i
+  const faqMatch = content.match(FAQ_HEADING_RE)
+  if (!faqMatch) return []
+
+  const faqStart = content.indexOf(faqMatch[0])
+  let faqSection = content.slice(faqStart + faqMatch[0].length)
+
+  // Stop at next H2 section or horizontal rule
+  const nextSectionIdx = faqSection.search(/\n## [^#]|\n---/)
+  if (nextSectionIdx !== -1) faqSection = faqSection.slice(0, nextSectionIdx)
+
+  // Split by newline + opening ** (start of each question)
+  const blocks = faqSection.split(/\n(?=\*\*[^*\n])/)
+  const items: FaqPair[] = []
+
+  for (const block of blocks) {
+    const closeStarIdx = block.indexOf('**')
+    if (closeStarIdx === -1) continue          // no opening ** — skip heading remnant
+    const closeStarEnd = block.indexOf('**', closeStarIdx + 2)
+    if (closeStarEnd === -1) continue          // no closing **
+    const q = block.slice(closeStarIdx + 2, closeStarEnd).trim()
+    const a = block.slice(closeStarEnd + 2).trim().replace(/\n+/g, ' ')
+    if (q && a) items.push({ q, a })
+  }
+
+  return items
 }
 
 // Slugs that get HowTo schema (step-by-step guides)
@@ -331,7 +369,7 @@ const DEFINED_TERMS: Record<string, { name: string; description: string }> = {
   },
 }
 
-export function ArticleJsonLd({ post, lang = 'pt-BR' }: ArticleJsonLdProps) {
+export function ArticleJsonLd({ post, lang = 'pt-BR', postContent }: ArticleJsonLdProps) {
   const author = getAuthor(post.author || 'Thiago Lisboa')
 
   // F1.1: merge frontmatter authorLinkedIn into sameAs (takes precedence if set)
@@ -460,8 +498,12 @@ export function ArticleJsonLd({ post, lang = 'pt-BR' }: ArticleJsonLdProps) {
       }
     : null
 
-  // FAQPage schema — only rendered when the slug has real Q&A data
-  const faqItems = post.slug ? FAQ_DATA[post.slug] : undefined
+  // FAQPage schema — prefer hardcoded FAQ_DATA, fall back to dynamic extraction from MDX content
+  const hardcodedFaq = post.slug ? FAQ_DATA[post.slug] : undefined
+  const faqItems: FaqPair[] | undefined =
+    hardcodedFaq && hardcodedFaq.length > 0
+      ? hardcodedFaq
+      : (postContent ? extractFaqFromContent(postContent) : undefined)
   const faqSchema = (post.structuredData === 'faq' && faqItems && faqItems.length > 0)
     ? {
         '@context': 'https://schema.org',

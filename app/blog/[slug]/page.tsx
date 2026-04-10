@@ -77,7 +77,7 @@ export default async function BlogPostEn({ params }: Props) {
     <>
       <ReadingProgressBar slug={post.slug} lang="en" />
       <ScrollToTopButton />
-      <ArticleJsonLd post={{ ...post, slug: post.slug }} lang="en" />
+      <ArticleJsonLd post={{ ...post, slug: post.slug }} lang="en" postContent={post.content} />
       <BreadcrumbSchema items={[
         { name: 'Blog', url: 'https://trychattie.com/blog' },
         { name: post.category, url: `https://trychattie.com/blog/category/${post.category}` },

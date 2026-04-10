@@ -93,6 +93,7 @@ export default async function BlogPostPt({ params }: Props) {
           authorLinkedIn: post.authorLinkedIn,
         }}
         lang="pt-BR"
+        postContent={post.content}
       />
       <BreadcrumbSchema items={[
         { name: 'Blog', url: 'https://trychattie.com/pt-br/blog' },
