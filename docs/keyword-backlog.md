@@ -20,7 +20,7 @@
 |---------|----------|-----------|-----------|--------|
 | como prospectar no LinkedIn B2B | Informacional | Alta | Alta | pendente |
 | mensagem de conexão LinkedIn exemplos | Informacional/Transacional | Média | Alta | publicado (`/pt-br/blog/mensagem-de-conexao-linkedin-exemplos`) |
-| como abordar prospects no LinkedIn | Informacional | Média | Alta | pendente |
+| como abordar prospects no LinkedIn | Informacional | Média | Alta | publicado (`/pt-br/blog/como-abordar-prospects-no-linkedin`) |
 | pitch de prospecção LinkedIn | Informacional | Média-Baixa | Alta | pendente |
 | prospecção ativa no LinkedIn | Informacional | Alta | Média | pendente |
 | LinkedIn para geração de leads B2B | Informacional | Alta | Média | pendente |
