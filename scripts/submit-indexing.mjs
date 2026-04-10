@@ -117,26 +117,27 @@ try {
 } catch (err) {
   const message = err.message || String(err)
 
-  // Erro de permissão: a service account precisa ser Proprietária Delegada no GSC
+  // Todos os erros da Indexing API são non-fatal: indexação imediata é uma otimização,
+  // não um requisito. O post já foi publicado — o Google vai indexar pelo crawl normal.
+  // Nunca usar process.exit(1) aqui para não matar o workflow por motivo não-crítico.
+
   if (message.includes('403') || message.includes('Forbidden') || message.includes('permission')) {
-    console.error(`❌  Erro de permissão na Indexing API:`)
-    console.error(`    ${message}`)
-    console.error(``)
-    console.error(`    Para corrigir:`)
-    console.error(`    1. Acesse Google Search Console → Configurações → Usuários e permissões`)
-    console.error(`    2. Adicione o email da service account como "Proprietário Delegado"`)
-    console.error(`    3. Aguarde até 48h para propagação`)
-    process.exit(1)
+    console.warn(`⚠️  Indexing API: erro de permissão — service account precisa ser Proprietária Delegada no GSC`)
+    console.warn(`    1. GSC → Configurações → Usuários e permissões → adicionar service account como Proprietário Delegado`)
+    console.warn(`    2. Aguarde até 48h para propagação`)
+    console.warn(`    Post publicado normalmente — Google indexará via crawl padrão.`)
+    process.exit(0)
   }
 
-  // Erro de API não habilitada
-  if (message.includes('API') && message.includes('enabled')) {
-    console.error(`❌  Web Search Indexing API não habilitada:`)
-    console.error(`    Acesse Google Cloud Console → APIs & Services → Enable "Web Search Indexing API"`)
-    process.exit(1)
+  if (message.includes('has not been used') || message.includes('is not enabled') || message.includes('enabled')) {
+    console.warn(`⚠️  Indexing API: Web Search Indexing API não habilitada no projeto GCP da service account`)
+    console.warn(`    Solução: GCP Console → projeto correto → APIs & Services → Enable "Web Search Indexing API"`)
+    console.warn(`    ATENÇÃO: habilitar no projeto que contém a service account, não em outro projeto.`)
+    console.warn(`    Post publicado normalmente — Google indexará via crawl padrão.`)
+    process.exit(0)
   }
 
-  // Outros erros: graceful degradation (não bloquear o pipeline)
-  console.warn(`⚠️  Indexing API falhou (${message.slice(0, 100)}) — continuando sem indexação imediata`)
+  // Outros erros: graceful degradation
+  console.warn(`⚠️  Indexing API falhou (${message.slice(0, 120)}) — continuando sem indexação imediata`)
   process.exit(0)
 }
