@@ -1,0 +1,9 @@
+# Enforce LF line endings for all text files (prevents CRLF from breaking frontmatter parsers)
+* text=auto eol=lf
+
+# MDX content — always LF
+content/blog/*.mdx text eol=lf
+content/blog-en/*.mdx text eol=lf
+
+# Scripts — always LF
+scripts/*.mjs text eol=lf

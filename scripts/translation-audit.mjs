@@ -27,7 +27,7 @@ const JSON_MODE = process.argv.includes('--json')
 // ─── Parse frontmatter ──────────────────────────────────────────────────────
 
 function parseFrontmatter(filePath) {
-  const raw = fs.readFileSync(filePath, 'utf-8')
+  const raw = fs.readFileSync(filePath, 'utf-8').replace(/\r\n/g, '\n')
   const match = raw.match(/^---\n([\s\S]*?)\n---/)
   if (!match) return {}
   const fm = {}

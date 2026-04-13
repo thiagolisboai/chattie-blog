@@ -149,12 +149,17 @@ async function findCandidates() {
   if (!fs.existsSync(BLOG_DIR)) return { candidates: [], tier: 0 }
   if (!fs.existsSync(BLOG_EN_DIR)) fs.mkdirSync(BLOG_EN_DIR, { recursive: true })
 
-  // Get all EN posts to know which PT-BR posts already have a pair
+  // Get all EN posts and build a map from ptSlug → enSlug (via ptSlug field in EN frontmatter)
   const existingEnSlugs = new Set(
     fs.readdirSync(BLOG_EN_DIR)
       .filter(f => f.endsWith('.mdx'))
       .map(f => f.replace('.mdx', ''))
   )
+  const ptSlugToEnSlug = new Map() // ptSlug → enSlug (from EN post frontmatter ptSlug field)
+  for (const enFile of fs.readdirSync(BLOG_EN_DIR).filter(f => f.endsWith('.mdx'))) {
+    const { fm: enFm } = parseFm(path.join(BLOG_EN_DIR, enFile))
+    if (enFm.ptSlug) ptSlugToEnSlug.set(enFm.ptSlug, enFile.replace('.mdx', ''))
+  }
 
   // Build pool of all PT-BR posts without EN pair
   const pool = []
@@ -163,8 +168,13 @@ async function findCandidates() {
     const filePath = path.join(BLOG_DIR, file)
     const { fm } = parseFm(filePath)
 
-    // Skip if EN pair already exists
-    if (fm.enSlug || existingEnSlugs.has(slug) || existingEnSlugs.has(`${slug}-en`)) continue
+    // Skip if EN pair already exists — check all three signals:
+    // 1. enSlug in PT-BR frontmatter is set (non-empty)
+    // 2. An EN file with matching ptSlug exists
+    // 3. An EN file with the same slug (or slug-en) exists
+    const hasEnSlug = fm.enSlug && fm.enSlug !== ''
+    const hasEnByPtRef = ptSlugToEnSlug.has(slug)
+    if (hasEnSlug || hasEnByPtRef || existingEnSlugs.has(slug) || existingEnSlugs.has(`${slug}-en`)) continue
 
     const publishDate = fm.date || fm.publishedAt?.split('T')[0]
     if (!publishDate) continue
@@ -330,6 +340,17 @@ Respond ONLY with the complete MDX content starting with ---.`
     throw new Error(`Invalid output — does not start with frontmatter:\n${mdxContent.slice(0, 200)}`)
   }
 
+  // ── Sanitize imageAlt: embedded double-quotes break YAML block mapping ──────
+  // Detect any imageAlt line with embedded quotes (more than the enclosing pair)
+  const imageAltLineWithQuotes = /\nimageAlt:\s*"[^"]*"[^"\n]*"/
+  if (imageAltLineWithQuotes.test(mdxContent)) {
+    // Build a safe imageAlt from the post title or keyword
+    const titleMatch = mdxContent.match(/\ntitle:\s*"?([^"\n]+)"?/)
+    const safeAlt = (titleMatch ? titleMatch[1] : enKeyword).replace(/"/g, '').slice(0, 120)
+    mdxContent = mdxContent.replace(/\nimageAlt:[^\n]*/, `\nimageAlt: "${safeAlt}"`)
+    console.log(`⚠️  imageAlt com aspas duplas detectado — substituído por: "${safeAlt}"`)
+  }
+
   // Extract slug from generated frontmatter
   const fmMatch = mdxContent.match(/^---\n([\s\S]*?)\n---/)
   const enFm = {}
@@ -358,11 +379,18 @@ Respond ONLY with the complete MDX content starting with ---.`
 
 function updatePtEnSlug(ptFilePath, enSlug) {
   const raw = fs.readFileSync(ptFilePath, 'utf-8')
-  if (raw.includes('enSlug:')) return // already set
-
-  const updated = raw.replace(/^---\n/, `---\nenSlug: "${enSlug}"\n`)
-  if (!DRY_RUN) fs.writeFileSync(ptFilePath, updated, 'utf-8')
-  console.log(`🔗  enSlug "${enSlug}" adicionado ao post PT-BR`)
+  let updated
+  if (raw.includes('enSlug:')) {
+    // Update existing field (handles enSlug: "" case)
+    updated = raw.replace(/\nenSlug:\s*"[^"]*"/, `\nenSlug: "${enSlug}"`)
+    if (updated === raw) return // no change needed (already correct value)
+    if (!DRY_RUN) fs.writeFileSync(ptFilePath, updated, 'utf-8')
+    console.log(`🔗  enSlug atualizado para "${enSlug}" no post PT-BR`)
+  } else {
+    updated = raw.replace(/^---\n/, `---\nenSlug: "${enSlug}"\n`)
+    if (!DRY_RUN) fs.writeFileSync(ptFilePath, updated, 'utf-8')
+    console.log(`🔗  enSlug "${enSlug}" adicionado ao post PT-BR`)
+  }
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -436,8 +464,8 @@ async function main() {
   const enFilePath = path.join(BLOG_EN_DIR, `${enResult.enSlug}.mdx`)
 
   if (fs.existsSync(enFilePath)) {
-    console.error(`❌  Post EN já existe: content/blog-en/${enResult.enSlug}.mdx`)
-    process.exit(1)
+    console.log(`ℹ️  Post EN já existe: content/blog-en/${enResult.enSlug}.mdx`)
+    process.exit(2)
   }
 
   fs.writeFileSync(enFilePath, enResult.mdxContent, 'utf-8')
