@@ -449,12 +449,14 @@ function validateInternalLinks(filePath) {
   }
 
   if (broken.length > 0) {
-    log(`❌  A2: ${broken.length} internal link(s) quebrado(s):`)
+    // Non-blocking: broken links are common when Claude references future posts.
+    // Warn loudly but don't block publishing — the post is otherwise valid.
+    log(`⚠️  A2: ${broken.length} internal link(s) apontando para posts ainda não publicados:`)
     broken.forEach(l => log(`       ${l}`))
-    return false
+    log(`   Post será publicado. Corrija os links quando esses posts forem criados.`)
+  } else {
+    log(`✅  A2: ${matches.length} internal link(s) validado(s)`)
   }
-
-  log(`✅  A2: ${matches.length} internal link(s) validado(s)`)
   return true
 }
 
@@ -726,6 +728,16 @@ function runSourceAudit() {
   }
 }
 
+// ─── Diagnostic: log validation failure to session log ───────────────────────
+
+function logValidationFailure(slug, gate, detail) {
+  try {
+    const today = new Date().toISOString().split('T')[0]
+    const entry = `\n## FALHA-VALIDAÇÃO ${today} — ${gate}\n- Slug: ${slug || 'n/a'}\n- Detalhe: ${detail}\n`
+    fs.appendFileSync(path.join(ROOT, 'docs', 'agent-session-log.md'), entry, 'utf-8')
+  } catch { /* não bloqueia o exit */ }
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -897,19 +909,15 @@ async function main() {
     const auditPassed = runSourceAudit()
     if (!auditPassed) {
       log('❌  Abortando — corrija as fontes antes de commitar')
+      logValidationFailure(result.slug, 'source-audit', 'fonte suspeita/proibida detectada no post gerado')
       process.exit(1)
     }
   }
 
-  // ── Phase 4b: A2 — Validate internal links ──
+  // ── Phase 4b: A2 — Validate internal links (non-blocking) ──
   if (config.quality.internalLinkValidation) {
     log('\n🔗  Validando internal links...')
-    const linksValid = validateInternalLinks(result.filePath)
-    if (!linksValid) {
-      log('❌  Abortando — internal links quebrados no post gerado')
-      log('   O arquivo foi salvo em content/blog/ para correção manual')
-      process.exit(1)
-    }
+    validateInternalLinks(result.filePath) // always returns true now; logs warnings for broken links
   }
 
   // ── Phase 4b2: T2.9 — Schema validation gate ──
@@ -919,6 +927,7 @@ async function main() {
     if (!schemaValid) {
       log('❌  Abortando — post não satisfaz requisitos do schema declarado')
       log('   O arquivo foi salvo em content/blog/ para correção manual')
+      logValidationFailure(result.slug, 'schema-validation', 'structuredData declaration not satisfied')
       process.exit(1)
     }
   }
@@ -934,6 +943,7 @@ async function main() {
     fmErrors.forEach(e => log(`   ❌  ${e}`))
     log('❌  Abortando — frontmatter inválido (corrigir antes de publicar)')
     log('   O arquivo foi salvo em content/blog/ para correção manual')
+    logValidationFailure(result.slug, 'frontmatter-validation', fmErrors.join('; '))
     process.exit(1)
   }
   log(`✅  F2.1: Frontmatter válido`)

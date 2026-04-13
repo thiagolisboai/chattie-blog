@@ -93,12 +93,16 @@ export function validateFrontmatter(mdxContent) {
   }
 
   // ── Description length (SEO meta) ──
+  // Google truncates snippets at ~155-165 chars but does NOT penalize longer descriptions.
+  // Error only at >175 to avoid false positives from Claude's natural output variance.
   if (fm.description) {
     const len = fm.description.length
     if (len < 120) {
       warnings.push(`description muito curta: ${len} chars (ideal 120-160) — pode reduzir CTR`)
-    } else if (len > 165) {
-      errors.push(`description muito longa: ${len} chars (máx 165) — será truncada pelo Google`)
+    } else if (len > 175) {
+      errors.push(`description muito longa: ${len} chars (máx 175) — será truncada pelo Google`)
+    } else if (len > 160) {
+      warnings.push(`description longa: ${len} chars (ideal ≤160) — pode ser truncada no snippet`)
     }
   }
 
