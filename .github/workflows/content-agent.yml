@@ -244,6 +244,7 @@ jobs:
       - name: Send email notification
         if: ${{ github.event.inputs.dry_run != 'true' && steps.agent.outputs.title != '' }}
         uses: dawidd6/action-send-mail@v3
+        continue-on-error: true
         with:
           server_address: smtp.gmail.com
           server_port: 465
