@@ -846,9 +846,17 @@ Responda APENAS com o MDX, começando com --- (frontmatter).`
     finalMdx = finalMdx.replace(/\npublishedAt:/, `\ndateModified: "${todayDate}"\npublishedAt:`)
   }
 
-  // F3.2: Inject imageAlt if the model omitted it
-  if (!finalMdx.includes('imageAlt:')) {
-    finalMdx = finalMdx.replace(/(\nimage:[^\n]+)/, `$1\nimageAlt: "${imageAlt}"`)
+  // F3.2: Inject imageAlt if the model omitted it; overwrite if the model produced an invalid value
+  // (Claude sometimes puts the Pexels search query in imageAlt, which contains unescaped quotes)
+  const imageAltLineRe = /\nimageAlt:\s*"[^"]*"[^\n]*/
+  const imageAltLineWithQuotes = /\nimageAlt:\s*"[^"]*"[^"]*"/ // detects embedded double-quotes
+  if (!finalMdx.includes('imageAlt:') || imageAltLineWithQuotes.test(finalMdx)) {
+    // Either absent or broken — replace with the clean generated alt
+    if (finalMdx.includes('imageAlt:')) {
+      finalMdx = finalMdx.replace(imageAltLineRe, `\nimageAlt: "${imageAlt}"`)
+    } else {
+      finalMdx = finalMdx.replace(/(\nimage:[^\n]+)/, `$1\nimageAlt: "${imageAlt}"`)
+    }
   }
 
   // F1.1: Inject EEAT author fields after `author:` line if the model omitted them (safety net)

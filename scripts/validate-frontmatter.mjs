@@ -136,6 +136,16 @@ export function validateFrontmatter(mdxContent) {
     errors.push(`image inválida: "${fm.image}" — deve ser URL ou caminho absoluto`)
   }
 
+  // ── imageAlt — detect unescaped double-quotes (breaks YAML parser) ──
+  // When raw frontmatter is parsed line-by-line, embedded quotes survive as part of the value.
+  // Detect by checking the raw line in the source, not the already-parsed fm object.
+  const imageAltRawLine = (mdxContent.match(/\nimageAlt:([^\n]*)/) || [])[1] || ''
+  const quoteCount = (imageAltRawLine.match(/"/g) || []).length
+  if (quoteCount > 2) {
+    // More than the opening+closing quotes → embedded quotes present
+    errors.push(`imageAlt contém aspas duplas não escapadas — quebra o parser YAML (use single quotes ou remova)`)
+  }
+
   // ── F1.1: EEAT fields ──
   if (!isNonEmpty(fm.authorTitle)) {
     warnings.push('authorTitle ausente — campo EEAT recomendado para autoridade editorial')
