@@ -113,7 +113,7 @@ jobs:
           EN_SLUG="${{ steps.generator.outputs.en_slug }}"
           PT_SLUG="${{ steps.generator.outputs.pt_slug }}"
           TITLE="${{ steps.generator.outputs.title }}"
-          BRANCH="dexter/en-post-${EN_SLUG}-$(date +%Y-%m-%d)"
+          BRANCH="dexter/en-post-${EN_SLUG}-$(date +%Y-%m-%d)-${GITHUB_RUN_NUMBER}"
 
           git checkout -b "$BRANCH"
           git add content/blog-en/
@@ -130,21 +130,23 @@ jobs:
 
           git push origin "$BRANCH"
 
-          printf '## Adaptação EN — Dexter\n\n' > /tmp/pr-body.md
+          # Nota: printf com format string iniciando em '-' causa "invalid option" no Ubuntu.
+          # Solução: usar '%s\n' como format e passar o conteúdo como argumento.
+          printf '%s\n\n' '## Adaptação EN — Dexter' > /tmp/pr-body.md
           printf '**Post PT-BR:** `/pt-br/blog/%s`\n' "$PT_SLUG" >> /tmp/pr-body.md
           printf '**Post EN gerado:** `/blog/%s`\n' "$EN_SLUG" >> /tmp/pr-body.md
           printf '**URL:** https://trychattie.com/blog/%s\n\n' "$EN_SLUG" >> /tmp/pr-body.md
-          printf '### Checklist de revisao\n' >> /tmp/pr-body.md
-          printf '- [ ] Tom ajustado para audience global (nao apenas Brasil)\n' >> /tmp/pr-body.md
-          printf '- [ ] Exemplos brasileiros substituidos por globais\n' >> /tmp/pr-body.md
-          printf '- [ ] Fontes em ingles verificadas\n' >> /tmp/pr-body.md
-          printf '- [ ] slug e canonicalUrl corretos (`/blog/%s`)\n' "$EN_SLUG" >> /tmp/pr-body.md
-          printf '- [ ] ptSlug aponta para `%s`\n' "$PT_SLUG" >> /tmp/pr-body.md
-          printf '- [ ] FAQ relevante para ICP internacional\n' >> /tmp/pr-body.md
-          printf '- [ ] CTA aponta para https://trychattie.com/en\n\n' >> /tmp/pr-body.md
-          printf 'Aprovar este PR publica o post EN automaticamente via Vercel.\n\n' >> /tmp/pr-body.md
-          printf '_Gerado por Dexter - C2 Fase C_\n\n' >> /tmp/pr-body.md
-          printf 'Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\n' >> /tmp/pr-body.md
+          printf '%s\n' '### Checklist de revisao' >> /tmp/pr-body.md
+          printf '%s\n' '- [ ] Tom ajustado para audience global (nao apenas Brasil)' >> /tmp/pr-body.md
+          printf '%s\n' '- [ ] Exemplos brasileiros substituidos por globais' >> /tmp/pr-body.md
+          printf '%s\n' '- [ ] Fontes em ingles verificadas' >> /tmp/pr-body.md
+          printf '%s\n' "- [ ] slug e canonicalUrl corretos (\`/blog/${EN_SLUG}\`)" >> /tmp/pr-body.md
+          printf '%s\n' "- [ ] ptSlug aponta para \`${PT_SLUG}\`" >> /tmp/pr-body.md
+          printf '%s\n' '- [ ] FAQ relevante para ICP internacional' >> /tmp/pr-body.md
+          printf '%s\n\n' '- [ ] CTA aponta para https://trychattie.com/en' >> /tmp/pr-body.md
+          printf '%s\n\n' 'Aprovar este PR publica o post EN automaticamente via Vercel.' >> /tmp/pr-body.md
+          printf '%s\n\n' '_Gerado por Dexter - C2 Fase C_' >> /tmp/pr-body.md
+          printf '%s\n' 'Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>' >> /tmp/pr-body.md
 
           gh pr create \
             --title "Dexter (EN): $TITLE" \
