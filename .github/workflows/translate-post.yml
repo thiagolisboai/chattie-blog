@@ -1,12 +1,11 @@
 # C2: Geracao de Posts EN — Dexter adapta PT-BR com performance validada
 #
 # Roda automaticamente: toda segunda-feira as 10h BRT (13h UTC)
-# Gera um PR (nunca commita direto) — requer revisao humana antes de publicar
+# Commita diretamente no main e publica via Vercel (modo autonomo total).
 #
 # Criterios de selecao:
-#   - Post PT-BR publicado ha mais de 45 dias
-#   - Mais de 50 cliques no periodo via GSC
-#   - Sem par EN ja existente
+#   - Tier 1: Post PT-BR publicado ha mais de 45 dias + mais de 50 cliques via GSC
+#   - Tier 2 (fallback): post mais antigo sem par EN (sem exigir cliques)
 #
 # Secrets necessarios (mesmos do content-agent):
 #   ANTHROPIC_API_KEY, PEXELS_API_KEY, BRAVE_API_KEY, GSC_KEY_JSON
@@ -23,7 +22,7 @@ on:
         required: false
         type: string
       dry_run:
-        description: 'Dry run (gera mas nao salva)'
+        description: 'Dry run (gera mas nao salva nem publica)'
         required: false
         type: boolean
         default: false
@@ -40,7 +39,6 @@ jobs:
 
     permissions:
       contents: write
-      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -80,14 +78,12 @@ jobs:
           if [ "$INPUT_DRY_RUN" = "true" ]; then
             ARGS="$ARGS --dry-run"
           fi
-          # set -e é ativo por padrão no GitHub Actions — usar || para capturar exit code
-          # sem que o shell termine antes de chegarmos no bloco de mapeamento.
           EXIT_CODE=0
           node scripts/generate-post-en.mjs $ARGS || EXIT_CODE=$?
-          # Exit 2 = nenhum candidato elegível (critério não atingido ainda)
-          # Não é um erro — é um resultado esperado para blog novo. Marcar como sucesso.
+          # Exit 2 = nenhum candidato elegivel (blog 100% traduzido ou criterio nao atingido)
+          # Nao e um erro — resultado valido. Sair com 0 para nao marcar run como falha.
           if [ $EXIT_CODE -eq 2 ]; then
-            echo "ℹ️  Dexter EN: nenhum candidato elegível nesta sessão (exit 2 → success)"
+            echo "ℹ️  Dexter EN: nenhum candidato elegivel nesta sessao (exit 2 → success)"
             exit 0
           fi
           exit $EXIT_CODE
@@ -99,7 +95,6 @@ jobs:
           GSC_SITE_URL: https://trychattie.com/
           INPUT_SLUG: ${{ github.event.inputs.slug }}
           INPUT_DRY_RUN: ${{ github.event.inputs.dry_run }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configure git
         if: ${{ github.event.inputs.dry_run != 'true' }}
@@ -107,15 +102,13 @@ jobs:
           git config user.name "Dexter"
           git config user.email "dexter@trychattie.com"
 
-      - name: Create PR with EN post
+      - name: Commit and push to main
         if: ${{ github.event.inputs.dry_run != 'true' && steps.generator.outputs.en_slug != '' }}
         run: |
           EN_SLUG="${{ steps.generator.outputs.en_slug }}"
           PT_SLUG="${{ steps.generator.outputs.pt_slug }}"
           TITLE="${{ steps.generator.outputs.title }}"
-          BRANCH="dexter/en-post-${EN_SLUG}-$(date +%Y-%m-%d)-${GITHUB_RUN_NUMBER}"
 
-          git checkout -b "$BRANCH"
           git add content/blog-en/
           git add content/blog/
 
@@ -125,34 +118,34 @@ jobs:
           fi
 
           git commit -m "content(en): $TITLE" \
-            -m "Adaptacao EN de /pt-br/blog/$PT_SLUG" \
             -m "Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+          git push origin main
+          echo "Push concluido - Vercel deploying..."
 
-          git push origin "$BRANCH"
+      # Health check: verifica se o post EN esta acessivel apos deploy Vercel
+      - name: Health check post-deploy
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.generator.outputs.en_slug != '' }}
+        run: |
+          echo "Aguardando deploy Vercel (3 min)..."
+          sleep 180
+          URL="https://trychattie.com/blog/${{ steps.generator.outputs.en_slug }}"
+          STATUS=$(curl -o /dev/null -s -w "%{http_code}" --max-time 15 "$URL")
+          if [ "$STATUS" = "200" ]; then
+            echo "✅ Post EN acessivel: HTTP $STATUS — $URL"
+          else
+            echo "⚠️ Post EN retornou HTTP $STATUS — $URL"
+            echo "   Verifique o deploy no Vercel. O post pode ainda estar sendo buildado."
+          fi
+        continue-on-error: true
 
-          # Nota: printf com format string iniciando em '-' causa "invalid option" no Ubuntu.
-          # Solução: usar '%s\n' como format e passar o conteúdo como argumento.
-          printf '%s\n\n' '## Adaptação EN — Dexter' > /tmp/pr-body.md
-          printf '**Post PT-BR:** `/pt-br/blog/%s`\n' "$PT_SLUG" >> /tmp/pr-body.md
-          printf '**Post EN gerado:** `/blog/%s`\n' "$EN_SLUG" >> /tmp/pr-body.md
-          printf '**URL:** https://trychattie.com/blog/%s\n\n' "$EN_SLUG" >> /tmp/pr-body.md
-          printf '%s\n' '### Checklist de revisao' >> /tmp/pr-body.md
-          printf '%s\n' '- [ ] Tom ajustado para audience global (nao apenas Brasil)' >> /tmp/pr-body.md
-          printf '%s\n' '- [ ] Exemplos brasileiros substituidos por globais' >> /tmp/pr-body.md
-          printf '%s\n' '- [ ] Fontes em ingles verificadas' >> /tmp/pr-body.md
-          printf '%s\n' "- [ ] slug e canonicalUrl corretos (\`/blog/${EN_SLUG}\`)" >> /tmp/pr-body.md
-          printf '%s\n' "- [ ] ptSlug aponta para \`${PT_SLUG}\`" >> /tmp/pr-body.md
-          printf '%s\n' '- [ ] FAQ relevante para ICP internacional' >> /tmp/pr-body.md
-          printf '%s\n\n' '- [ ] CTA aponta para https://trychattie.com/en' >> /tmp/pr-body.md
-          printf '%s\n\n' 'Aprovar este PR publica o post EN automaticamente via Vercel.' >> /tmp/pr-body.md
-          printf '%s\n\n' '_Gerado por Dexter - C2 Fase C_' >> /tmp/pr-body.md
-          printf '%s\n' 'Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>' >> /tmp/pr-body.md
-
-          gh pr create \
-            --title "Dexter (EN): $TITLE" \
-            --body-file /tmp/pr-body.md
+      # Submeter URL EN para indexacao imediata no Google
+      - name: Submit EN URL for Google Indexing
+        if: ${{ github.event.inputs.dry_run != 'true' && steps.generator.outputs.en_slug != '' }}
+        run: node scripts/submit-indexing.mjs --slug=${{ steps.generator.outputs.en_slug }} --lang=en
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GSC_KEY_FILE: /tmp/gsc-key.json
+          GSC_SITE_URL: https://trychattie.com/
+        continue-on-error: true
 
       # IndexNow: notifica Bing/Yandex para o post EN
       - name: Submit EN URL to IndexNow
@@ -170,9 +163,10 @@ jobs:
           EN_SLUG="${{ steps.generator.outputs.en_slug }}"
           PT_SLUG="${{ steps.generator.outputs.pt_slug }}"
           if [ -n "$EN_SLUG" ]; then
-            echo "Post EN gerado: $EN_SLUG" >> $GITHUB_STEP_SUMMARY
-            echo "- PT-BR: /pt-br/blog/$PT_SLUG" >> $GITHUB_STEP_SUMMARY
-            echo "- EN: /blog/$EN_SLUG" >> $GITHUB_STEP_SUMMARY
+            echo "Post EN publicado: $EN_SLUG" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- PT-BR: https://trychattie.com/pt-br/blog/$PT_SLUG" >> $GITHUB_STEP_SUMMARY
+            echo "- EN: https://trychattie.com/blog/$EN_SLUG" >> $GITHUB_STEP_SUMMARY
           else
             echo "Nenhum post EN gerado nesta sessao." >> $GITHUB_STEP_SUMMARY
           fi

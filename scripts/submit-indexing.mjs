@@ -48,17 +48,20 @@ loadEnv()
 const slugArg  = process.argv.find(a => a.startsWith('--slug='))
 const urlArg   = process.argv.find(a => a.startsWith('--url='))
 const typeArg  = process.argv.find(a => a.startsWith('--type='))
+const langArg  = process.argv.find(a => a.startsWith('--lang='))
 const SITE_URL = process.env.GSC_SITE_URL || 'https://trychattie.com/'
 const KEY_FILE = process.env.GSC_KEY_FILE
 
 const notifType = typeArg ? typeArg.split('=')[1] : 'URL_UPDATED'
+const lang = langArg ? langArg.split('=')[1] : 'pt-BR'
 
 let targetUrl = null
 if (urlArg) {
   targetUrl = urlArg.split('=').slice(1).join('=')
 } else if (slugArg) {
   const slug = slugArg.split('=').slice(1).join('=')
-  targetUrl = `${SITE_URL.replace(/\/$/, '')}/pt-br/blog/${slug}`
+  const blogPath = lang === 'en' ? '/blog/' : '/pt-br/blog/'
+  targetUrl = `${SITE_URL.replace(/\/$/, '')}${blogPath}${slug}`
 }
 
 if (!targetUrl) {
