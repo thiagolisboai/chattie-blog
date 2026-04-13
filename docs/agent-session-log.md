@@ -29,3 +29,9 @@ Histórico de posts gerados pelo Dexter, agente de conteúdo autônomo do Chatti
 - Slug: pitch-de-prospeccao-linkedin
 - Palavras: ~2886
 - Backlinks: como-abordar-prospects-no-linkedin, ia-para-vendas-b2b-no-linkedin-guia-completo-2026, o-que-e-um-ai-sdr
+
+## 2026-04-13 — "Social Selling no LinkedIn: Best Practices de Outbound B2B para 2025 e 2026"
+- Keyword: "social selling" "linkedin" outbound best practices 2025 or 2024 or 2026
+- Slug: social-selling-linkedin-outbound-best-practices
+- Palavras: ~3074
+- Backlinks: como-abordar-prospects-no-linkedin, pitch-de-prospeccao-linkedin, social-selling-b2b-metodologia-completa-linkedin-2026

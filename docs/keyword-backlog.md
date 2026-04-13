@@ -151,3 +151,4 @@ Com base no GSC (blog novo, zero posts indexados individualmente), o foco é **v
 | Qualificação | GrowthMachine, Speedio |
 
 **Oportunidade:** nenhum concorrente tem posição forte em **IA para prospecção LinkedIn** em PT-BR. É o terreno mais desocupado e mais alinhado ao produto.
+| "social selling" "linkedin" outbound best practices 2025 or 2024 or 2026 | informacional | Média | Média | publicado (`/pt-br/blog/social-selling-linkedin-outbound-best-practices`) |

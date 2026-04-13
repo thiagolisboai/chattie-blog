@@ -9,3 +9,5 @@
 {"ts":"2026-04-06T20:11:34.310Z","label":"generate-post-en","model":"claude-sonnet-4-6","inputTokens":3378,"outputTokens":4005,"costUsd":0.07021}
 {"ts":"2026-04-10T14:05:37.187Z","label":"generate-post","model":"claude-sonnet-4-6","inputTokens":7806,"outputTokens":5718,"costUsd":0.10919}
 {"ts":"2026-04-10T14:05:40.299Z","label":"snippet-optimize-batch","model":"claude-sonnet-4-6","inputTokens":414,"outputTokens":98,"costUsd":0.00271}
+{"ts":"2026-04-13T13:05:24.010Z","label":"generate-post","model":"claude-sonnet-4-6","inputTokens":7648,"outputTokens":5797,"costUsd":0.1099}
+{"ts":"2026-04-13T13:05:35.272Z","label":"snippet-optimize-batch","model":"claude-sonnet-4-6","inputTokens":1258,"outputTokens":667,"costUsd":0.01378}
