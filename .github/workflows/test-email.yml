@@ -1,0 +1,33 @@
+# Test Email — valida configuração SMTP sem rodar o Dexter completo
+# Uso: Actions → Test Email → Run workflow
+# Pode deletar este arquivo após confirmar que o email funciona.
+
+name: Test Email
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Send test email
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Send test email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          to: ${{ secrets.NOTIFY_EMAIL }}
+          from: Dexter Test <${{ secrets.MAIL_USERNAME }}>
+          subject: "✅ Dexter SMTP — teste de configuração"
+          body: |
+            Teste de configuração SMTP do Dexter.
+
+            Se você recebeu este email, a integração está funcionando corretamente.
+
+            --
+            Dexter - Agente de Conteúdo Autônomo do Chattie Blog
