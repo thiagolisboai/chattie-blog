@@ -40,7 +40,7 @@ function parseFm(filePath) {
     const [k, ...v] = line.split(':')
     if (k && v.length) fm[k.trim()] = v.join(':').trim().replace(/^"|"$/g, '')
   })
-  fm._hasFaqSection = /^## (FAQ|Perguntas|Questions)/m.test(raw)
+  fm._hasFaqSection = /^## .*(FAQ|Perguntas|Questions|Frequently Asked)/im.test(raw)
   fm._wordCount = raw.split(/\s+/).length
   return fm
 }
