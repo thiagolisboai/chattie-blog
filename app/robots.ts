@@ -17,7 +17,12 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: ALLOWED,
-        disallow: ['/keystatic/', '/outstatic/', '/api/'],
+        disallow: [
+        '/keystatic/',
+        '/outstatic/',
+        '/api/',
+        '/future.its-marketing-agency.portfolio-archive', // ghost page de WordPress anterior — já é 404, bloquear para deindexação
+      ],
       },
       // AI crawlers — explicit GEO permissions
       { userAgent: 'GPTBot',            allow: ALLOWED },
