@@ -2,10 +2,12 @@ import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
   const ALLOWED = [
+    '/',
     '/pt-br/blog/',
     '/blog/',
     '/pt-br/recursos/',
     '/resources/',
+    '/sitemap.xml',
     '/feed.xml',
     '/en/feed.xml',
   ]
@@ -27,6 +29,9 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: 'GoogleOther',       allow: ALLOWED },
       { userAgent: 'Amazonbot',         allow: ALLOWED },
     ],
-    sitemap: ['https://trychattie.com/sitemap.xml'],
+    sitemap: [
+      'https://trychattie.com/sitemap.xml',
+      'https://trychattie.com/sitemap-hreflang.xml',
+    ],
   }
 }
