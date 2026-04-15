@@ -39,7 +39,7 @@
 | como escrever mensagem no LinkedIn sem parecer vendedor | Informacional | Baixa | Alta | pendente |
 | script follow up LinkedIn B2B | Transacional | Média-Baixa | Alta | publicado (`/pt-br/recursos/script-follow-up-linkedin`) |
 | mensagem de reconexão LinkedIn | Transacional | Baixa | Média | pendente |
-| como personalizar mensagem LinkedIn em escala | Informacional | Baixa | Alta | pendente |
+| como personalizar mensagem LinkedIn em escala | Informacional | Baixa | Alta | publicado (`/pt-br/blog/como-personalizar-mensagens-linkedin-em-escala`) |
 
 **Ângulo diferenciador:** mostrar como a IA do Chattie personaliza mensagens em escala — não só templates estáticos.
 
@@ -54,7 +54,7 @@
 | IA para prospecção B2B | Informacional | Média | Alta | pendente |
 | automação de mensagens LinkedIn segura | Informacional | Baixa | Alta | pendente |
 | como usar IA para vendas B2B LinkedIn | Informacional | Baixa | Alta | pendente |
-| SDR com inteligência artificial | Informacional | Média | Alta | pendente |
+| SDR com inteligência artificial | Informacional | Média | Alta | publicado (`/pt-br/blog/ferramentas-de-ia-para-sdr`) |
 | Chattie vs concorrentes | Comercial | Muito Baixa | Média | pendente |
 
 **Ângulo diferenciador:** Chattie É o produto. Posts sobre AI SDR e automação segura têm vantagem de autoridade — ninguém no Brasil cobre isso com profundidade.
@@ -105,7 +105,7 @@
 
 | Keyword | Intenção | Competição | Prioridade | Status |
 |---------|----------|-----------|-----------|--------|
-| como qualificar leads no LinkedIn | Informacional | Média | Alta | pendente |
+| como qualificar leads no LinkedIn | Informacional | Média | Alta | publicado (`/pt-br/blog/como-qualificar-leads-no-linkedin-com-ia`) |
 | ICP LinkedIn como definir perfil cliente ideal | Informacional | Baixa | Alta | pendente |
 | cadência de prospecção LinkedIn B2B | Informacional | Média-Baixa | Alta | pendente |
 | SPIN selling no LinkedIn | Informacional | Baixa | Média | pendente |
