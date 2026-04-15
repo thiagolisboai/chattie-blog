@@ -67,8 +67,8 @@
 |---------|----------|-----------|-----------|--------|
 | LinkedIn Sales Navigator o que é | Informacional | Alta | Média | pendente |
 | LinkedIn Sales Navigator como usar | Informacional | Alta | Média | pendente |
-| LinkedIn Sales Navigator vale a pena | Comercial | Média | Alta | pendente |
-| LinkedIn Sales Navigator vs gratuito | Comercial | Média-Baixa | Alta | pendente |
+| LinkedIn Sales Navigator vale a pena | Comercial | Média | Alta | publicado (`/pt-br/blog/linkedin-sales-navigator-vale-a-pena`) |
+| LinkedIn Sales Navigator vs gratuito | Comercial | Média-Baixa | Alta | publicado (`/pt-br/blog/linkedin-sales-navigator-vs-gratuito`) |
 | como exportar leads do Sales Navigator | Informacional | Baixa | Alta | pendente |
 | filtros avançados LinkedIn Sales Navigator | Informacional | Baixa | Alta | pendente |
 
@@ -106,10 +106,10 @@
 | Keyword | Intenção | Competição | Prioridade | Status |
 |---------|----------|-----------|-----------|--------|
 | como qualificar leads no LinkedIn | Informacional | Média | Alta | publicado (`/pt-br/blog/como-qualificar-leads-no-linkedin-com-ia`) |
-| ICP LinkedIn como definir perfil cliente ideal | Informacional | Baixa | Alta | pendente |
-| cadência de prospecção LinkedIn B2B | Informacional | Média-Baixa | Alta | pendente |
+| ICP LinkedIn como definir perfil cliente ideal | Informacional | Baixa | Alta | publicado (`/pt-br/blog/icp-linkedin-como-definir-perfil-cliente-ideal`) |
+| cadência de prospecção LinkedIn B2B | Informacional | Média-Baixa | Alta | publicado (`/pt-br/blog/cadencia-de-prospeccao-linkedin-b2b`) |
 | SPIN selling no LinkedIn | Informacional | Baixa | Média | pendente |
-| como identificar decisores no LinkedIn | Informacional | Baixa | Alta | pendente |
+| como identificar decisores no LinkedIn | Informacional | Baixa | Alta | publicado (`/pt-br/blog/como-identificar-decisores-no-linkedin`) |
 | ABM no LinkedIn account based marketing | Informacional | Média | Média | pendente |
 
 ---
@@ -118,10 +118,10 @@
 
 | Keyword | Intenção | Competição | Prioridade | Status |
 |---------|----------|-----------|-----------|--------|
-| Expandi vs Waalaxy comparativo | Comercial | Média | Alta | pendente |
+| Expandi vs Waalaxy comparativo | Comercial | Média | Alta | publicado (`/pt-br/blog/expandi-vs-waalaxy`) |
 | melhores ferramentas prospecção LinkedIn 2025 | Comercial | Alta | Alta | pendente |
 | Dux-Soup alternativas | Comercial | Baixa | Média | pendente |
-| LinkedIn vs email para prospecção B2B | Informacional | Baixa | Alta | pendente |
+| LinkedIn vs email para prospecção B2B | Informacional | Baixa | Alta | publicado (`/pt-br/blog/linkedin-vs-email-prospeccao`) |
 | WhatsApp vs LinkedIn para prospecção B2B | Informacional | Muito Baixa | Alta | pendente |
 
 ---
