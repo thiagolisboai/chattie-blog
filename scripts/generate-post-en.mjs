@@ -418,22 +418,42 @@ async function main() {
     target = { slug: FORCE_SLUG, filePath, fm, clicks: '(forçado)' }
     console.log(`🎯  Slug forçado: ${FORCE_SLUG}`)
   } else {
-    console.log(`\n🔍  Buscando candidatos (Tier 1: >=${MIN_CLICKS} cliques em >=${MIN_AGE_DAYS} dias)...`)
-    const { candidates, tier } = await findCandidates()
-
-    if (candidates.length === 0) {
-      console.log(`ℹ️  Todos os posts PT-BR já têm par EN. Nada a fazer.`)
-      process.exit(2)
+    // Tier 0: priority queue — docs/en-priority-queue.txt
+    const PRIORITY_FILE = path.join(ROOT, 'docs', 'en-priority-queue.txt')
+    if (fs.existsSync(PRIORITY_FILE)) {
+      const prioritySlugs = fs.readFileSync(PRIORITY_FILE, 'utf-8')
+        .split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'))
+      for (const slug of prioritySlugs) {
+        const filePath = path.join(BLOG_DIR, `${slug}.mdx`)
+        if (!fs.existsSync(filePath)) continue
+        const { fm } = parseFm(filePath)
+        const enSlugValue = (fm.enSlug || '').replace(/"/g, '').trim()
+        if (!enSlugValue) {
+          target = { slug, filePath, fm, clicks: '(priority queue)' }
+          console.log(`🎯  [Tier 0 — Priority Queue] Candidato selecionado: ${slug}`)
+          break
+        }
+      }
     }
 
-    if (tier === 1) {
-      // Tier 1: pick the post with most clicks (proven demand)
-      target = candidates.sort((a, b) => (b.clicks || 0) - (a.clicks || 0))[0]
-      console.log(`🎯  [Tier 1] Candidato selecionado: ${target.slug} (${target.clicks} cliques, ${target.age} dias)`)
-    } else {
-      // Tier 2 fallback: already pre-selected (oldest without EN pair)
-      target = candidates[0]
-      console.log(`🎯  [Tier 2 fallback] Candidato selecionado: ${target.slug} (${target.age} dias, ${target.clicks ?? 'n/a'} cliques)`)
+    if (!target) {
+      console.log(`\n🔍  Buscando candidatos (Tier 1: >=${MIN_CLICKS} cliques em >=${MIN_AGE_DAYS} dias)...`)
+      const { candidates, tier } = await findCandidates()
+
+      if (candidates.length === 0) {
+        console.log(`ℹ️  Todos os posts PT-BR já têm par EN. Nada a fazer.`)
+        process.exit(2)
+      }
+
+      if (tier === 1) {
+        // Tier 1: pick the post with most clicks (proven demand)
+        target = candidates.sort((a, b) => (b.clicks || 0) - (a.clicks || 0))[0]
+        console.log(`🎯  [Tier 1] Candidato selecionado: ${target.slug} (${target.clicks} cliques, ${target.age} dias)`)
+      } else {
+        // Tier 2 fallback: already pre-selected (oldest without EN pair)
+        target = candidates[0]
+        console.log(`🎯  [Tier 2 fallback] Candidato selecionado: ${target.slug} (${target.age} dias, ${target.clicks ?? 'n/a'} cliques)`)
+      }
     }
   }
 

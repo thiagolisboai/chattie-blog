@@ -1,0 +1,11 @@
+# Fila de prioridade para Dexter EN
+# Um slug PT-BR por linha — Dexter processa o primeiro sem par EN
+# Quando um post for traduzido, o enSlug é preenchido automaticamente
+# e este arquivo não precisa ser editado (o script verifica se enSlug existe)
+
+automacao-linkedin-o-que-e-permitido
+ia-para-vendas-b2b
+linkedin-para-vendas-b2b
+ferramentas-para-prospeccao-no-linkedin
+chattie-vs-expandi
+chattie-vs-waalaxy
