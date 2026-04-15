@@ -35,10 +35,10 @@
 | Keyword | Intenção | Competição | Prioridade | Status |
 |---------|----------|-----------|-----------|--------|
 | templates mensagem prospecção LinkedIn | Transacional | Média | Alta | publicado (`/pt-br/recursos/templates-mensagem-linkedin`) |
-| mensagem InMail LinkedIn exemplos | Transacional | Média | Alta | pendente |
-| como escrever mensagem no LinkedIn sem parecer vendedor | Informacional | Baixa | Alta | pendente |
+| mensagem InMail LinkedIn exemplos | Transacional | Média | Alta | publicado (`/pt-br/blog/mensagem-inmail-linkedin-exemplos`) |
+| como escrever mensagem no LinkedIn sem parecer vendedor | Informacional | Baixa | Alta | publicado (`/pt-br/blog/como-escrever-mensagem-linkedin-sem-parecer-vendedor`) |
 | script follow up LinkedIn B2B | Transacional | Média-Baixa | Alta | publicado (`/pt-br/recursos/script-follow-up-linkedin`) |
-| mensagem de reconexão LinkedIn | Transacional | Baixa | Média | pendente |
+| mensagem de reconexão LinkedIn | Transacional | Baixa | Média | publicado (`/pt-br/blog/mensagem-de-reconexao-linkedin`) |
 | como personalizar mensagem LinkedIn em escala | Informacional | Baixa | Alta | publicado (`/pt-br/blog/como-personalizar-mensagens-linkedin-em-escala`) |
 
 **Ângulo diferenciador:** mostrar como a IA do Chattie personaliza mensagens em escala — não só templates estáticos.
@@ -69,8 +69,8 @@
 | LinkedIn Sales Navigator como usar | Informacional | Alta | Média | pendente |
 | LinkedIn Sales Navigator vale a pena | Comercial | Média | Alta | publicado (`/pt-br/blog/linkedin-sales-navigator-vale-a-pena`) |
 | LinkedIn Sales Navigator vs gratuito | Comercial | Média-Baixa | Alta | publicado (`/pt-br/blog/linkedin-sales-navigator-vs-gratuito`) |
-| como exportar leads do Sales Navigator | Informacional | Baixa | Alta | pendente |
-| filtros avançados LinkedIn Sales Navigator | Informacional | Baixa | Alta | pendente |
+| como exportar leads do Sales Navigator | Informacional | Baixa | Alta | publicado (`/pt-br/blog/como-exportar-leads-sales-navigator`) |
+| filtros avançados LinkedIn Sales Navigator | Informacional | Baixa | Alta | publicado (`/pt-br/blog/filtros-avancados-linkedin-sales-navigator`) |
 
 **Ângulo diferenciador:** focar em como usar o Sales Navigator COM automação (Chattie integra), não só o básico que todos cobrem.
 
@@ -94,9 +94,9 @@
 | Keyword | Intenção | Competição | Prioridade | Status |
 |---------|----------|-----------|-----------|--------|
 | como otimizar perfil LinkedIn para vendas | Informacional | Alta | Média | pendente |
-| LinkedIn headline para vendas B2B | Informacional | Média | Alta | pendente |
+| LinkedIn headline para vendas B2B | Informacional | Média | Alta | publicado (`/pt-br/blog/linkedin-headline-para-vendas-b2b`) |
 | foto de perfil LinkedIn profissional | Informacional | Alta | Baixa | pendente |
-| LinkedIn about section exemplos para vendedores | Informacional | Baixa | Alta | pendente |
+| LinkedIn about section exemplos para vendedores | Informacional | Baixa | Alta | publicado (`/pt-br/blog/linkedin-about-section-exemplos-para-vendedores`) |
 | banner LinkedIn perfil de vendas | Informacional | Baixa | Média | pendente |
 
 ---
@@ -122,7 +122,7 @@
 | melhores ferramentas prospecção LinkedIn 2025 | Comercial | Alta | Alta | pendente |
 | Dux-Soup alternativas | Comercial | Baixa | Média | pendente |
 | LinkedIn vs email para prospecção B2B | Informacional | Baixa | Alta | publicado (`/pt-br/blog/linkedin-vs-email-prospeccao`) |
-| WhatsApp vs LinkedIn para prospecção B2B | Informacional | Muito Baixa | Alta | pendente |
+| WhatsApp vs LinkedIn para prospecção B2B | Informacional | Muito Baixa | Alta | publicado (`/pt-br/blog/whatsapp-vs-linkedin-para-prospeccao-b2b`) |
 
 ---
 

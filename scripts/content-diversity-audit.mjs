@@ -30,8 +30,10 @@ const HOWTO_SLUGS = new Set([
   'linkedin-para-prospeccao-b2b-guia-definitivo', 'guia-completo-social-selling-linkedin',
   'social-selling-b2b-metodologia-completa-linkedin-2026', 'cadencia-de-prospeccao-linkedin-b2b',
   'como-qualificar-leads-no-linkedin-com-ia', 'como-personalizar-mensagens-linkedin-em-escala',
+  'filtros-avancados-linkedin-sales-navigator', 'como-exportar-leads-sales-navigator',
   // EN
   'linkedin-prospecting-guide', 'linkedin-follow-up-b2b',
+  'linkedin-b2b-prospecting-cadence',
 ])
 const DEFINED_TERMS = new Set([
   // PT-BR
@@ -45,9 +47,9 @@ const COMPARISON_SLUGS = new Set([
   // PT-BR
   'chattie-vs-expandi', 'chattie-vs-waalaxy', 'expandi-vs-waalaxy',
   'linkedin-vs-email-prospeccao', 'linkedin-sales-navigator-vs-gratuito',
-  'ai-sdr-vs-sdr-humano',
+  'ai-sdr-vs-sdr-humano', 'whatsapp-vs-linkedin-para-prospeccao-b2b',
   // EN
-  'ai-sdr-vs-human-sdr',
+  'ai-sdr-vs-human-sdr', 'expandi-vs-waalaxy',
 ])
 
 // ─── Parse frontmatter ──────────────────────────────────────────────────────
