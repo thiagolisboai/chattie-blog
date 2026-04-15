@@ -28,13 +28,17 @@ enSlug: ""
 ---
 ```
 
-## Categorias válidas
+## Categorias válidas e quando usar cada uma
 
-- `social-selling`
-- `linkedin`
-- `b2b`
-- `ia-para-vendas`
-- `chattie`
+| Categoria | Usar quando o post é sobre... |
+| --- | --- |
+| `linkedin` | Táticas, how-to, perfil, Sales Navigator, recursos nativos do LinkedIn |
+| `social-selling` | Metodologia, pilares, índice SSI, relacionamento vs. spam |
+| `comparativos` | Comparação direta de ferramentas (Chattie vs X, melhores ferramentas de Y) |
+| `ia-para-vendas` | IA, AI SDR, automação, qualificação com IA, ferramentas de IA para SDR |
+| `chattie` | Casos de uso do Chattie, ROI, founders usando Chattie |
+
+**REGRA:** posts com "IA", "AI SDR" ou "inteligência artificial" no título → `ia-para-vendas`. Posts sobre "ferramentas" que comparam múltiplos produtos → `comparativos`. Não usar `social-selling` como default quando outra categoria for mais específica.
 
 ## Regras de slug
 

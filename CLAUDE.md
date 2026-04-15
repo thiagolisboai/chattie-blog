@@ -134,6 +134,30 @@ node scripts/content-diversity-audit.mjs
 - Novos posts de conceito ("o que é X") devem ser adicionados a `DEFINED_TERMS` em `json-ld.tsx`
 - Novos guias passo a passo devem ser adicionados a `HOWTO_SLUGS` em `json-ld.tsx`
 - Novos comparativos devem ser adicionados a `COMPARISON_SLUGS` em `json-ld.tsx`
+- **Todo post com `structuredData: "faq"` deve ser adicionado a `FAQ_DATA` em `json-ld.tsx`** com mínimo 3 Q&As extraídas literalmente da seção `## FAQ` do post
+
+### Checklist pós-publicação obrigatório (json-ld.tsx)
+
+Após publicar qualquer post novo, verificar e atualizar `components/json-ld.tsx`:
+
+| Condição | Ação em json-ld.tsx |
+| --- | --- |
+| `structuredData: "faq"` | Adicionar entrada em `FAQ_DATA` com as Q&As do post |
+| Post tipo "o que é X" (conceitual) | Adicionar entrada em `DEFINED_TERMS` |
+| Post tipo guia passo a passo (HowTo) | Adicionar entrada em `HOWTO_SLUGS` com os passos |
+| `structuredData: "comparison"` | Adicionar entrada em `COMPARISON_SLUGS` com os itens |
+
+**Nenhum post fica sem entrada em `FAQ_DATA` se tiver `structuredData: "faq"`.** Ignorar esse passo resulta em FAQPage schema vazio — sem rich result no Google.
+
+### Regra de tags — normalização
+
+- Nunca usar `"ia"` e `"inteligência-artificial"` na mesma tag list
+- Usar sempre a forma completa: `"inteligência-artificial"` (PT-BR) / `"artificial-intelligence"` (EN)
+- `"ia"` como tag standalone é permitido APENAS se não houver `"inteligência-artificial"` na mesma lista
+
+### Tabelas comparativas em posts de ferramentas
+
+Todo post da categoria `comparativos` **ou** que liste/compare ≥ 3 ferramentas deve incluir uma tabela markdown com colunas relevantes (tipo, risco, preço, melhor para). Isso se aplica mesmo que o `structuredData` seja `"faq"` (ex: posts de "melhores ferramentas de X").
 
 ### Metas de distribuição de categorias
 
