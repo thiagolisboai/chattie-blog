@@ -24,7 +24,7 @@
 | pitch de prospecção LinkedIn | Informacional | Média-Baixa | Alta | publicado (`/pt-br/blog/pitch-de-prospeccao-linkedin`) |
 | prospecção ativa no LinkedIn | Informacional | Alta | Média | pendente |
 | LinkedIn para geração de leads B2B | Informacional | Alta | Média | pendente |
-| como aumentar taxa de resposta LinkedIn | Informacional | Baixa | Alta | pendente |
+| como aumentar taxa de resposta LinkedIn | Informacional | Baixa | Alta | publicado (`/pt-br/blog/como-aumentar-taxa-de-resposta-linkedin`) |
 
 **Ângulo diferenciador:** focar em "prospecção com IA" e "sem spam" — concorrentes (Agendor, ExactSales) cobrem o básico mas ignoram automação responsável.
 

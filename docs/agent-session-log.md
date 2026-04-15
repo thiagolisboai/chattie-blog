@@ -35,3 +35,9 @@ Histórico de posts gerados pelo Dexter, agente de conteúdo autônomo do Chatti
 - Slug: social-selling-linkedin-outbound-best-practices
 - Palavras: ~3074
 - Backlinks: como-abordar-prospects-no-linkedin, pitch-de-prospeccao-linkedin, social-selling-b2b-metodologia-completa-linkedin-2026
+
+## 2026-04-15 — "Como Aumentar a Taxa de Resposta no LinkedIn: Guia Técnico para B2B em 2026"
+- Keyword: como aumentar taxa de resposta LinkedIn
+- Slug: como-aumentar-taxa-de-resposta-linkedin
+- Palavras: ~2529
+- Backlinks: como-abordar-prospects-no-linkedin, como-otimizar-perfil-linkedin-para-vendas-b2b, ferramentas-para-prospeccao-no-linkedin
