@@ -9,6 +9,7 @@ import { BlogNav } from '@/components/blog-nav'
 import { BlogFooter } from '@/components/blog-footer'
 import { RevealObserver } from '@/components/reveal-observer'
 import { ScrollToTopButton } from '@/components/post-ui'
+import { AuthorPersonSchema } from '@/components/author-schema'
 import type { PostFrontmatter } from '@/lib/posts-pt'
 
 interface Props {
@@ -53,6 +54,7 @@ export default async function AuthorPageEn({ params }: Props) {
 
   return (
     <>
+      <AuthorPersonSchema author={author} lang="en" />
       <BlogNav lang="en" />
       <RevealObserver />
       <ScrollToTopButton />
@@ -150,6 +152,7 @@ export default async function AuthorPageEn({ params }: Props) {
                   href={author.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-ga-cta="author-linkedin-en"
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
                     fontSize: '0.82rem', fontWeight: 800,
@@ -205,6 +208,112 @@ export default async function AuthorPageEn({ params }: Props) {
               </span>
               <span style={{ fontSize: '0.78rem', color: 'rgba(250,251,243,0.45)', marginLeft: '0.4rem' }}>categories</span>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* EEAT: Expanded bio + expertise areas + credentials */}
+      <div style={{ background: '#FAFBF3', borderBottom: '2px solid #000' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto', padding: '3rem 1.5rem', display: 'grid', gridTemplateColumns: '1fr auto', gap: '3rem', alignItems: 'start' }}>
+
+          {/* Left: expanded bio + expertise tags */}
+          <div>
+            <p style={{
+              fontFamily: "'Sherika', sans-serif",
+              fontWeight: 700,
+              fontSize: '0.75rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.13em',
+              color: '#2F6451',
+              marginBottom: '0.85rem',
+            }}>
+              About the author
+            </p>
+            <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#000', marginBottom: '1.75rem', maxWidth: 580 }}>
+              {author.bioExpanded}
+            </p>
+
+            {/* Expertise tags */}
+            <p style={{
+              fontFamily: "'Sherika', sans-serif",
+              fontWeight: 700,
+              fontSize: '0.7rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              color: '#2F6451',
+              marginBottom: '0.6rem',
+            }}>
+              Areas of expertise
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
+              {author.expertiseAreas.map((area) => (
+                <span
+                  key={area}
+                  style={{
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    background: '#000',
+                    color: '#FAFBF3',
+                    padding: '0.3rem 0.7rem',
+                    border: '2px solid #000',
+                    fontFamily: "'Sherika', sans-serif",
+                  }}
+                >
+                  {area}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Right: credentials card */}
+          <div style={{
+            minWidth: 260,
+            background: '#fff',
+            border: '2px solid #000',
+            boxShadow: '4px 4px 0 #000',
+            padding: '1.5rem',
+            flexShrink: 0,
+          }}>
+            <p style={{
+              fontFamily: "'Sherika', sans-serif",
+              fontWeight: 900,
+              fontSize: '0.78rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.12em',
+              marginBottom: '1.1rem',
+              color: '#000',
+            }}>
+              Credentials
+            </p>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              {author.credentials.map((c) => (
+                <li key={c.title} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
+                  <span style={{ color: '#66BAC6', fontWeight: 900, flexShrink: 0, marginTop: '0.1em', fontSize: '1rem' }}>→</span>
+                  {c.url ? (
+                    <a
+                      href={c.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        fontSize: '0.85rem',
+                        color: '#000',
+                        fontWeight: 600,
+                        textDecoration: 'underline',
+                        textDecorationColor: '#66BAC6',
+                        textUnderlineOffset: '3px',
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {c.title}
+                    </a>
+                  ) : (
+                    <span style={{ fontSize: '0.85rem', color: '#000', fontWeight: 600, lineHeight: 1.5 }}>
+                      {c.title}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

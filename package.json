@@ -12,6 +12,7 @@
   "dependencies": {
     "@keystatic/core": "^0.5.50",
     "@keystatic/next": "^5.0.4",
+    "@vercel/speed-insights": "^2.0.0",
     "gray-matter": "^4.0.3",
     "next": "15.3.9",
     "next-mdx-remote": "^6.0.0",

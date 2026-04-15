@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import { Barlow } from 'next/font/google'
 import Script from 'next/script'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { SkipLink } from '@/components/skip-link'
 import { HtmlLang } from '@/components/html-lang'
 import { WebsiteSchema } from '@/components/website-schema'
+import { GA4Events } from '@/components/ga4-events'
 import './globals.css'
 
 const barlow = Barlow({
@@ -51,8 +53,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <WebsiteSchema />
         <HtmlLang />
         <SkipLink />
+        <GA4Events />
         <div className="grain-overlay" aria-hidden="true" />
         {children}
+        <SpeedInsights />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-8JMPF0BR2R"
           strategy="afterInteractive"
