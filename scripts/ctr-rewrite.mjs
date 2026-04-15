@@ -186,8 +186,11 @@ function applyFrontmatterUpdate(filePath, updates) {
 
 // ─── Claude API call ─────────────────────────────────────────────────────────
 
-async function generateRewrite(lang, currentTitle, currentDescription, impressions, avgPosition) {
+async function generateRewrite(lang, currentTitle, currentDescription, impressions, avgPosition, topQueries = []) {
   const isptBR = lang === 'pt-BR'
+  const queriesNote = topQueries.length > 0
+    ? topQueries.map(q => `"${q}"`).join(', ')
+    : null
 
   const systemPrompt = isptBR
     ? `Você é um especialista em SEO e copywriting para B2B brasileiro. Você reescreve titles e meta descriptions de posts de blog para maximizar CTR no Google Search.
@@ -195,7 +198,8 @@ async function generateRewrite(lang, currentTitle, currentDescription, impressio
 Regras absolutas:
 - Title: máximo 65 caracteres. Incluir 1 número específico se possível. Começar com keyword ou dado concreto.
 - Description: máximo 155 caracteres. Terminar com CTA implícita ou benefício claro. Sem reticências.
-- Manter a keyword principal. Não inventar fatos.
+- CRÍTICO: A página já ranqueia para as queries informadas. O novo title DEVE conter a keyword principal dessas queries. Remover ou substituir a keyword primária destrói o ranqueamento existente.
+- Não inventar fatos.
 - Tom: direto, técnico, sem floreio, sem motivação vazia.
 - Responder APENAS no formato JSON pedido — sem explicações.`
     : `You are an SEO and copywriting specialist for B2B content. You rewrite blog post titles and meta descriptions to maximize CTR on Google Search.
@@ -203,7 +207,8 @@ Regras absolutas:
 Absolute rules:
 - Title: maximum 65 characters. Include 1 specific number if possible. Start with keyword or concrete data.
 - Description: maximum 155 characters. End with implicit CTA or clear benefit. No ellipsis.
-- Keep the main keyword. Do not invent facts.
+- CRITICAL: The page already ranks for the queries listed below. The new title MUST contain the primary keyword phrase from those queries. Removing or replacing it destroys existing rankings.
+- Do not invent facts.
 - Tone: direct, technical, no fluff.
 - Respond ONLY in the requested JSON format — no explanations.`
 
@@ -211,18 +216,20 @@ Absolute rules:
     ? `Post com CTR abaixo do esperado no Google:
 - Impressões: ${impressions}
 - Posição média: ${avgPosition.toFixed(1)}
+- Queries que já geram ranqueamento: ${queriesNote ?? '(não disponível)'}
 - Title atual (${currentTitle.length} chars): "${currentTitle}"
 - Description atual (${currentDescription.length} chars): "${currentDescription}"
 
-Reescreva para aumentar o CTR. Retorne JSON exato:
+Reescreva para aumentar o CTR mantendo a keyword principal. Retorne JSON exato:
 {"title": "...", "description": "..."}`
     : `Post with below-average CTR on Google:
 - Impressions: ${impressions}
 - Average position: ${avgPosition.toFixed(1)}
+- Queries already driving rankings: ${queriesNote ?? '(not available)'}
 - Current title (${currentTitle.length} chars): "${currentTitle}"
 - Current description (${currentDescription.length} chars): "${currentDescription}"
 
-Rewrite to increase CTR. Return exact JSON:
+Rewrite to increase CTR while preserving the primary keyword. Return exact JSON:
 {"title": "...", "description": "..."}`
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -290,9 +297,33 @@ for (const row of candidates) {
     continue
   }
 
+  // Get top queries driving impressions for this specific page
+  let topQueries = []
+  try {
+    const pageQueryRows = await queryGsc({
+      startDate:  PERIOD_START,
+      endDate:    PERIOD_END,
+      dimensions: ['query'],
+      dimensionFilterGroups: [{
+        filters: [{
+          dimension: 'page',
+          operator:  'equals',
+          expression: url,
+        }],
+      }],
+    })
+    topQueries = pageQueryRows
+      .sort((a, b) => b.impressions - a.impressions)
+      .slice(0, 3)
+      .map(r => r.keys[0])
+  } catch (_) {
+    // Non-fatal — continue without query context
+  }
+
   console.log(`\n✏️  Reescrevendo: ${meta.slug}`)
   console.log(`   Title atual: "${currentTitle}"`)
   console.log(`   Desc  atual: "${currentDesc}"`)
+  if (topQueries.length > 0) console.log(`   Queries top: ${topQueries.map(q => `"${q}"`).join(', ')}`)
 
   let rewrite
   try {
@@ -302,6 +333,7 @@ for (const row of candidates) {
       currentDesc,
       row.impressions,
       row.position,
+      topQueries,
     )
   } catch (err) {
     console.error(`   ❌ Erro ao chamar Claude: ${err.message}`)

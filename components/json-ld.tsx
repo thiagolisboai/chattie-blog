@@ -142,6 +142,77 @@ const HOWTO_SLUGS: Record<string, { steps: string[] }> = {
       'Revise como prospect: "Se eu recebesse isso, saberia que foi escrita especificamente para mim?"',
     ],
   },
+  'como-otimizar-perfil-linkedin-para-vendas-b2b': {
+    steps: [
+      'Audite cada seção do perfil com a perspectiva do seu comprador ideal — não de um recrutador',
+      'Reescreva o headline para comunicar o resultado que você entrega, não o cargo que ocupa',
+      'Preencha a seção "Sobre" respondendo: qual dor você resolve, para quem e o que te diferencia',
+      'Configure a seção "Em Destaque" com um case study, conteúdo de valor ou recurso relevante para o ICP',
+      'Substitua fotos genéricas por foto profissional e banner que transmitam credibilidade visual',
+      'Reescreva experiências focando em impacto e resultados mensuráveis, não em responsabilidades',
+    ],
+  },
+  'como-abordar-prospects-no-linkedin': {
+    steps: [
+      'Pesquise o prospect antes de qualquer contato: leia posts recentes, atividade e perfil',
+      'Envie pedido de conexão personalizado com contexto específico — nunca em branco ou com pitch',
+      'Aguarde a conexão ser aceita e espere 24–48h antes de enviar a primeira mensagem',
+      'Abra a conversa com referência ao que motivou a conexão — sem oferta direta',
+      'Mantenha cadência estruturada com follow-ups que adicionam valor, não pressão',
+      'Se o prospect não responder, faça follow-up com novo gatilho ou insight — nunca com "só verificando"',
+    ],
+  },
+  'mensagem-de-conexao-linkedin-exemplos': {
+    steps: [
+      'Pesquise o prospect e identifique um contexto específico para a abertura da mensagem',
+      'Escreva a mensagem com menos de 300 caracteres — claro, direto e sem pitch de produto',
+      'Abra com referência específica: post recente, marco da empresa ou contexto compartilhado',
+      'Explique brevemente por que quer se conectar, sem pressionar para uma reunião',
+      'Revise como receptor: "Eu aceitaria este convite se recebesse essa mensagem?"',
+      'Após a conexão aceita, registre no CRM social e inicie follow-up em 24–48h',
+    ],
+  },
+  'pitch-de-prospeccao-linkedin': {
+    steps: [
+      'Defina o ICP com clareza antes de escrever qualquer mensagem de prospecção',
+      'Pesquise o problema específico do prospect — personalize a dor, não o nome',
+      'Estruture o pitch em 3 partes: abertura com contexto, ponte de valor, CTA de baixo compromisso',
+      'Ajuste o tamanho ao canal: máx 300 chars no convite de conexão, até 5 parágrafos curtos no DM',
+      'Personalize a abertura de cada mensagem — nunca replique um template palavra por palavra',
+      'Meça a taxa de resposta e refine o pitch com base nos dados reais de cada ciclo',
+    ],
+  },
+  'linkedin-para-prospeccao-b2b-guia-definitivo': {
+    steps: [
+      'Otimize o perfil LinkedIn para atrair o comprador ideal antes de qualquer prospecção ativa',
+      'Defina e segmente seu ICP com filtros avançados do LinkedIn ou Sales Navigator',
+      'Publique conteúdo relevante 2–3x por semana para aquecer leads antes da abordagem direta',
+      'Aborde prospects com contexto: pedido de conexão personalizado, sem pitch inicial',
+      'Execute cadência de mensagens com follow-ups que adicionam valor — não de pressão',
+      'Integre LinkedIn com CRM social para rastrear cada conversa e não perder oportunidades',
+    ],
+  },
+  'guia-completo-social-selling-linkedin': {
+    steps: [
+      'Otimize o perfil para o comprador ideal: headline, "Sobre" e destaque voltados para o ICP',
+      'Defina 3–4 pilares de conteúdo e publique 2–3x por semana com ponto de vista claro',
+      'Identifique 20–30 contas-alvo por trimestre e engaje nos conteúdos delas antes de abordar',
+      'Envie pedidos de conexão personalizados com referência específica ao contexto do prospect',
+      'Inicie conversas após a conexão com perguntas relevantes — sem pitch na primeira mensagem',
+      'Nutra relacionamentos com follow-ups de valor ao longo de semanas ou meses',
+    ],
+  },
+  'social-selling-b2b-metodologia-completa-linkedin-2026': {
+    steps: [
+      'Defina o ICP operacional e transforme em filtros precisos no LinkedIn ou Sales Navigator',
+      'Otimize o perfil para o ICP: headline, seção "Sobre" e destaque voltados para o comprador',
+      'Publique conteúdo com ponto de vista claro 2–3x por semana dentro dos pilares temáticos definidos',
+      'Engaje estrategicamente nos posts dos prospects por 2–4 semanas antes do outreach direto',
+      'Execute outreach com o framework PREC: Pesquisa, Referência, Engajamento, CTA de baixo compromisso',
+      'Siga a cadência de 5 touchpoints e qualifique prospects em duas camadas: antes e após o contato',
+      'Use CRM de social selling para manter histórico de conversas e follow-ups precisos no tempo certo',
+    ],
+  },
 }
 
 // FAQ data for posts with structuredData: "faq"
@@ -410,6 +481,22 @@ const DEFINED_TERMS: Record<string, { name: string; description: string }> = {
     name: 'AI SDR',
     description:
       'AI SDR (AI Sales Development Representative) é um sistema que usa inteligência artificial para apoiar tarefas de prospecção e qualificação de leads — identificando prospects com perfil ideal, sugerindo o timing certo de abordagem e organizando o pipeline de conversas — mantendo o vendedor humano no controle de cada interação.',
+  },
+  // EN
+  'what-is-an-ai-sdr': {
+    name: 'AI SDR',
+    description:
+      'An AI SDR (AI Sales Development Representative) is a system that uses artificial intelligence to support prospecting and lead qualification tasks — identifying prospects matching the ideal customer profile, suggesting optimal outreach timing, and organizing conversation pipelines — while keeping the human seller in control of every interaction.',
+  },
+  'what-is-social-selling-and-why-it-matters-in-b2b': {
+    name: 'Social Selling',
+    description:
+      'Social selling is the practice of using professional social networks, especially LinkedIn, to build relationships, generate trust, and open B2B sales opportunities organically — without relying on cold calls or unsolicited message blasts. It works by positioning salespeople as credible, visible, and useful to buyers before they are ready to purchase.',
+  },
+  'what-is-a-social-crm-and-why-it-matters-for-linkedin-b2b': {
+    name: 'Social CRM',
+    description:
+      'A social CRM is a category of tool that organizes conversations, interaction history, and interest signals in digital environments like LinkedIn — enabling precise follow-ups and commercial relationship management in the channels where buyers are already active, complementing traditional CRM systems that were not built for social-first prospecting.',
   },
 }
 
