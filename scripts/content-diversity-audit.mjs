@@ -56,7 +56,7 @@ const COMPARISON_SLUGS = new Set([
 // ─── Parse frontmatter ──────────────────────────────────────────────────────
 
 function parseFm(filePath) {
-  const raw = fs.readFileSync(filePath, 'utf-8')
+  const raw = fs.readFileSync(filePath, 'utf-8').replace(/\r\n/g, '\n')
   const match = raw.match(/^---\n([\s\S]*?)\n---/)
   if (!match) return {}
   const fm = {}

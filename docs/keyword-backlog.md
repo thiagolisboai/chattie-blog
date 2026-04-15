@@ -49,7 +49,7 @@
 
 | Keyword | Intenção | Competição | Prioridade | Status |
 |---------|----------|-----------|-----------|--------|
-| ferramentas de automação LinkedIn 2025 | Informacional/Comercial | Alta | Alta | pendente |
+| ferramentas de automação LinkedIn 2025 | Informacional/Comercial | Alta | Alta | publicado (`/pt-br/blog/ferramentas-de-automacao-linkedin-2026`) |
 | AI SDR LinkedIn o que é | Informacional | Baixa | Alta | pendente |
 | IA para prospecção B2B | Informacional | Média | Alta | pendente |
 | automação de mensagens LinkedIn segura | Informacional | Baixa | Alta | publicado (`/pt-br/blog/automacao-mensagens-linkedin-segura`) |

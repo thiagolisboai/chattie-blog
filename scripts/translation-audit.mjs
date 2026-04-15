@@ -128,6 +128,7 @@ const PRIORITY = {
   'como-usar-ia-para-vendas-b2b-linkedin':                { priority: 'Alta',  enSlugSuggested: 'using-ai-for-b2b-sales-on-linkedin' },
   'melhores-ferramentas-prospeccao-linkedin-2026':        { priority: 'Alta',  enSlugSuggested: 'best-linkedin-prospecting-tools-2026' },
   'abm-no-linkedin-account-based-marketing':              { priority: 'Alta',  enSlugSuggested: 'account-based-marketing-on-linkedin' },
+  'ferramentas-de-automacao-linkedin-2026':               { priority: 'Alta',  enSlugSuggested: 'linkedin-automation-tools-2026' },
   // Other unpaired posts — ordered by SEO value
   'como-abordar-prospects-no-linkedin':                   { priority: 'Média', enSlugSuggested: 'how-to-reach-out-to-prospects-on-linkedin' },
   'como-aumentar-taxa-de-resposta-linkedin':              { priority: 'Média', enSlugSuggested: 'how-to-increase-linkedin-reply-rate' },
