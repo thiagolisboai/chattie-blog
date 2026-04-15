@@ -60,10 +60,11 @@ const enSlugs = new Set(enPosts.map((p) => p.slug))
 
 // ─── Classify ───────────────────────────────────────────────────────────────
 
-const paired = []        // both sides linked correctly
-const ptNeedsEn = []     // PT-BR with no EN pair
-const enNeedsPt = []     // EN with no PT-BR pair
-const brokenLinks = []   // slug reference points to non-existent post
+const paired = []          // both sides linked correctly
+const ptNeedsEn = []       // PT-BR with no EN pair
+const enNeedsPt = []       // EN with no PT-BR pair
+const brokenLinks = []     // slug reference points to non-existent post
+const identicalSlugs = []  // paired posts where PT slug === EN slug (SEO risk)
 
 for (const pt of ptPosts) {
   const enSlug = pt.enSlug
@@ -78,6 +79,9 @@ for (const pt of ptPosts) {
       brokenLinks.push({ post: enSlug, lang: 'en', field: 'ptSlug', expected: pt.slug, found: enPost.ptSlug || '(empty)' })
     } else {
       paired.push({ pt: pt.slug, en: enSlug })
+      if (pt.slug === enSlug) {
+        identicalSlugs.push({ slug: pt.slug, ptUrl: `https://trychattie.com/pt-br/blog/${pt.slug}`, enUrl: `https://trychattie.com/blog/${enSlug}` })
+      }
     }
   }
 }
@@ -114,6 +118,40 @@ const PRIORITY = {
   'como-founders-usam-o-chattie':             { priority: 'Baixa', enSlugSuggested: 'how-founders-use-chattie' },
   'como-o-chattie-se-paga':                   { priority: 'Baixa', enSlugSuggested: 'how-chattie-pays-for-itself' },
   'linkedin-para-vendas':                     { priority: 'Baixa', enSlugSuggested: 'linkedin-for-sales' },
+  // Phase C — social selling, IA, comparativos, ABM
+  // NOTE: EN slugs deliberately differ from PT-BR slugs to avoid identical-slug pairs
+  'social-selling-index-linkedin':                        { priority: 'Alta',  enSlugSuggested: 'linkedin-social-selling-index-ssi-guide' },
+  'como-construir-autoridade-linkedin-b2b':               { priority: 'Alta',  enSlugSuggested: 'building-linkedin-authority-for-b2b' },
+  'social-selling-vs-spam-linkedin':                      { priority: 'Alta',  enSlugSuggested: 'linkedin-social-selling-vs-spam' },
+  'linkedin-para-founders-b2b':                           { priority: 'Alta',  enSlugSuggested: 'linkedin-for-b2b-founders' },
+  'automacao-mensagens-linkedin-segura':                  { priority: 'Alta',  enSlugSuggested: 'safe-linkedin-message-automation' },
+  'como-usar-ia-para-vendas-b2b-linkedin':                { priority: 'Alta',  enSlugSuggested: 'using-ai-for-b2b-sales-on-linkedin' },
+  'melhores-ferramentas-prospeccao-linkedin-2026':        { priority: 'Alta',  enSlugSuggested: 'best-linkedin-prospecting-tools-2026' },
+  'abm-no-linkedin-account-based-marketing':              { priority: 'Alta',  enSlugSuggested: 'account-based-marketing-on-linkedin' },
+  // Other unpaired posts — ordered by SEO value
+  'como-abordar-prospects-no-linkedin':                   { priority: 'Média', enSlugSuggested: 'how-to-reach-out-to-prospects-on-linkedin' },
+  'como-aumentar-taxa-de-resposta-linkedin':              { priority: 'Média', enSlugSuggested: 'how-to-increase-linkedin-reply-rate' },
+  'como-escrever-mensagem-linkedin-sem-parecer-vendedor': { priority: 'Média', enSlugSuggested: 'linkedin-messages-that-dont-sound-salesy' },
+  'como-exportar-leads-sales-navigator':                  { priority: 'Média', enSlugSuggested: 'how-to-export-leads-from-sales-navigator' },
+  'como-identificar-decisores-no-linkedin':               { priority: 'Média', enSlugSuggested: 'how-to-find-decision-makers-on-linkedin' },
+  'ferramentas-de-ia-para-sdr':                           { priority: 'Média', enSlugSuggested: 'ai-tools-for-sdrs' },
+  'filtros-avancados-linkedin-sales-navigator':           { priority: 'Média', enSlugSuggested: 'advanced-linkedin-sales-navigator-filters' },
+  'ia-para-vendas-b2b-no-linkedin-guia-completo-2026':   { priority: 'Média', enSlugSuggested: 'ai-for-linkedin-b2b-sales-complete-guide-2026' },
+  'linkedin-about-section-exemplos-para-vendedores':      { priority: 'Média', enSlugSuggested: 'linkedin-about-section-examples-for-salespeople' },
+  'linkedin-headline-para-vendas-b2b':                    { priority: 'Média', enSlugSuggested: 'linkedin-headline-for-b2b-sales' },
+  'linkedin-para-prospeccao-b2b-guia-definitivo':         { priority: 'Média', enSlugSuggested: 'linkedin-b2b-prospecting-complete-guide' },
+  'linkedin-sales-navigator-vale-a-pena':                 { priority: 'Média', enSlugSuggested: 'is-linkedin-sales-navigator-worth-it' },
+  'linkedin-sales-navigator-vs-gratuito':                 { priority: 'Média', enSlugSuggested: 'linkedin-sales-navigator-vs-free-account' },
+  'linkedin-vs-email-prospeccao':                         { priority: 'Média', enSlugSuggested: 'linkedin-vs-email-for-b2b-prospecting' },
+  'mensagem-de-conexao-linkedin-exemplos':                { priority: 'Média', enSlugSuggested: 'linkedin-connection-message-examples' },
+  'mensagem-de-reconexao-linkedin':                       { priority: 'Média', enSlugSuggested: 'linkedin-reconnection-message-templates' },
+  'mensagem-inmail-linkedin-exemplos':                    { priority: 'Média', enSlugSuggested: 'linkedin-inmail-message-examples' },
+  'pitch-de-prospeccao-linkedin':                         { priority: 'Média', enSlugSuggested: 'linkedin-prospecting-pitch-templates' },
+  'social-selling-b2b-metodologia-completa-linkedin-2026':{ priority: 'Média', enSlugSuggested: 'linkedin-b2b-social-selling-methodology-2026' },
+  // NOTE: slug 'social-selling-linkedin-outbound-best-practices' is PT-BR with English-looking slug
+  // EN version MUST use a different slug to avoid identical pair
+  'social-selling-linkedin-outbound-best-practices':      { priority: 'Média', enSlugSuggested: 'linkedin-social-selling-outbound-best-practices-2026' },
+  'whatsapp-vs-linkedin-para-prospeccao-b2b':             { priority: 'Baixa', enSlugSuggested: 'whatsapp-vs-linkedin-for-b2b-prospecting' },
 }
 
 // ─── Output ─────────────────────────────────────────────────────────────────
@@ -141,6 +179,18 @@ if (brokenLinks.length > 0) {
   console.log(`❌  Links quebrados (corrigir primeiro)`)
   brokenLinks.forEach((b) => {
     console.log(`    [${b.lang}] ${b.post} → ${b.field}: "${b.target || b.found}" (esperado: "${b.expected || 'arquivo existente'}")`)
+  })
+  console.log('')
+}
+
+if (identicalSlugs.length > 0) {
+  console.log(`⚠️   Slugs idênticos PT-BR/EN (risco de sinalização duplicata por ferramentas SEO)`)
+  console.log(`    Estes pares são tecnicamente corretos (URLs distintos, hreflang OK) mas`)
+  console.log(`    devem ser aceitos conscientemente. Aceitável apenas para nomes de produtos/ferramentas.`)
+  identicalSlugs.forEach((p) => {
+    console.log(`    slug: "${p.slug}"`)
+    console.log(`      PT-BR: ${p.ptUrl}`)
+    console.log(`      EN:    ${p.enUrl}`)
   })
   console.log('')
 }

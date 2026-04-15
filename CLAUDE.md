@@ -242,6 +242,31 @@ Adaptar (não traduzir): substituir exemplos BR por globais, ajustar tom, verifi
 - `canonicalUrl`: `https://trychattie.com/blog/[slug]`
 - `ptSlug`: slug do post equivalente em PT-BR (para hreflang)
 
+## Regra de slugs EN — prevenção de slugs idênticos
+
+**O slug EN NUNCA deve ser idêntico ao slug PT-BR do par**, com exceção de nomes próprios de ferramentas/produtos que não têm tradução (ex: `expandi-vs-waalaxy`, `chattie-vs-expandi`).
+
+**Por que importa:** slugs idênticos em coleções diferentes fazem ferramentas de auditoria SEO (Screaming Frog, Ahrefs, etc.) sinalizarem conteúdo duplicado potencial. A infraestrutura técnica (hreflang, canonical, `lang` HTML) está correta — mas a prevenção é mais barata que a justificativa.
+
+**Regra prática:** muitos posts PT-BR usam termos em inglês no slug como empréstimos (`social-selling-`, `follow-up-`, `linkedin-`, `abm-`). Quando o PT-BR usa esses termos, o EN deve usar uma estrutura de frase diferente, não apenas remover os acentos.
+
+**Exemplos de slugs a evitar:**
+
+| PT-BR slug | EN slug ERRADO | EN slug CORRETO |
+|-----------|----------------|-----------------|
+| `social-selling-index-linkedin` | `social-selling-index-linkedin` (idêntico!) | `linkedin-social-selling-index-ssi-guide` |
+| `social-selling-vs-spam-linkedin` | `social-selling-vs-spam-linkedin` | `linkedin-social-selling-vs-spam` |
+| `follow-up-linkedin-b2b` | `follow-up-linkedin-b2b` | `linkedin-follow-up-b2b` ✅ (já usado) |
+| `melhores-ferramentas-prospeccao-linkedin-2026` | `melhores-ferramentas-prospeccao-linkedin-2026` | `best-linkedin-prospecting-tools-2026` |
+
+**Verificação obrigatória antes de criar post EN:**
+
+```bash
+node scripts/translation-audit.mjs
+```
+
+Se aparecer na seção `⚠️ Slugs idênticos`, o slug EN deve ser corrigido antes do commit.
+
 ## GEO obrigatório (para ser citado por LLMs)
 
 - Citar dados com fonte e data: "Segundo [fonte], em [ano]..."
