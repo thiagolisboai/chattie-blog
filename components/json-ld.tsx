@@ -124,6 +124,24 @@ const HOWTO_SLUGS: Record<string, { steps: string[] }> = {
       'Use Chattie to automate reminders and keep conversation history organized',
     ],
   },
+  'como-qualificar-leads-no-linkedin-com-ia': {
+    steps: [
+      'Identifique os 5 sinais de prontidão de compra: atividade recente no perfil, mudança de cargo, engajamento com seu conteúdo, pergunta direta e velocidade de resposta',
+      'Classifique cada prospect em três tiers: Cold (1 sinal), Warm (2–3 sinais), Hot (4+ sinais)',
+      'Priorize o tempo de follow-up nos prospects Hot e Warm — não gaste energia em Cold sem gatilho novo',
+      'Use IA para agregar sinais de múltiplas fontes antes de cada abordagem',
+      'Registre o tier de cada prospect no CRM social e atualize conforme novos sinais surgem',
+    ],
+  },
+  'como-personalizar-mensagens-linkedin-em-escala': {
+    steps: [
+      'Construa um banco de contexto por prospect: post recente relevante, evento na empresa, histórico de interações anteriores',
+      'Separe o que é permanente (value proposition, prova social) do que é específico (abertura e ponte de contexto)',
+      'Escreva a abertura primeiro — a primeira frase decide se o prospect vai continuar lendo',
+      'Use IA para agregar contexto antes de escrever, não para gerar a mensagem final sem sua revisão',
+      'Revise como prospect: "Se eu recebesse isso, saberia que foi escrita especificamente para mim?"',
+    ],
+  },
 }
 
 // FAQ data for posts with structuredData: "faq"
@@ -366,6 +384,11 @@ const DEFINED_TERMS: Record<string, { name: string; description: string }> = {
     name: 'CRM Social',
     description:
       'CRM social é uma categoria de ferramenta que organiza conversas, histórico de interações e sinais de interesse em ambientes digitais como o LinkedIn, permitindo follow-ups precisos e gestão de relacionamentos comerciais em canais onde os compradores já estão ativos.',
+  },
+  'o-que-e-um-ai-sdr': {
+    name: 'AI SDR',
+    description:
+      'AI SDR (AI Sales Development Representative) é um sistema que usa inteligência artificial para apoiar tarefas de prospecção e qualificação de leads — identificando prospects com perfil ideal, sugerindo o timing certo de abordagem e organizando o pipeline de conversas — mantendo o vendedor humano no controle de cada interação.',
   },
 }
 
