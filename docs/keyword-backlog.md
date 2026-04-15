@@ -52,8 +52,8 @@
 | ferramentas de automação LinkedIn 2025 | Informacional/Comercial | Alta | Alta | pendente |
 | AI SDR LinkedIn o que é | Informacional | Baixa | Alta | pendente |
 | IA para prospecção B2B | Informacional | Média | Alta | pendente |
-| automação de mensagens LinkedIn segura | Informacional | Baixa | Alta | pendente |
-| como usar IA para vendas B2B LinkedIn | Informacional | Baixa | Alta | pendente |
+| automação de mensagens LinkedIn segura | Informacional | Baixa | Alta | publicado (`/pt-br/blog/automacao-mensagens-linkedin-segura`) |
+| como usar IA para vendas B2B LinkedIn | Informacional | Baixa | Alta | publicado (`/pt-br/blog/como-usar-ia-para-vendas-b2b-linkedin`) |
 | SDR com inteligência artificial | Informacional | Média | Alta | publicado (`/pt-br/blog/ferramentas-de-ia-para-sdr`) |
 | Chattie vs concorrentes | Comercial | Muito Baixa | Média | pendente |
 
@@ -82,10 +82,10 @@
 |---------|----------|-----------|-----------|--------|
 | social selling no LinkedIn | Informacional | Alta | Média | publicado (checar slug) |
 | o que é social selling | Informacional | Alta | Baixa | pendente |
-| social selling index LinkedIn | Informacional | Média | Alta | pendente |
-| como construir autoridade no LinkedIn B2B | Informacional | Média | Alta | pendente |
-| diferença entre social selling e spam | Informacional | Baixa | Alta | pendente |
-| LinkedIn para founders B2B | Informacional | Baixa | Alta | pendente |
+| social selling index LinkedIn | Informacional | Média | Alta | publicado (`/pt-br/blog/social-selling-index-linkedin`) |
+| como construir autoridade no LinkedIn B2B | Informacional | Média | Alta | publicado (`/pt-br/blog/como-construir-autoridade-linkedin-b2b`) |
+| diferença entre social selling e spam | Informacional | Baixa | Alta | publicado (`/pt-br/blog/social-selling-vs-spam-linkedin`) |
+| LinkedIn para founders B2B | Informacional | Baixa | Alta | publicado (`/pt-br/blog/linkedin-para-founders-b2b`) |
 
 ---
 
@@ -110,7 +110,7 @@
 | cadência de prospecção LinkedIn B2B | Informacional | Média-Baixa | Alta | publicado (`/pt-br/blog/cadencia-de-prospeccao-linkedin-b2b`) |
 | SPIN selling no LinkedIn | Informacional | Baixa | Média | pendente |
 | como identificar decisores no LinkedIn | Informacional | Baixa | Alta | publicado (`/pt-br/blog/como-identificar-decisores-no-linkedin`) |
-| ABM no LinkedIn account based marketing | Informacional | Média | Média | pendente |
+| ABM no LinkedIn account based marketing | Informacional | Média | Média | publicado (`/pt-br/blog/abm-no-linkedin-account-based-marketing`) |
 
 ---
 
@@ -119,7 +119,7 @@
 | Keyword | Intenção | Competição | Prioridade | Status |
 |---------|----------|-----------|-----------|--------|
 | Expandi vs Waalaxy comparativo | Comercial | Média | Alta | publicado (`/pt-br/blog/expandi-vs-waalaxy`) |
-| melhores ferramentas prospecção LinkedIn 2025 | Comercial | Alta | Alta | pendente |
+| melhores ferramentas prospecção LinkedIn 2025 | Comercial | Alta | Alta | publicado (`/pt-br/blog/melhores-ferramentas-prospeccao-linkedin-2026`) |
 | Dux-Soup alternativas | Comercial | Baixa | Média | pendente |
 | LinkedIn vs email para prospecção B2B | Informacional | Baixa | Alta | publicado (`/pt-br/blog/linkedin-vs-email-prospeccao`) |
 | WhatsApp vs LinkedIn para prospecção B2B | Informacional | Muito Baixa | Alta | publicado (`/pt-br/blog/whatsapp-vs-linkedin-para-prospeccao-b2b`) |

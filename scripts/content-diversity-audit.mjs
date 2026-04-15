@@ -48,6 +48,7 @@ const COMPARISON_SLUGS = new Set([
   'chattie-vs-expandi', 'chattie-vs-waalaxy', 'expandi-vs-waalaxy',
   'linkedin-vs-email-prospeccao', 'linkedin-sales-navigator-vs-gratuito',
   'ai-sdr-vs-sdr-humano', 'whatsapp-vs-linkedin-para-prospeccao-b2b',
+  'melhores-ferramentas-prospeccao-linkedin-2026',
   // EN
   'ai-sdr-vs-human-sdr', 'expandi-vs-waalaxy',
 ])
