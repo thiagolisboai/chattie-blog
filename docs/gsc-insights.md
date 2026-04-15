@@ -67,4 +67,4 @@ _Candidatos para reescrita de title, otimização ou remoção._
 4. **Revisar** `/blog/linkedin-social-selling-guide` — 298 impressões, 0 cliques
 
 ---
-_Gerado automaticamente por `scripts/gsc-report.mjs` em 15/04/2026, 11:54:23_
+_Gerado automaticamente por `scripts/gsc-report.mjs` em 14/04/2026, 21:47:33_
