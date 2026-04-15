@@ -419,6 +419,13 @@ const FAQ_DATA: Record<string, FaqItem[]> = {
     { q: 'Como saber se minha abordagem no LinkedIn está funcionando?', a: 'Monitore: taxa de aceite do convite (deve ficar acima de 30%), taxa de resposta à primeira mensagem (meta: acima de 15%), e quantas conversas avançam para reunião. Se algum número está muito baixo, o problema está nessa etapa específica.' },
     { q: 'Quantas mensagens de follow-up são aceitáveis antes de desistir de um prospect?', a: 'Em geral, 2 a 3 follow-ups são suficientes, com espaçamento de 5 a 10 dias entre cada um. Após o terceiro sem resposta, pause por 30 dias e tente com um ângulo completamente diferente.' },
   ],
+  // ── AI SDR vs SDR Humano PT-BR ────────────────────────────────────────────
+  'ai-sdr-vs-sdr-humano': [
+    { q: 'IA vai substituir SDRs em vendas B2B complexas?', a: 'Em vendas B2B com ticket médio-alto, ciclos longos e múltiplos decisores, não. IA substitui as partes repetitivas — pesquisa, triagem, organização, alertas. As partes que exigem julgamento contextual, empatia e adaptação em tempo real continuam sendo território humano. O resultado esperado não é menos SDRs — é SDRs mais produtivos.' },
+    { q: 'Qual o impacto real de IA na produtividade de um SDR?', a: 'Em operações com stack de IA bem implementada, SDRs tipicamente reportam aumento de 40–80% em capacidade de gestão de prospects simultâneos — ou seja, um SDR com IA cobre o trabalho que antes exigia 1,5 a 2 SDRs. Se isso resulta em menos contratações ou mais volume depende dos objetivos de crescimento da empresa.' },
+    { q: 'O uso de IA em prospecção prejudica o relacionamento com prospects?', a: 'Depende do que a IA faz. IA que opera em background — organizando pipeline, preservando contexto, sugerindo timing — é invisível ao prospect. IA que envia mensagens autônomas sem revisão humana é detectável por compradores B2B experientes e compromete a credibilidade da abordagem.' },
+    { q: 'Vale a pena usar AI SDR para prospecção de baixo volume?', a: 'Para menos de 20 prospects simultâneos, a maioria das ferramentas de IA é exagero — uma planilha estruturada resolve. O ponto de inflexão é quando você começa a perder follow-ups ou deixar prospects quentes esfriarem. Para volumes acima de 30–40 prospects ativos, a vantagem de uma ferramenta como o Chattie se paga rapidamente.' },
+  ],
   // ── Novos PT-BR — Cluster Sales Navigator + Qualificação ─────────────────
   'linkedin-sales-navigator-vale-a-pena': [
     { q: 'O Sales Navigator pode causar bloqueio ou restrição na conta do LinkedIn?', a: 'Não. O Sales Navigator é um produto oficial do LinkedIn — não há risco de restrição por usar a ferramenta dentro dos parâmetros normais de uso. O risco de bloqueio está associado ao uso de extensões de terceiros que automatizam ações, não ao Sales Navigator em si.' },
@@ -553,6 +560,13 @@ const COMPARISON_SLUGS: Record<string, { items: ComparisonItem[] }> = {
       { name: 'Human SDR', description: 'Sales Development Representative — profissional essencial para julgamento contextual, conversas consultivas e ciclos de venda complexos', url: 'https://trychattie.com/blog/ai-sdr-vs-human-sdr' },
     ],
   },
+  // ── AI SDR vs SDR Humano (PT-BR + EN par) ─────────────────────────────────
+  'ai-sdr-vs-sdr-humano': {
+    items: [
+      { name: 'AI SDR', description: 'Sistema de inteligência artificial para prospecção e qualificação de leads — escala pesquisa, organização e timing de follow-up liberando o SDR humano para conversas de maior valor', url: 'https://trychattie.com' },
+      { name: 'SDR Humano', description: 'Sales Development Representative — essencial para julgamento contextual, adaptação em conversas consultivas, negociação e ciclos de venda complexos de alto ticket', url: 'https://trychattie.com/pt-br/blog/ai-sdr-vs-sdr-humano' },
+    ],
+  },
   // ── Novos comparativos PT-BR ───────────────────────────────────────────────
   'expandi-vs-waalaxy': {
     items: [
@@ -590,6 +604,11 @@ const DEFINED_TERMS: Record<string, { name: string; description: string }> = {
     name: 'AI SDR',
     description:
       'AI SDR (AI Sales Development Representative) é um sistema que usa inteligência artificial para apoiar tarefas de prospecção e qualificação de leads — identificando prospects com perfil ideal, sugerindo o timing certo de abordagem e organizando o pipeline de conversas — mantendo o vendedor humano no controle de cada interação.',
+  },
+  'icp-linkedin-como-definir-perfil-cliente-ideal': {
+    name: 'ICP (Ideal Customer Profile)',
+    description:
+      'ICP (Ideal Customer Profile) é a descrição precisa do tipo de empresa e do perfil de pessoa que tem mais probabilidade de comprar um produto e de ter sucesso com ele — definido por firmografia (tamanho, setor, estágio), cargo e seniority, sinais de timing de compra, indicadores de fit de problema e comportamento ativo na plataforma de prospecção.',
   },
   // EN
   'what-is-an-ai-sdr': {

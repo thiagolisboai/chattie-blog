@@ -22,12 +22,33 @@ const DIRS = {
 
 // Schema types actually rendered (based on json-ld.tsx logic)
 const HOWTO_SLUGS = new Set([
+  // PT-BR
   'follow-up-linkedin-b2b', 'como-prospectar-clientes-no-linkedin',
   'linkedin-para-gerar-leads-qualificados', 'linkedin-para-vendas',
+  'como-otimizar-perfil-linkedin-para-vendas-b2b', 'como-abordar-prospects-no-linkedin',
+  'mensagem-de-conexao-linkedin-exemplos', 'pitch-de-prospeccao-linkedin',
+  'linkedin-para-prospeccao-b2b-guia-definitivo', 'guia-completo-social-selling-linkedin',
+  'social-selling-b2b-metodologia-completa-linkedin-2026', 'cadencia-de-prospeccao-linkedin-b2b',
+  'como-qualificar-leads-no-linkedin-com-ia', 'como-personalizar-mensagens-linkedin-em-escala',
+  // EN
   'linkedin-prospecting-guide', 'linkedin-follow-up-b2b',
 ])
-const DEFINED_TERMS = new Set(['o-que-e-social-selling', 'o-que-e-um-crm-social'])
-const COMPARISON_SLUGS = new Set(['chattie-vs-expandi', 'chattie-vs-waalaxy', 'ai-sdr-vs-human-sdr'])
+const DEFINED_TERMS = new Set([
+  // PT-BR
+  'o-que-e-social-selling', 'o-que-e-um-crm-social', 'o-que-e-um-ai-sdr',
+  'icp-linkedin-como-definir-perfil-cliente-ideal',
+  // EN
+  'what-is-an-ai-sdr', 'what-is-social-selling-and-why-it-matters-in-b2b',
+  'what-is-a-social-crm-and-why-it-matters-for-linkedin-b2b',
+])
+const COMPARISON_SLUGS = new Set([
+  // PT-BR
+  'chattie-vs-expandi', 'chattie-vs-waalaxy', 'expandi-vs-waalaxy',
+  'linkedin-vs-email-prospeccao', 'linkedin-sales-navigator-vs-gratuito',
+  'ai-sdr-vs-sdr-humano',
+  // EN
+  'ai-sdr-vs-human-sdr',
+])
 
 // ─── Parse frontmatter ──────────────────────────────────────────────────────
 
