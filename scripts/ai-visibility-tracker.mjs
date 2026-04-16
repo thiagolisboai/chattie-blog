@@ -18,31 +18,15 @@
  *   node scripts/ai-visibility-tracker.mjs --topic   — só queries de tópico
  */
 
-import https from 'https'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { braveSearch } from './brave-search.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT      = path.join(__dirname, '..')
 
-// ─── Load .env.local ──────────────────────────────────────────────────────────
-
-function loadEnv() {
-  const envPath = path.join(ROOT, '.env.local')
-  if (!fs.existsSync(envPath)) return
-  fs.readFileSync(envPath, 'utf-8').split('\n').forEach((line) => {
-    const [k, ...v] = line.split('=')
-    if (k && !k.startsWith('#') && v.length) {
-      const key = k.trim()
-      if (!process.env[key]) process.env[key] = v.join('=').trim()
-    }
-  })
-}
-loadEnv()
-
-const BRAVE_API_KEY = process.env.BRAVE_API_KEY
-const HOST          = 'trychattie.com'
+const HOST = 'trychattie.com'
 
 // ─── Target queries ───────────────────────────────────────────────────────────
 
@@ -72,55 +56,15 @@ const QUERIES = [
   { q: 'social selling index ssi guide',             type: 'topic',  lang: 'en'    },
 ]
 
-// ─── Brave Search API ─────────────────────────────────────────────────────────
-
-function braveSearch(query) {
-  return new Promise((resolve, reject) => {
-    if (!BRAVE_API_KEY) {
-      reject(new Error('BRAVE_API_KEY não definida — configure em .env.local'))
-      return
-    }
-
-    const encoded  = encodeURIComponent(query)
-    const options  = {
-      hostname: 'api.search.brave.com',
-      path:     `/res/v1/web/search?q=${encoded}&count=10&search_lang=pt&result_filter=web`,
-      method:   'GET',
-      headers:  {
-        'Accept':               'application/json',
-        'Accept-Encoding':      'gzip',
-        'X-Subscription-Token': BRAVE_API_KEY,
-      },
-    }
-
-    const req = https.request(options, (res) => {
-      const chunks = []
-      res.on('data', c => chunks.push(c))
-      res.on('end', () => {
-        try {
-          const body = Buffer.concat(chunks).toString('utf-8')
-          resolve({ statusCode: res.statusCode, body: JSON.parse(body) })
-        } catch (e) {
-          reject(e)
-        }
-      })
-    })
-
-    req.on('error', reject)
-    req.setTimeout(15000, () => { req.destroy(); reject(new Error('Timeout 15s')) })
-    req.end()
-  })
-}
+// ─── Find host in results ─────────────────────────────────────────────────────
 
 /**
- * Returns position (1-based) of HOST in results, or null if not found.
+ * Returns position (1-based) of HOST in results array, or null if not found.
+ * braveSearch() from brave-search.mjs returns [{position, title, url, description}]
  */
 function findHostPosition(results) {
-  if (!results?.web?.results) return null
-  const items = results.web.results
-  for (let i = 0; i < items.length; i++) {
-    const url = items[i].url || ''
-    if (url.includes(HOST)) return i + 1
+  for (const r of results) {
+    if ((r.url || '').includes(HOST)) return r.position
   }
   return null
 }
@@ -211,11 +155,6 @@ if (DRY_RUN) {
   process.exit(0)
 }
 
-if (!BRAVE_API_KEY) {
-  console.error('❌  BRAVE_API_KEY não definida em .env.local')
-  process.exit(1)
-}
-
 const entries   = []
 const timestamp = new Date().toISOString()
 
@@ -223,15 +162,8 @@ for (const { q, type, lang } of queries) {
   process.stdout.write(`  Buscando: "${q}" ... `)
 
   try {
-    const { statusCode, body } = await braveSearch(q)
-
-    if (statusCode !== 200) {
-      console.log(`⚠️  HTTP ${statusCode}`)
-      entries.push({ ts: timestamp, query: q, type, lang, position: null, error: `HTTP ${statusCode}` })
-      continue
-    }
-
-    const position = findHostPosition(body)
+    const results  = await braveSearch(q, 10)
+    const position = findHostPosition(results)
     const icon     = position == null ? '❌ não encontrado' : position <= 3 ? `🟢 #${position}` : position <= 7 ? `🟡 #${position}` : `🔴 #${position}`
     console.log(icon)
 
