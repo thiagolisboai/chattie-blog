@@ -277,6 +277,96 @@ Se aparecer na seção `⚠️ Slugs idênticos`, o slug EN deve ser corrigido a
 - Começar cada H2 com a resposta direta antes de desenvolver
 - Usar linguagem que define conceitos claramente (LLMs adoram definições precisas)
 
+### Regra: Snippable Answers (obrigatório em todo post novo)
+
+O **primeiro parágrafo após cada H2** deve dar a resposta de forma direta em **≤ 50 palavras**, antes de desenvolver. Esse bloco é o que LLMs e featured snippets capturam.
+
+**Padrão correto:**
+
+```markdown
+## Como funciona o LinkedIn SSI?
+
+O LinkedIn SSI (Social Selling Index) é uma pontuação de 0 a 100 que mede quatro
+pilares: marca profissional, conexões certas, engajamento e relacionamentos.
+Scores acima de 70 são considerados fortes para prospecção B2B ativa.
+
+[desenvolvimento detalhado a seguir...]
+```
+
+**Verificar conformidade:**
+
+```bash
+node scripts/snippable-audit.mjs
+```
+
+Posts com H2s que abrem com mais de 50 palavras falham no audit.
+
+### Regra: Outbound Citations com href
+
+Toda estatística ou dado externo citado no corpo do post **deve ter link markdown** apontando para a fonte primária. Citação sem href não é auditável e não beneficia GEO.
+
+**Correto:** `Segundo o [LinkedIn](https://business.linkedin.com/sales-solutions/social-selling/the-social-selling-index), em 2025...`
+
+**Errado:** `Segundo o LinkedIn, em 2025...` (sem href)
+
+### Regra: Multi-Modal — tabelas e dados visuais
+
+- Todo post da categoria `comparativos` ou `ia-para-vendas` com 2+ ferramentas **deve incluir pelo menos uma tabela de comparação** com colunas relevantes (preço, risco, features, melhor para)
+- Posts informativos com dados numéricos (benchmarks, taxas, médias) devem apresentar os dados em tabela ou lista estruturada — nunca só em prosa
+- LLMs e AI overviews extraem dados de tabelas com muito mais precisão do que de texto corrido
+
+## FASE 7 — AI Visibility Tracking
+
+Rodar semanalmente (ou após batch de publicação) para medir visibilidade real no Perplexity/Brave:
+
+```bash
+node scripts/ai-visibility-tracker.mjs
+```
+
+Gera relatório em `docs/ai-visibility-report.md` com posição do domínio em 18 queries-alvo.
+
+### Interpretação dos resultados
+
+| Posição | Sinal | Ação |
+| --- | --- | --- |
+| 🟢 Top 3 | Muito provável citação em AI overviews | Manutenção |
+| 🟡 4-7 | Visível, mas pode não ser citado | Otimizar title + H2s |
+| 🔴 8-10 | Borderline | Revisar resposta direta + schema |
+| ❌ Fora do top 10 | Não encontrado | Criar/otimizar post dedicado |
+
+Queries de brand (chattie vs X) devem estar todas em 🟢. Queries de tópico são o alvo de crescimento.
+
+## FASE 8 — Original Research
+
+**Original Research é o maior diferencial GEO**. Um dado gerado internamente pelo Chattie se torna fonte primária que outros posts (inclusive de terceiros) citam.
+
+### Fontes de dados disponíveis no Chattie
+
+Dados internos que podem virar pesquisa original:
+
+- Taxa média de resposta em campanhas de LinkedIn (benchmark por setor/ICP)
+- Melhores horários de envio por tipo de mensagem
+- Taxa de aceitação de convite por tipo de note/sem note
+- Comparativo de SSI score dos usuários por resultado de prospecção
+- Tempo médio de resposta em follow-ups por posição na cadência
+
+### Como publicar Original Research
+
+1. Coletar dados de pelo menos 100+ interações para relevância estatística
+2. Estruturar como "Chattie B2B LinkedIn Benchmark [ano]"
+3. Criar post com `structuredData: "faq"` + tabelas de dados + gráfico descritivo
+4. Adicionar frontmatter: `originalResearch: true`
+5. Citar o post de benchmark em todos os outros posts relevantes (internal linking)
+6. Publicar também em EN para maximizar surface area de citação global
+
+### Template de frontmatter para Original Research
+
+```yaml
+originalResearch: true
+dataPoints: 500          # número de interações/amostras usadas
+dataCollectedFrom: "Chattie platform — campanhas ativas Q1 2026"
+```
+
 ## Imagens de capa via Pexels
 
 Toda imagem de capa deve ser buscada no Pexels antes de salvar o post.
