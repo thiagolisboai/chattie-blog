@@ -54,4 +54,8 @@ if (DRY_RUN) {
 }
 
 const result = await submitIndexNow(urls)
-process.exit(result === 'ok' ? 0 : 1)
+// Never fail the build — IndexNow is best-effort (network hiccup ≠ broken deploy)
+if (result !== 'ok') {
+  console.warn('⚠️  IndexNow submission failed — deploy will continue. Resubmit manually with: node scripts/indexnow-bulk.mjs')
+}
+process.exit(0)

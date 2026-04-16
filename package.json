@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "node scripts/source-audit.mjs && node scripts/generate-search.mjs && next build",
+    "postbuild": "node scripts/indexnow-bulk.mjs",
     "start": "next start",
     "lint": "next lint"
   },
