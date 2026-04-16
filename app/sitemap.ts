@@ -17,13 +17,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     // ── PT-BR static pages ──────────────────────────────────────────────────
+    // Note: tag and category pages are noindex — excluded from sitemap to avoid mixed signals
     { url: `${BASE}/pt-br/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
-    ...ptActiveCats.map((cat) => ({
-      url: `${BASE}/pt-br/blog/categoria/${cat}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.75,
-    })),
     { url: `${BASE}/pt-br/recursos/checklist-prospeccao-linkedin`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
     { url: `${BASE}/pt-br/recursos/templates-mensagem-linkedin`,   lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
     { url: `${BASE}/pt-br/recursos/script-follow-up-linkedin`,     lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
@@ -43,13 +38,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
 
     // ── EN static pages ─────────────────────────────────────────────────────
+    // Note: tag and category pages are noindex — excluded from sitemap to avoid mixed signals
     { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
-    ...enActiveCats.map((cat) => ({
-      url: `${BASE}/blog/category/${cat}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.75,
-    })),
     { url: `${BASE}/resources/linkedin-prospecting-checklist`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
     { url: `${BASE}/resources/linkedin-connection-templates`,  lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
     { url: `${BASE}/resources/linkedin-followup-script`,       lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },

@@ -48,6 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${label} | Chattie Blog`,
     description: `Articles about ${label} for B2B founders and consultants who sell on LinkedIn.`,
     alternates: { canonical: `https://trychattie.com/blog/category/${slug}` },
+    robots: { index: false, follow: true },
   }
 }
 

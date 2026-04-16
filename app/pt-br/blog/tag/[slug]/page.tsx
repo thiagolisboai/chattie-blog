@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `#${label} | Blog Chattie`,
     description: `Todos os artigos sobre ${label} — social selling, LinkedIn B2B e IA para vendas pelo Chattie.`,
     alternates: { canonical: `https://trychattie.com/pt-br/blog/tag/${slug}` },
-    robots: { index: true, follow: true },
+    robots: { index: false, follow: true },
   }
 }
 

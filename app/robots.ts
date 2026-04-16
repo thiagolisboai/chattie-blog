@@ -22,6 +22,7 @@ export default function robots(): MetadataRoute.Robots {
         '/outstatic/',
         '/api/',
         '/future.its-marketing-agency.portfolio-archive', // ghost page de WordPress anterior — já é 404, bloquear para deindexação
+        '/ouicore-fb-marketing-agency-portfolio-archive', // idem — artefato WordPress indexado indevidamente
       ],
       },
       // AI crawlers — explicit GEO permissions
