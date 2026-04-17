@@ -922,7 +922,10 @@ export function ArticleJsonLd({ post, lang = 'pt-BR', postContent }: ArticleJson
     keywords: post.tags?.join(', '),
     speakable: {
       '@type': 'SpeakableSpecification',
-      cssSelector: ['h1', '.prose h2', '.prose > p:first-of-type'],
+      // #post-description = the lead paragraph (meta description rendered in <header>)
+      // article.prose h2  = question-based section headings
+      // article.prose p   = first paragraph after each H2 (snippable answer-first blocks)
+      cssSelector: ['#post-description', 'article.prose h2', 'article.prose > p:first-of-type'],
     },
   }
 

@@ -174,7 +174,7 @@ export default async function BlogPostPt({ params }: Props) {
           >
             {post.title}
           </h1>
-          <p style={{ fontSize: '1.1rem', color: '#555', lineHeight: 1.65 }}>{post.description}</p>
+          <p id="post-description" style={{ fontSize: '1.1rem', color: '#555', lineHeight: 1.65 }}>{post.description}</p>
 
           {post.image && (
             <div
