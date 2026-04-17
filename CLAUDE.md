@@ -400,11 +400,14 @@ Authorization: {PEXELS_API_KEY}
 
 ## Workflow de sessão completo
 
-### Passo 0 — Ler o relatório GSC (SEMPRE)
+### Passo 0 — Relatório GSC + AI Visibility (SEMPRE)
+
 ```bash
 node scripts/gsc-report.mjs
+node scripts/ai-visibility-tracker.mjs
 ```
-Ler `docs/gsc-insights.md` e decidir a prioridade com base nos dados.
+
+Ler `docs/gsc-insights.md` (Google) e `docs/ai-visibility-report.md` (Brave/Perplexity) em conjunto. GSC = onde você está ontem. Tracker = onde você está agora. Decidir a prioridade da sessão com base nos dois.
 
 ### Passo 1 — Executar a ação de maior prioridade
 Seguir a hierarquia definida na seção FASE 1 acima.
