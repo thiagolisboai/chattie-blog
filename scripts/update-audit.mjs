@@ -32,10 +32,10 @@ const STALE_MONTHS = 6   // flag posts older than this
 
 function parseFm(filePath) {
   const raw = fs.readFileSync(filePath, 'utf-8')
-  const match = raw.match(/^---\n([\s\S]*?)\n---/)
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)
   if (!match) return {}
   const fm = {}
-  match[1].split('\n').forEach((line) => {
+  match[1].split(/\r?\n/).forEach((line) => {
     const [k, ...v] = line.split(':')
     if (k && v.length) fm[k.trim()] = v.join(':').trim().replace(/^"|"$/g, '')
   })
@@ -99,7 +99,7 @@ for (const [lang, dir] of Object.entries(DIRS)) {
       lastMod,
       age: Math.round(age),
       staleYear: fm._staleYear,
-      contentRefs: fm._contentRef.length,
+      contentRefs: (fm._contentRef || []).length,
       hasDateModified: !!fm.dateModified,
       inGscDrop,
     })

@@ -41,3 +41,13 @@ Histórico de posts gerados pelo Dexter, agente de conteúdo autônomo do Chatti
 - Slug: como-aumentar-taxa-de-resposta-linkedin
 - Palavras: ~2529
 - Backlinks: como-abordar-prospects-no-linkedin, como-otimizar-perfil-linkedin-para-vendas-b2b, ferramentas-para-prospeccao-no-linkedin
+
+## 2026-04-20 — "O que é Sales Enablement e Como Aplicar no LinkedIn B2B"
+- Keyword: o que é sales enablement e como aplicar no LinkedIn B2B
+- Slug: o-que-e-sales-enablement-linkedin-b2b
+- Palavras: ~2555
+- Backlinks: o-que-e-social-selling, pitch-de-prospeccao-linkedin, como-abordar-prospects-no-linkedin
+
+## FALHA-VALIDAÇÃO 2026-04-20 — schema-validation
+- Slug: o-que-e-um-ai-sdr-linkedin
+- Detalhe: structuredData declaration not satisfied

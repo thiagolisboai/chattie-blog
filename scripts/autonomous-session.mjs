@@ -591,12 +591,51 @@ function createPullRequest({ keyword, result }) {
 // ─── T3.13: Keyword cannibalization detection ─────────────────────────────────
 
 /**
+ * PT-BR + EN stop words excluded from cannibalization token matching.
+ * These are high-frequency words that carry no topical signal — including
+ * them would cause false positives for any keyword that shares common
+ * prepositions/articles with existing post titles.
+ *
+ * Critically: "para", "como", "com" have 4+ chars and were previously
+ * INCLUDED by the old `w.length > 3` filter, generating false matches
+ * (e.g. "IA para prospecção" → ["para", "prospeccao"] matching any
+ * post with "para" in title). Now they are explicitly excluded.
+ */
+const CANNIBAL_STOP_WORDS = new Set([
+  // PT-BR function words
+  'para', 'como', 'com', 'sem', 'por', 'que', 'dos', 'das', 'nas', 'nos',
+  'uma', 'uns', 'ela', 'ele', 'eles', 'elas', 'seu', 'sua', 'seus', 'suas',
+  'esse', 'essa', 'este', 'esta', 'aqui', 'isso', 'isto', 'nao', 'sim',
+  'ser', 'ter', 'ver', 'foi', 'sao', 'tem', 'mais', 'muito', 'bem',
+  'quais', 'qual', 'quando', 'onde', 'quem', 'pode', 'deve', 'estas',
+  'estes', 'aquelas', 'aqueles', 'numa', 'num', 'pelo', 'pela', 'pelos',
+  'pelas', 'entre', 'sobre', 'antes', 'depois', 'acima', 'abaixo',
+  'fazer', 'usar', 'usar', 'cada', 'todo', 'toda', 'todos', 'todas',
+  'novo', 'nova', 'guia', 'como', 'voce', 'meu', 'minha', 'deus',
+  // EN function words
+  'the', 'and', 'for', 'you', 'are', 'with', 'this', 'that', 'from',
+  'they', 'what', 'how', 'when', 'where', 'who', 'will', 'can', 'not',
+  'but', 'all', 'one', 'your', 'has', 'have', 'been', 'best', 'top',
+  'use', 'get', 'new', 'our', 'make', 'also', 'more', 'than', 'into',
+])
+
+/**
  * Checks if the selected keyword would cannibalize an existing post.
  *
  * Uses token overlap between the keyword and each existing post's title.
- * If ≥70% of meaningful keyword tokens appear in an existing post's title,
- * that post is a likely cannibalization risk — update it instead of creating
- * a new post that would compete for the same query.
+ * Tokens: meaningful words ≥2 chars, excluding PT-BR/EN stop words.
+ *
+ * ANGLE DETECTION: definitional queries ("o que é X") do NOT cannibalize
+ * non-definitional posts, and comparison queries ("X vs Y") do NOT
+ * cannibalize non-comparison posts — they serve different search intents.
+ *
+ * Threshold: ≥75% of keyword tokens must match an existing post's title+slug
+ * for it to be considered cannibalization (raised from 70% to offset the
+ * larger token set after the stop word fix).
+ *
+ * Minimum token guard: if the keyword normalizes to fewer than 2 meaningful
+ * tokens (e.g. "LinkedIn o que é" → ["linkedin"]), skip the check entirely
+ * — not enough signal to make a reliable determination.
  *
  * @param {string} keyword
  * @returns {{ slug: string, title: string, score: number } | null} — matching post or null
@@ -605,17 +644,28 @@ function checkCannibalization(keyword) {
   const blogDir = path.join(ROOT, 'content', 'blog')
   if (!fs.existsSync(blogDir)) return null
 
-  // Tokenize: meaningful words (>3 chars), normalized
+  // Tokenize: meaningful words ≥2 chars, excluding stop words
   const tokenize = (text) => text
     .toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9\s]/g, ' ')
     .split(/\s+/)
-    .filter(w => w.length > 3)
+    .filter(w => w.length >= 2 && !CANNIBAL_STOP_WORDS.has(w) && w !== '')
 
   const kwTokens = tokenize(keyword)
-  if (kwTokens.length === 0) return null
-  const threshold = Math.ceil(kwTokens.length * 0.70)
+
+  // Guard: skip check if fewer than 2 meaningful tokens — not enough signal
+  if (kwTokens.length < 2) {
+    log(`ℹ️  T3.13: Keyword "${keyword}" tem apenas ${kwTokens.length} token(s) significativo(s) — verificação de canibalização ignorada`)
+    return null
+  }
+
+  // Angle detection: definitional vs. non-definitional intents
+  const kwLower = keyword.toLowerCase()
+  const isDefinitional = /\bo\s+que\s+[eé]\b|\bwhat\s+is\b|\bdefinicao\b|\bdefinição\b|\bmeaning\b/i.test(kwLower)
+  const isComparison    = /\bvs\.?\b|\bversus\b|\bcomparativ\b|\bmelhor\b.*\bou\b/i.test(kwLower)
+
+  const threshold = Math.ceil(kwTokens.length * 0.75)
 
   const files = fs.readdirSync(blogDir).filter(f => f.endsWith('.mdx'))
 
@@ -633,6 +683,21 @@ function checkCannibalization(keyword) {
     const title = fm.title || ''
     const slug  = fm.slug || file.replace('.mdx', '')
 
+    // Angle bypass: definitional keyword doesn't cannibalize a non-definitional post
+    if (isDefinitional) {
+      const titleLower = title.toLowerCase()
+      const existingIsDefinitional = /\bo\s+que\s+[eé]\b|\bwhat\s+is\b|\bdefinicao\b|\bdefinição\b/i.test(titleLower)
+        || slug.startsWith('o-que-e-')
+        || slug.includes('-o-que-e-')
+      if (!existingIsDefinitional) continue // different intent — not a cannibalization risk
+    }
+
+    // Angle bypass: comparison keyword doesn't cannibalize a non-comparison post
+    if (isComparison) {
+      const existingIsComparison = / vs /i.test(title) || slug.includes('-vs-')
+      if (!existingIsComparison) continue
+    }
+
     // Compare keyword tokens against title + slug combined
     const targetText = `${title} ${slug.replace(/-/g, ' ')}`
     const targetTokens = tokenize(targetText)
@@ -644,6 +709,66 @@ function checkCannibalization(keyword) {
   }
 
   return null
+}
+
+// ─── Backlog auto-replenishment from competitor and cluster gap reports ────────
+
+/**
+ * When the backlog is exhausted (all keywords cannibalize), this function
+ * pulls actionable gaps from docs/competitor-report.md and adds them to
+ * docs/keyword-backlog.md as "Alta" priority "Média" competition entries.
+ *
+ * Filters for LinkedIn/B2B/sales relevance to avoid injecting off-topic
+ * keywords from broader competitors (e.g. RD Station e-commerce content).
+ *
+ * @returns {number} — count of new keywords added to backlog
+ */
+function replenishBacklogFromCompetitors() {
+  const reportPath  = path.join(ROOT, 'docs', 'competitor-report.md')
+  const backlogPath = path.join(ROOT, 'docs', 'keyword-backlog.md')
+  if (!fs.existsSync(reportPath) || !fs.existsSync(backlogPath)) return 0
+
+  const reportRaw  = fs.readFileSync(reportPath, 'utf-8')
+  const backlogRaw = fs.readFileSync(backlogPath, 'utf-8')
+
+  // Extract gap titles from the competitor report table
+  const gapMatches = [...reportRaw.matchAll(/\|\s*❌\s*Gap\s*\|\s*(.+?)\s*\|/g)]
+  const RELEVANCE_RE = /linkedin|prospec|vend|b2b|sdr|lead|cadenc|sales|enabl|social.?sell|crm|follow.?up|mensagem|automac|prospect/i
+
+  const candidates = gapMatches
+    .map(m => m[1].trim().replace(/\|.*$/, '').trim()) // strip trailing pipe
+    .filter(t => t.length > 10)
+    .filter(t => RELEVANCE_RE.test(t))
+    .filter(t => {
+      // Skip if already in backlog (first 25 chars comparison)
+      const fingerprint = t.slice(0, 25).toLowerCase().replace(/[^a-z0-9]/g, '')
+      return !backlogRaw.toLowerCase().replace(/[^a-z0-9]/g, '').includes(fingerprint)
+    })
+
+  if (candidates.length === 0) {
+    log('ℹ️  Replenishment: competitor-report.md sem gaps novos relevantes')
+    return 0
+  }
+
+  const toAdd = candidates.slice(0, 6)
+  const newRows = toAdd.map(g =>
+    `| ${g.slice(0, 80)} | informacional | Média | Alta | pendente |`
+  )
+
+  const section = [
+    '',
+    `## Cluster auto-injetado — Gaps de Concorrentes (${new Date().toISOString().split('T')[0]})`,
+    '',
+    '| Keyword | Intenção | Competição | Prioridade | Status |',
+    '|---------|----------|-----------|-----------|--------|',
+    ...newRows,
+    '',
+  ].join('\n')
+
+  fs.writeFileSync(backlogPath, backlogRaw.trimEnd() + section, 'utf-8')
+  log(`✅  Replenishment: ${toAdd.length} keyword(s) injetada(s) no backlog:`)
+  toAdd.forEach(k => log(`   + "${k.slice(0, 70)}"`))
+  return toAdd.length
 }
 
 // ─── T2.9: Schema validation gate ────────────────────────────────────────────
@@ -848,21 +973,44 @@ async function main() {
 
   if (!kwArg && config.intelligence.cannibalCheck && !FORCE_NEW) {
     let cannibal = checkCannibalization(keyword)
+    let replenishAttempted = false
+
     while (cannibal) {
       log(`⚠️  T3.13: Canibalização detectada! Keyword "${keyword}" tem ${Math.round(cannibal.score * 100)}% de sobreposição com:`)
       log(`          "${cannibal.title}" → content/blog/${cannibal.slug}.mdx`)
-      log(`   Execute: node scripts/update-post.mjs --slug=${cannibal.slug}`)
+      log(`   Sugestão: node scripts/update-post.mjs --slug=${cannibal.slug}`)
       skippedByCannibal.push(keyword)
 
-      if (skippedByCannibal.length >= MAX_CANNIBAL_TRIES) {
-        log(`ℹ️  T3.13: ${MAX_CANNIBAL_TRIES} keywords consecutivas canibalizaram posts existentes.`)
-        log('   Atualize o backlog ou use --force-new para criar mesmo com sobreposição.')
+      if (skippedByCannibal.length >= MAX_CANNIBAL_TRIES && !replenishAttempted) {
+        // ── Auto-replenishment: pull gaps from competitor-report.md before giving up ──
+        log(`⚠️  T3.13: ${MAX_CANNIBAL_TRIES} keywords canibalizaram. Tentando reabastecimento automático do backlog...`)
+        const added = replenishBacklogFromCompetitors()
+        replenishAttempted = true // only attempt replenishment once per session
+
+        if (added === 0) {
+          log('ℹ️  T3.13: Sem gaps novos nos relatórios de concorrentes.')
+          log('   → Próximos passos:')
+          log('     1. node scripts/competitor-monitor.mjs   (descobre novos gaps)')
+          log('     2. node scripts/autonomous-session.mjs --force-new  (ignora canibalização)')
+          log('     3. Adicionar keywords em docs/keyword-backlog.md manualmente')
+          process.exit(2)
+        }
+        // Fall through — next iteration picks up freshly injected keywords
+      } else if (skippedByCannibal.length >= MAX_CANNIBAL_TRIES + 4) {
+        // Hard stop after replenishment also failed to find valid keywords
+        log(`ℹ️  T3.13: Esgotamento total — ${skippedByCannibal.length} tentativas sem keyword válida.`)
+        log('   Rode: node scripts/competitor-monitor.mjs --inject-backlog')
         process.exit(2)
       }
 
-      // Try next eligible keyword from backlog
+      // Try next eligible keyword from backlog (includes freshly replenished entries)
       const next = selectKeywordFromBacklog(skippedByCannibal)
       if (!next) {
+        if (replenishAttempted) {
+          log('ℹ️  T3.13: Reabastecimento concluído mas todas as keywords novas também canibalizaram.')
+          log('   Use --force-new para criar mesmo assim.')
+          process.exit(2)
+        }
         log('ℹ️  T3.13: Sem mais keywords elegíveis no backlog sem canibalização.')
         process.exit(2)
       }
@@ -881,7 +1029,7 @@ async function main() {
     if (cannibal) {
       log(`⚠️  T3.13: Canibalização detectada! Keyword "${keyword}" tem ${Math.round(cannibal.score * 100)}% de sobreposição com:`)
       log(`          "${cannibal.title}" → content/blog/${cannibal.slug}.mdx`)
-      log(`   Para ignorar, use --force-new`)
+      log(`   Para ignorar, use --force-new. Para ângulo diferente, use --keyword="novo tema"`)
       process.exit(2)
     }
   }

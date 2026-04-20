@@ -50,7 +50,7 @@
 | Keyword | Intenção | Competição | Prioridade | Status |
 |---------|----------|-----------|-----------|--------|
 | ferramentas de automação LinkedIn 2025 | Informacional/Comercial | Alta | Alta | publicado (`/pt-br/blog/ferramentas-de-automacao-linkedin-2026`) |
-| AI SDR LinkedIn o que é | Informacional | Baixa | Alta | pendente |
+| AI SDR LinkedIn o que é | Informacional | Baixa | Alta | publicado (`/pt-br/blog/o-que-e-um-ai-sdr-linkedin`) |
 | IA para prospecção B2B | Informacional | Média | Alta | pendente |
 | automação de mensagens LinkedIn segura | Informacional | Baixa | Alta | publicado (`/pt-br/blog/automacao-mensagens-linkedin-segura`) |
 | como usar IA para vendas B2B LinkedIn | Informacional | Baixa | Alta | publicado (`/pt-br/blog/como-usar-ia-para-vendas-b2b-linkedin`) |
@@ -152,3 +152,91 @@ Com base no GSC (blog novo, zero posts indexados individualmente), o foco é **v
 
 **Oportunidade:** nenhum concorrente tem posição forte em **IA para prospecção LinkedIn** em PT-BR. É o terreno mais desocupado e mais alinhado ao produto.
 | "social selling" "linkedin" outbound best practices 2025 or 2024 or 2026 | informacional | Média | Média | publicado (`/pt-br/blog/social-selling-linkedin-outbound-best-practices`) |
+
+---
+
+## Cluster 9 — Sales Enablement e Processo de Vendas (gaps de concorrentes BR)
+
+> Identificados como gaps no competitor-report.md — Agendor e Meetime cobrem, nós não.
+> Ângulo diferenciador: conectar cada conceito com IA e automação responsável no LinkedIn.
+
+| Keyword | Intenção | Competição | Prioridade | Status |
+| --- | --- | --- | --- | --- |
+| o que é sales enablement e como aplicar no LinkedIn B2B | Informacional | Baixa | Alta | publicado (`/pt-br/blog/o-que-e-sales-enablement-linkedin-b2b`) |
+| fluxo de cadência de prospecção: o que é e como montar | Informacional | Baixa | Alta | pendente |
+| tendências de vendas B2B para 2026: o que muda na prospecção | Informacional | Média | Alta | pendente |
+| prospecção ativa vs inbound: qual usar no LinkedIn B2B | Informacional | Baixa | Alta | pendente |
+| como preparar sua operação de prospecção B2B para 2026 | Informacional | Média | Alta | pendente |
+| o que é marketing B2B e como o LinkedIn se encaixa na estratégia | Informacional | Média | Alta | pendente |
+
+**Ângulo diferenciador:** concorrentes (Agendor, Meetime) cobrem o processo geral mas ignoram a camada de IA. Cada post nesse cluster termina com "como o Chattie automatiza essa etapa".
+
+---
+
+## Cluster 10 — Comparativos Internacionais (AI SDR tools)
+
+> Alta oportunidade: founders brasileiros pesquisam ferramentas internacionais antes de decidir.
+> Zero concorrência PT-BR nesses termos compostos — janela aberta em 2026.
+
+| Keyword | Intenção | Competição | Prioridade | Status |
+| --- | --- | --- | --- | --- |
+| Chattie vs Apollo io: qual AI SDR para LinkedIn B2B | Comercial | Muito Baixa | Alta | pendente |
+| Chattie vs Clay: diferença entre AI SDR e enrichment | Comercial | Muito Baixa | Alta | pendente |
+| alternativas ao Expandi para prospecção LinkedIn sem risco de ban | Comercial | Baixa | Alta | pendente |
+| Lemlist vs LinkedIn nativo: qual canal de cold outreach converte mais | Informacional | Baixa | Alta | pendente |
+| melhores ferramentas de AI SDR para LinkedIn em 2026 | Comercial | Média | Alta | pendente |
+| como escolher entre automação de LinkedIn e AI SDR: guia para founders B2B | Informacional | Baixa | Alta | pendente |
+
+**Ângulo diferenciador:** Chattie é o único AI SDR nativo do LinkedIn focado no mercado BR/LATAM — comparativos internacionais posicionam o produto contra players globais sem par local.
+
+---
+
+## Cluster 11 — Novos Ângulos em Tópicos Existentes
+
+> Posts que já existem no blog mas com ângulo insuficiente — criar versão complementar com intent diferente.
+> IMPORTANTE: verificar canibalização antes de criar — usar `--force-new` se necessário.
+
+| Keyword | Intenção | Competição | Prioridade | Status |
+| --- | --- | --- | --- | --- |
+| como usar o Sales Navigator para encontrar decisores B2B em 2026 | Informacional | Baixa | Alta | pendente |
+| SPIN selling no LinkedIn: como adaptar a metodologia ao outreach digital | Informacional | Baixa | Alta | pendente |
+| como criar uma rotina de prospecção LinkedIn de 30 minutos por dia | Informacional | Muito Baixa | Alta | pendente |
+| erros comuns na prospecção LinkedIn B2B que travam o pipeline | Informacional | Baixa | Alta | pendente |
+| como medir o ROI da prospecção LinkedIn: métricas e benchmarks 2026 | Informacional | Baixa | Alta | pendente |
+| LinkedIn SSI score: como usar o Social Selling Index para qualificar prospects | Informacional | Baixa | Média | pendente |
+
+---
+
+## Cluster 12 — Original Research (dados internos Chattie)
+
+> Posts que geram backlinks naturais e citações em AI engines — o maior gap GEO atual.
+> Requerem dados reais da plataforma antes de publicar. Frontmatter: `originalResearch: true`.
+
+| Keyword | Intenção | Competição | Prioridade | Status |
+| --- | --- | --- | --- | --- |
+| benchmark de taxa de resposta LinkedIn B2B: dados reais de 2026 | Informacional | Muito Baixa | Alta | pendente |
+| melhores horários para enviar mensagens no LinkedIn em 2026 | Informacional | Baixa | Alta | pendente |
+| taxa de aceitação de conexão LinkedIn: o que os dados dizem sobre notes | Informacional | Muito Baixa | Alta | pendente |
+| quanto tempo leva para fechar um lead pelo LinkedIn: benchmark B2B | Informacional | Muito Baixa | Alta | pendente |
+
+**Nota:** esses posts só podem ser publicados com dados reais do Chattie. Prioridade Alta mas só executar após coleta de dados (mínimo 100 interações por métrica).
+## Cluster auto-injetado — Gaps de Concorrentes BR (2026-04-20)
+
+| Keyword | Intenção | Competição | Prioridade | Status |
+|---------|----------|-----------|-----------|--------|
+| Prospecção via LinkedIn: saiba como fazer no Blog da Ramper! - Ramper | informacional | Média | Alta | pendente |
+| Ramper | A plataforma de prospecção B2B | informacional | Média | Alta | pendente |
+| Ferramentas para LinkedIn: 6 opções para aumentar suas vendas | informacional | Média | Alta | pendente |
+| Prospecção B2B: 7 métodos para aumentar o número de clientes | informacional | Média | Alta | pendente |
+| Ramper Prospect - Software de prospecção digital B2B - Solicitar demo | informacional | Média | Alta | pendente |
+| A importância do Follow-up na prospecção B2B- Ramper | informacional | Média | Alta | pendente |
+## Cluster auto-injetado — Gaps de Concorrentes INTL (2026-04-20)
+
+| Keyword | Intenção | Competição | Prioridade | Status |
+|---------|----------|-----------|-----------|--------|
+| #1 Linkedin Automation Tool | informacional | Média | Alta | pendente |
+| Best LinkedIn Marketing Tools in 2026: Build, Analyze & Automate Your B2B Strate | informacional | Média | Alta | pendente |
+| Social Outreach Automation Tool | informacional | Média | Alta | pendente |
+| Top 40 LinkedIn Automation tools for lead generation in 2025 | informacional | Média | Alta | pendente |
+| 17 Best AI Lead Generation Tools to Boost Sales in 2026 | informacional | Média | Alta | pendente |
+| Best LinkedIn Recruiter Message Templates for 2026 - Expandi | informacional | Média | Alta | pendente |

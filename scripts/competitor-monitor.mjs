@@ -15,10 +15,14 @@
  *
  * Uso:
  *   node scripts/competitor-monitor.mjs
- *   node scripts/competitor-monitor.mjs --add=agendor.com.br   (adiciona concorrente)
+ *   node scripts/competitor-monitor.mjs --add=agendor.com.br     (adiciona concorrente)
+ *   node scripts/competitor-monitor.mjs --inject-backlog          (injeta gaps no backlog)
+ *   node scripts/competitor-monitor.mjs --intl-only               (só concorrentes internacionais)
+ *   node scripts/competitor-monitor.mjs --local-only              (só concorrentes BR)
  *
  * Concorrentes padrão (se docs/competitors.md não existir):
- *   agendor.com.br, piperun.com, exact.com.br, meetime.com.br, zendesk.com/pt-br
+ *   BR: agendor.com.br, piperun.com, exact.com.br, meetime.com.br, resultadosdigitais.com.br
+ *   INTL: expandi.io, waalaxy.com, lemlist.com, apollo.io, clay.com, salesloft.com, lavender.ai
  *
  * Requer:
  *   BRAVE_API_KEY — para buscas de conteúdo concorrente
@@ -49,48 +53,144 @@ loadEnv()
 
 // ─── Default competitors ──────────────────────────────────────────────────────
 
-const DEFAULT_COMPETITORS = [
-  { domain: 'agendor.com.br',     name: 'Agendor',      focus: 'linkedin vendas b2b' },
-  { domain: 'piperun.com',        name: 'PipeRun',       focus: 'prospecção linkedin crm' },
-  { domain: 'exact.com.br',       name: 'Exact Sales',   focus: 'pré-vendas sdr b2b' },
-  { domain: 'meetime.com.br',     name: 'Meetime',       focus: 'vendas b2b linkedin' },
-  { domain: 'resultadosdigitais.com.br', name: 'RD Station', focus: 'marketing vendas b2b' },
+const DEFAULT_COMPETITORS_BR = [
+  // Tier 1 — prospecção e automação LinkedIn (maior sobreposição com Chattie)
+  { domain: 'ramper.com.br',             name: 'Ramper',        focus: 'automação prospecção linkedin outreach b2b', region: 'br' },
+  { domain: 'reev.com',                  name: 'Reev',          focus: 'sales engagement sdr cadência b2b linkedin',  region: 'br' },
+  { domain: 'speedio.com.br',            name: 'Speedio',       focus: 'prospecção b2b dados leads linkedin',        region: 'br' },
+  { domain: 'exact.com.br',             name: 'Exact Sales',   focus: 'pré-vendas sdr qualificação b2b',            region: 'br' },
+  { domain: 'leads2b.com',              name: 'Leads2b',       focus: 'prospecção b2b leads linkedin vendas',       region: 'br' },
+  { domain: 'meetime.com.br',           name: 'Meetime',       focus: 'vendas b2b linkedin prospecção cadência',    region: 'br' },
+  // Tier 2 — CRM e vendas B2B
+  { domain: 'agendor.com.br',           name: 'Agendor',       focus: 'crm linkedin prospecção vendas b2b',         region: 'br' },
+  { domain: 'piperun.com',              name: 'PipeRun',       focus: 'crm prospecção linkedin pipeline b2b',       region: 'br' },
+  { domain: 'ploomes.com',              name: 'Ploomes',       focus: 'crm b2b vendas complexas linkedin',          region: 'br' },
+  { domain: 'nectar.com.br',            name: 'Nectar CRM',    focus: 'crm vendas b2b prospecção linkedin',         region: 'br' },
+  // Tier 3 — autoridade ampla
+  { domain: 'resultadosdigitais.com.br', name: 'RD Station',   focus: 'marketing vendas b2b linkedin inbound',      region: 'br' },
+  { domain: 'outboundmarketing.com.br', name: 'Outbound Mkt BR', focus: 'outbound sdr receita previsível linkedin', region: 'br' },
+  { domain: 'g4educacao.com',           name: 'G4 Educação',   focus: 'vendas b2b liderança comercial linkedin',    region: 'br' },
+  { domain: 'cortex.com.br',            name: 'Cortex',        focus: 'inteligência comercial b2b dados vendas',    region: 'br' },
+  { domain: 'econodata.com.br',         name: 'Econodata',     focus: 'dados prospecção b2b leads linkedin',        region: 'br' },
 ]
+
+// International competitors in the LinkedIn sales / AI SDR / social selling space.
+// These are the brands our ICP compares us to when searching for tools in English.
+const DEFAULT_COMPETITORS_INTL = [
+  { domain: 'expandi.io',     name: 'Expandi',     focus: 'linkedin automation outreach b2b',  region: 'intl' },
+  { domain: 'waalaxy.com',    name: 'Waalaxy',     focus: 'linkedin prospecting automation',   region: 'intl' },
+  { domain: 'lemlist.com',    name: 'Lemlist',     focus: 'linkedin cold outreach b2b sales',  region: 'intl' },
+  { domain: 'apollo.io',      name: 'Apollo',      focus: 'ai sdr linkedin prospecting b2b',   region: 'intl' },
+  { domain: 'clay.com',       name: 'Clay',        focus: 'ai sdr linkedin enrichment b2b',    region: 'intl' },
+  { domain: 'salesloft.com',  name: 'Salesloft',   focus: 'sales engagement linkedin ai sdr',  region: 'intl' },
+  { domain: 'lavender.ai',    name: 'Lavender',    focus: 'linkedin email ai personalization',  region: 'intl' },
+  { domain: 'instantly.ai',   name: 'Instantly',   focus: 'linkedin cold outreach ai sales',   region: 'intl' },
+]
+
+const DEFAULT_COMPETITORS = [...DEFAULT_COMPETITORS_BR, ...DEFAULT_COMPETITORS_INTL]
 
 // ─── Load competitors from file ───────────────────────────────────────────────
 
 function loadCompetitors() {
   const p = path.join(ROOT, 'docs', 'competitors.md')
   if (!fs.existsSync(p)) {
-    // Create with defaults on first run
+    // Create with all defaults on first run (BR + INTL)
     const defaultContent = [
       '# Concorrentes Monitorados',
       '',
       '> Lista de domínios monitorados pelo `competitor-monitor.mjs`.',
-      '> Formato: `domain | Nome | foco de busca`',
+      '> Formato: `domain | Nome | foco de busca | região (br|intl)`',
       '',
-      '| Domain | Nome | Foco de Busca |',
-      '|--------|------|--------------|',
-      ...DEFAULT_COMPETITORS.map(c => `| ${c.domain} | ${c.name} | ${c.focus} |`),
+      '## Concorrentes BR',
+      '',
+      '| Domain | Nome | Foco de Busca | Região |',
+      '|--------|------|--------------|--------|',
+      ...DEFAULT_COMPETITORS_BR.map(c => `| ${c.domain} | ${c.name} | ${c.focus} | ${c.region} |`),
+      '',
+      '## Concorrentes Internacionais',
+      '',
+      '| Domain | Nome | Foco de Busca | Região |',
+      '|--------|------|--------------|--------|',
+      ...DEFAULT_COMPETITORS_INTL.map(c => `| ${c.domain} | ${c.name} | ${c.focus} | ${c.region} |`),
       '',
       '_Edite esta lista para adicionar ou remover concorrentes._',
     ].join('\n')
     fs.writeFileSync(p, defaultContent, 'utf-8')
-    return DEFAULT_COMPETITORS
+    return filterByRegion(DEFAULT_COMPETITORS)
   }
 
   const raw = fs.readFileSync(p, 'utf-8')
   const rows = raw.split('\n')
-    .filter(l => l.startsWith('|') && !l.includes('---') && !l.includes('Domain'))
+    .filter(l => l.startsWith('|') && !l.includes('---') && !l.includes('Domain') && !l.includes('Nome'))
     .map(l => {
       const cols = l.split('|').map(c => c.trim()).filter(Boolean)
       if (cols.length < 3) return null
-      return { domain: cols[0], name: cols[1], focus: cols[2] }
+      return {
+        domain: cols[0],
+        name:   cols[1],
+        focus:  cols[2],
+        region: cols[3] || 'br',
+      }
     })
     .filter(Boolean)
 
-  return rows.length > 0 ? rows : DEFAULT_COMPETITORS
+  const list = rows.length > 0 ? rows : DEFAULT_COMPETITORS
+  return filterByRegion(list)
 }
+
+function filterByRegion(list) {
+  if (INTL_ONLY)  return list.filter(c => c.region === 'intl')
+  if (LOCAL_ONLY) return list.filter(c => c.region === 'br')
+  return list
+}
+
+// ─── Inject top gaps into keyword-backlog.md ──────────────────────────────────
+
+function injectGapsIntoBacklog(gaps) {
+  const backlogPath = path.join(ROOT, 'docs', 'keyword-backlog.md')
+  if (!fs.existsSync(backlogPath)) {
+    console.log('⚠️  docs/keyword-backlog.md não encontrado — gaps não injetados')
+    return 0
+  }
+
+  const backlogRaw = fs.readFileSync(backlogPath, 'utf-8')
+  const RELEVANCE_RE = /linkedin|prospec|vend|b2b|sdr|lead|cadenc|sales|social.?sell|crm|follow|mensagem|automat|prospect|enablement|tendencia|tendência/i
+
+  const toAdd = gaps
+    .filter(g => g.isGap && RELEVANCE_RE.test(g.title))
+    .filter(g => {
+      const fp = g.title.slice(0, 25).toLowerCase().replace(/[^a-z0-9]/g, '')
+      return !backlogRaw.toLowerCase().replace(/[^a-z0-9]/g, '').includes(fp)
+    })
+    .slice(0, 6)
+
+  if (toAdd.length === 0) {
+    console.log('ℹ️  --inject-backlog: sem gaps novos relevantes para injetar')
+    return 0
+  }
+
+  const region = INTL_ONLY ? 'INTL' : LOCAL_ONLY ? 'BR' : 'BR+INTL'
+  const section = [
+    '',
+    `## Cluster auto-injetado — Gaps de Concorrentes ${region} (${new Date().toISOString().split('T')[0]})`,
+    '',
+    '| Keyword | Intenção | Competição | Prioridade | Status |',
+    '|---------|----------|-----------|-----------|--------|',
+    ...toAdd.map(g => `| ${g.title.slice(0, 80)} | informacional | Média | Alta | pendente |`),
+    '',
+  ].join('\n')
+
+  fs.writeFileSync(backlogPath, backlogRaw.trimEnd() + section, 'utf-8')
+  console.log(`✅  ${toAdd.length} gap(s) injetado(s) no backlog:`)
+  toAdd.forEach(g => console.log(`   + "${g.title.slice(0, 70)}"`))
+  return toAdd.length
+}
+
+// ─── CLI flags ────────────────────────────────────────────────────────────────
+
+const INJECT_BACKLOG = process.argv.includes('--inject-backlog')
+const INTL_ONLY      = process.argv.includes('--intl-only')
+const LOCAL_ONLY     = process.argv.includes('--local-only')
 
 // ─── Handle --add flag ────────────────────────────────────────────────────────
 
@@ -102,7 +202,7 @@ if (addArg) {
   if (raw.includes(domain)) {
     console.log(`⚠️  ${domain} já está na lista`)
   } else {
-    fs.appendFileSync(p, `| ${domain} | (nome) | (foco de busca) |\n`, 'utf-8')
+    fs.appendFileSync(p, `| ${domain} | (nome) | (foco de busca) | intl |\n`, 'utf-8')
     console.log(`✅  Adicionado: ${domain}`)
     console.log(`   Edite docs/competitors.md para preencher nome e foco`)
   }
@@ -294,5 +394,17 @@ console.log(`   Gaps encontrados: ${gaps.length} | Cobertos: ${covered.length}`)
 
 if (gaps.length > 0) {
   console.log(`\n   Top gaps para adicionar ao backlog:`)
-  gaps.slice(0, 3).forEach(g => console.log(`   - [${g.competitor}] ${g.title.slice(0, 60)}`))
+  gaps.slice(0, 5).forEach(g => console.log(`   - [${g.competitor}] ${g.title.slice(0, 60)}`))
+  console.log(`\n   💡  Para injetar automaticamente no backlog:`)
+  console.log(`       node scripts/competitor-monitor.mjs --inject-backlog`)
+}
+
+// ── --inject-backlog: auto-inject top gaps into keyword-backlog.md ──
+if (INJECT_BACKLOG) {
+  console.log('\n📥  --inject-backlog: injetando gaps no backlog...')
+  const injected = injectGapsIntoBacklog(allFindings)
+  if (injected > 0) {
+    console.log(`\n🚀  Próximo passo: node scripts/autonomous-session.mjs`)
+    console.log(`   O Dexter vai encontrar as keywords recém-injetadas no backlog.`)
+  }
 }
