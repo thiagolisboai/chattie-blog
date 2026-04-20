@@ -1,6 +1,6 @@
-# GSC Insights — 2026-04-17
-> Período analisado: **2026-03-15 → 2026-04-14** (30 dias)
-> Comparativo vs período anterior: **2026-02-13 → 2026-03-15**
+# GSC Insights — 2026-04-20
+> Período analisado: **2026-03-18 → 2026-04-17** (30 dias)
+> Comparativo vs período anterior: **2026-02-16 → 2026-03-18**
 
 ---
 
@@ -9,10 +9,10 @@
 | Métrica | Valor |
 |---------|-------|
 | Total de cliques | 0 |
-| Total de impressões | 358 |
+| Total de impressões | 417 |
 | CTR médio | 0.0% |
-| Posição média | 6.0 |
-| Páginas com dados | 12 |
+| Posição média | 6.5 |
+| Páginas com dados | 17 |
 
 ## 🎯 Oportunidades de CTR (impressões altas, cliques baixos)
 
@@ -48,6 +48,7 @@ _Candidatos para reescrita de title, otimização ou remoção._
 | Página | Impressões | Posição |
 |--------|-----------|---------|
 | /blog/linkedin-social-selling-guide | 303 | 9.4 |
+| /blog/linkedin-b2b-prospecting-cadence | 23 | 4.1 |
 
 ## ✏️ Queries com CTR baixo no post (title/meta a revisar)
 
@@ -67,4 +68,4 @@ _Candidatos para reescrita de title, otimização ou remoção._
 4. **Revisar** `/blog/linkedin-social-selling-guide` — 303 impressões, 0 cliques
 
 ---
-_Gerado automaticamente por `scripts/gsc-report.mjs` em 17/04/2026, 11:49:03_
+_Gerado automaticamente por `scripts/gsc-report.mjs` em 20/04/2026, 12:01:09_
