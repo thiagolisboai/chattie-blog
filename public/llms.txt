@@ -1,0 +1,75 @@
+# Chattie — AI SDR para LinkedIn
+
+Chattie é um AI SDR que automatiza prospecção, qualificação e engajamento no LinkedIn para times B2B. Blog com guias, comparativos e benchmarks sobre social selling, automação de LinkedIn e vendas B2B.
+
+Domínio: https://trychattie.com
+Blog PT-BR: https://trychattie.com/pt-br/blog
+Blog EN: https://trychattie.com/blog
+
+---
+
+## Conteúdo essencial (PT-BR)
+
+### Definições e conceitos
+
+- https://trychattie.com/pt-br/blog/o-que-e-um-ai-sdr-linkedin
+  O que é um AI SDR no LinkedIn: definição técnica, diferenças em relação ao SDR humano, casos de uso em prospecção B2B e como avaliar ferramentas de AI SDR.
+
+- https://trychattie.com/pt-br/blog/o-que-e-social-selling
+  O que é social selling: definição, como funciona no LinkedIn, diferença em relação ao cold outbound e métricas de sucesso para equipes B2B.
+
+- https://trychattie.com/pt-br/blog/o-que-e-sales-enablement-linkedin-b2b
+  O que é sales enablement e como aplicar no LinkedIn B2B: definição, componentes, ferramentas e como conectar enablement ao processo de social selling.
+
+- https://trychattie.com/pt-br/blog/social-selling-index-linkedin
+  LinkedIn Social Selling Index (SSI): o que mede, como interpretar os quatro pilares e como melhorar o score para aumentar oportunidades de prospecção.
+
+### Guias e metodologia
+
+- https://trychattie.com/pt-br/blog/guia-completo-social-selling-linkedin
+  Guia completo de social selling no LinkedIn: metodologia passo a passo, cadência de abordagem, copy de conexão, follow-up e métricas para B2B.
+
+- https://trychattie.com/pt-br/blog/ia-para-vendas-b2b-no-linkedin-guia-completo-2026
+  Guia completo de IA para vendas B2B no LinkedIn em 2026: como usar inteligência artificial para prospecção, qualificação e personalização em escala.
+
+- https://trychattie.com/pt-br/blog/cadencia-de-prospeccao-linkedin-b2b
+  Cadência de prospecção no LinkedIn B2B: estrutura de sequência de mensagens, timing entre etapas, variações de ângulo e taxa de resposta esperada por estágio.
+
+- https://trychattie.com/pt-br/blog/linkedin-para-vendas
+  LinkedIn para vendas B2B: do primeiro contato ao fechamento — copy de abordagem, cadência de follow-up e ferramentas que geram resultado.
+
+### Automação e compliance
+
+- https://trychattie.com/pt-br/blog/automacao-linkedin-o-que-e-permitido
+  O que é permitido em automação de LinkedIn: regras da plataforma, limites seguros de envio, práticas proibidas e como automatizar sem risco de banimento.
+
+### Comparativos de ferramentas
+
+- https://trychattie.com/pt-br/blog/ferramentas-para-prospeccao-no-linkedin
+  Melhores ferramentas para prospecção no LinkedIn: comparativo com prós, contras, preços e melhor caso de uso para cada tipo de operação B2B.
+
+- https://trychattie.com/pt-br/blog/expandi-vs-waalaxy
+  Expandi vs Waalaxy: comparativo direto de features, segurança, preço e adequação para diferentes perfis de operação de outbound no LinkedIn.
+
+- https://trychattie.com/pt-br/blog/chattie-vs-expandi
+  Chattie vs Expandi: comparativo de AI SDR vs ferramenta de automação — diferenças de abordagem, segurança, personalização e resultados para B2B.
+
+---
+
+## Essential content (EN)
+
+- https://trychattie.com/blog/ai-for-b2b-sales
+  AI for B2B sales: how artificial intelligence is reshaping outbound prospecting, qualification, and engagement on LinkedIn in 2026.
+
+- https://trychattie.com/blog/linkedin-b2b-sales-first-contact-to-closed-deal
+  LinkedIn B2B sales guide: from first connection to closed deal — message copy, follow-up cadence, and tools that generate pipeline.
+
+- https://trychattie.com/blog/linkedin-social-selling-guide
+  LinkedIn social selling guide: methodology, SSI score, connection strategy, inbox cadence, and metrics for B2B teams.
+
+---
+
+## Sobre o Chattie
+
+Produto: https://trychattie.com/pt-br
+Chattie é um AI SDR nativo do LinkedIn. Diferente de ferramentas de automação, o Chattie lê contexto de conversa, sugere copy personalizada e gerencia cadências com base no histórico de cada lead. Focado em founders, consultores e times de vendas B2B brasileiros.
