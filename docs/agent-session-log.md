@@ -51,3 +51,9 @@ Histórico de posts gerados pelo Dexter, agente de conteúdo autônomo do Chatti
 ## FALHA-VALIDAÇÃO 2026-04-20 — schema-validation
 - Slug: o-que-e-um-ai-sdr-linkedin
 - Detalhe: structuredData declaration not satisfied
+
+## 2026-04-22 — "Fluxo de Cadência de Prospecção: O Que É e Como Montar do Zero"
+- Keyword: fluxo de cadência de prospecção: o que é e como montar
+- Slug: fluxo-de-cadencia-de-prospeccao-o-que-e-como-montar
+- Palavras: ~2360
+- Backlinks: cadencia-de-prospeccao-linkedin-b2b, pitch-de-prospeccao-linkedin, como-abordar-prospects-no-linkedin

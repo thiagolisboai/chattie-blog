@@ -163,7 +163,7 @@ Com base no GSC (blog novo, zero posts indexados individualmente), o foco é **v
 | Keyword | Intenção | Competição | Prioridade | Status |
 | --- | --- | --- | --- | --- |
 | o que é sales enablement e como aplicar no LinkedIn B2B | Informacional | Baixa | Alta | publicado (`/pt-br/blog/o-que-e-sales-enablement-linkedin-b2b`) |
-| fluxo de cadência de prospecção: o que é e como montar | Informacional | Baixa | Alta | pendente |
+| fluxo de cadência de prospecção: o que é e como montar | Informacional | Baixa | Alta | publicado (`/pt-br/blog/fluxo-de-cadencia-de-prospeccao-o-que-e-como-montar`) |
 | tendências de vendas B2B para 2026: o que muda na prospecção | Informacional | Média | Alta | pendente |
 | prospecção ativa vs inbound: qual usar no LinkedIn B2B | Informacional | Baixa | Alta | pendente |
 | como preparar sua operação de prospecção B2B para 2026 | Informacional | Média | Alta | pendente |
