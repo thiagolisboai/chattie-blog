@@ -82,6 +82,17 @@ const HOWTO_SLUGS: Record<string, { steps: string[] }> = {
       'Mantenha histórico e cadência com CRM social como o Chattie',
     ],
   },
+  'como-prospectar-no-linkedin-b2b': {
+    steps: [
+      'Defina o ICP: cargo, setor, tamanho de empresa, dor específica e sinais de timing',
+      'Use filtros do LinkedIn (ou Sales Navigator) para construir lista alinhada ao ICP',
+      'Otimize headline e seção "Sobre" para sustentar a abordagem comercial',
+      'Conecte com nota específica referenciando post, empresa ou ponto em comum',
+      'Envie primeira mensagem com contexto real e pergunta aberta — sem pitch',
+      'Siga cadência de follow-up com variação de ângulo a cada 5–14 dias',
+      'Qualifique no inbox com 2–3 perguntas antes de propor reunião',
+    ],
+  },
   'linkedin-para-gerar-leads-qualificados': {
     steps: [
       'Defina critérios de lead qualificado antes de prospectar (ICP)',
@@ -755,6 +766,12 @@ const FAQ_DATA: Record<string, FaqItem[]> = {
     { q: 'Quantas contas-alvo devo trabalhar em paralelo numa operação ABM no LinkedIn?', a: 'Uma regra prática: contas Tier 1 com tratamento completo exigem em torno de 2 a 4 horas por conta por mês para manutenção ativa de relacionamento e personalização real de mensagens. Para um founder ou SDR que dedica 30% do tempo a ABM, isso significa entre 8 e 15 contas Tier 1 sendo trabalhadas em paralelo com qualidade. Adicione mais contas Tier 2 e Tier 3 com menor intensidade.' },
     { q: 'Como personalizar mensagens para múltiplos decisores dentro da mesma conta?', a: 'O ponto de partida é entender o papel de cada pessoa no processo de compra antes de escrever qualquer mensagem. O decisor orçamentário quer entender impacto no negócio e retorno sobre investimento. O campeão interno quer entender como a solução resolve a dor operacional. O avaliador técnico quer entender segurança, integração e esforço de implementação. Use o que você sabe sobre a conta como contexto compartilhado — mas adapte o ângulo ao que importa para cada perfil.' },
     { q: 'O que diferencia uma conta ABM de uma conta de prospecção normal?', a: 'A diferença não está na empresa em si — está em como você a aborda. A mesma empresa pode ser tratada como conta de prospecção normal (um lead numa lista) ou como conta ABM (mapeamento de stakeholders, aquecimento ativo, personalização por papel, acompanhamento de longo prazo). Contas ABM são aquelas onde você está disposto a investir semanas de relacionamento antes de fazer uma oferta — e onde um único fechamento paga o esforço de toda a operação.' },
+  ],
+  'como-prospectar-no-linkedin-b2b': [
+    { q: 'Quantas mensagens de prospecção posso enviar por dia no LinkedIn sem risco?', a: 'Para uso orgânico dentro dos limites da plataforma, o recomendado é até 15 a 20 pedidos de conexão por dia e até 20 a 30 mensagens de follow-up. Ultrapassar esses volumes — especialmente com textos idênticos — aumenta o risco de restrição da conta. Volume com qualidade supera volume com spam em todos os indicadores de resultado.' },
+    { q: 'Qual é a taxa de resposta esperada em prospecção B2B no LinkedIn?', a: 'Com ICP definido, abordagem com contexto e copy personalizada, taxas de resposta entre 15% e 30% são alcançáveis para mensagens iniciais. Follow-ups bem estruturados podem elevar a taxa de conversão total da cadência. Taxas abaixo de 10% geralmente indicam problema de ICP, copy genérica ou abordagem precoce.' },
+    { q: 'Preciso do LinkedIn Premium ou Sales Navigator para prospectar B2B?', a: 'Não necessariamente. A versão gratuita permite prospecção eficiente com os filtros de busca padrão. O Sales Navigator adiciona filtros avançados, alertas de atividade e maior volume de buscas salvas — útil para quem prospecta com volume acima de 50 leads por semana.' },
+    { q: 'Qual o momento certo para propor uma reunião em prospecção no LinkedIn?', a: 'Quando você tem evidência de fit e interesse: a pessoa respondeu de forma substantiva a pelo menos uma mensagem, o timing é confirmado como ativo e o problema que você resolve está presente na conversa. Propor reunião antes de qualificar minimamente reduz comparecimento e desperdiça agenda dos dois lados.' },
   ],
 }
 

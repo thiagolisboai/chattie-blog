@@ -18,7 +18,7 @@
 
 | Keyword | Intenção | Competição | Prioridade | Status |
 |---------|----------|-----------|-----------|--------|
-| como prospectar no LinkedIn B2B | Informacional | Alta | Alta | pendente |
+| como prospectar no LinkedIn B2B | Informacional | Alta | Alta | publicado (`/pt-br/blog/como-prospectar-no-linkedin-b2b`) |
 | mensagem de conexão LinkedIn exemplos | Informacional/Transacional | Média | Alta | publicado (`/pt-br/blog/mensagem-de-conexao-linkedin-exemplos`) |
 | como abordar prospects no LinkedIn | Informacional | Média | Alta | publicado (`/pt-br/blog/como-abordar-prospects-no-linkedin`) |
 | pitch de prospecção LinkedIn | Informacional | Média-Baixa | Alta | publicado (`/pt-br/blog/pitch-de-prospeccao-linkedin`) |
