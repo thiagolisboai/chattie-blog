@@ -57,3 +57,9 @@ Histórico de posts gerados pelo Dexter, agente de conteúdo autônomo do Chatti
 - Slug: fluxo-de-cadencia-de-prospeccao-o-que-e-como-montar
 - Palavras: ~2360
 - Backlinks: cadencia-de-prospeccao-linkedin-b2b, pitch-de-prospeccao-linkedin, como-abordar-prospects-no-linkedin
+
+## 2026-04-24 — "Tendências de Vendas B2B para 2026: O Que Muda na Prospecção"
+- Keyword: tendências de vendas B2B para 2026: o que muda na prospecção
+- Slug: tendencias-vendas-b2b-2026-o-que-muda-na-prospeccao
+- Palavras: ~2611
+- Backlinks: ia-para-prospeccao-no-linkedin, ai-sdr-vs-sdr-humano, como-personalizar-mensagens-linkedin-em-escala
