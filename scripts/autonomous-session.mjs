@@ -32,6 +32,7 @@ import { generateLinkedInDraft } from './generate-linkedin-draft.mjs'
 import { braveSearch } from './brave-search.mjs'
 import { config, printConfig } from './load-config.mjs'
 import { validateFrontmatter } from './validate-frontmatter.mjs'
+import { callAnthropic } from './anthropic-client.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.join(__dirname, '..')
@@ -771,6 +772,105 @@ function replenishBacklogFromCompetitors() {
   return toAdd.length
 }
 
+// ─── V7: FAQ repair — generates missing FAQ section via targeted API call ─────
+
+/**
+ * Detects language from frontmatter `lang` field.
+ * Returns "pt-BR" or "en" (default).
+ */
+function detectLang(content) {
+  const m = content.match(/^lang:\s*"?([^"\n]+)"?/m)
+  return (m?.[1] || 'pt-BR').trim()
+}
+
+/**
+ * Generates a FAQ section for a post that is missing one.
+ * Uses Haiku (cheap) with a targeted prompt based on title + first 600 words.
+ * Returns the formatted markdown string, or null on failure.
+ */
+async function repairFaqSection(filePath) {
+  const content = fs.readFileSync(filePath, 'utf-8')
+  const lang = detectLang(content)
+  const isPtBR = lang === 'pt-BR'
+
+  const titleMatch = content.match(/^title:\s*"?([^"\n]+)"?/m)
+  const title = titleMatch?.[1]?.replace(/^"|"$/g, '') || path.basename(filePath, '.mdx')
+
+  // Strip frontmatter, take first ~600 words of body for context
+  const body = content.replace(/^---[\s\S]*?---\n/, '')
+  const excerpt = body.split(/\s+/).slice(0, 600).join(' ')
+
+  const system = isPtBR
+    ? 'Você é um especialista em SEO e conteúdo B2B. Gere seções FAQ concisas e diretas em PT-BR.'
+    : 'You are a B2B SEO and content expert. Generate concise, direct FAQ sections in English.'
+
+  const user = isPtBR
+    ? `Gere uma seção FAQ para o post abaixo com EXATAMENTE 4 perguntas e respostas.
+
+Formato obrigatório (use exatamente este formato — sem variação):
+
+## FAQ
+
+### [Pergunta 1]?
+[Resposta direta em 2-4 frases.]
+
+### [Pergunta 2]?
+[Resposta direta em 2-4 frases.]
+
+### [Pergunta 3]?
+[Resposta direta em 2-4 frases.]
+
+### [Pergunta 4]?
+[Resposta direta em 2-4 frases.]
+
+---
+
+Título do post: ${title}
+
+Início do conteúdo:
+${excerpt}`
+    : `Generate a FAQ section for the post below with EXACTLY 4 questions and answers.
+
+Required format (use exactly this format — no variation):
+
+## FAQ
+
+### [Question 1]?
+[Direct answer in 2-4 sentences.]
+
+### [Question 2]?
+[Direct answer in 2-4 sentences.]
+
+### [Question 3]?
+[Direct answer in 2-4 sentences.]
+
+### [Question 4]?
+[Direct answer in 2-4 sentences.]
+
+---
+
+Post title: ${title}
+
+Content excerpt:
+${excerpt}`
+
+  try {
+    const raw = await callAnthropic(system, user, {
+      model: 'claude-haiku-4-5-20251001',
+      maxTokens: 800,
+    })
+    // Validate it has the ## FAQ heading and at least 3 ### questions
+    if (!raw.match(/^## FAQ/m) || (raw.match(/^### /gm) || []).length < 3) {
+      log('⚠️  V7: Resposta da API não contém FAQ válido')
+      return null
+    }
+    return raw.trim()
+  } catch (err) {
+    log(`⚠️  V7: Erro ao chamar API para FAQ repair: ${err.message}`)
+    return null
+  }
+}
+
 // ─── T2.9: Schema validation gate ────────────────────────────────────────────
 
 /**
@@ -1086,12 +1186,42 @@ async function main() {
   // ── Phase 4b2: T2.9 — Schema validation gate ──
   if (config.quality.schemaValidation) {
     log('\n🧩  T2.9: Validando schema do post...')
-    const schemaValid = validateSchema(result.filePath)
+    let schemaValid = validateSchema(result.filePath)
     if (!schemaValid) {
-      log('❌  Abortando — post não satisfaz requisitos do schema declarado')
-      log('   O arquivo foi salvo em content/blog/ para correção manual')
-      logValidationFailure(result.slug, 'schema-validation', 'structuredData declaration not satisfied')
-      process.exit(1)
+      // V7: if the failure is a missing FAQ section (not too-few questions),
+      // attempt repair via a targeted Haiku API call before aborting.
+      const raw = fs.readFileSync(result.filePath, 'utf-8')
+      const fmM  = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)
+      const body = fmM ? raw.slice(fmM[0].length) : raw
+      const fm   = {}
+      if (fmM) fmM[1].split(/\r?\n/).forEach(l => { const [k, ...v] = l.split(':'); if (k && v.length) fm[k.trim()] = v.join(':').trim().replace(/^"|"$/g, '') })
+      const schema = fm.structuredData || ''
+      const FAQ_HEADING_RE = /^##\s+.*(FAQ|Perguntas|Dúvidas|Respostas|Frequently Asked)/im
+
+      if (schema === 'faq' && !body.match(FAQ_HEADING_RE)) {
+        log('⚠️  V7: Seção FAQ ausente — tentando repair via API (Haiku)...')
+        const faqBlock = await repairFaqSection(result.filePath)
+        if (faqBlock) {
+          let updated = fs.readFileSync(result.filePath, 'utf-8')
+          // Insert before ## Conclusão / ## Conclusion / ## Referências / ## References if present
+          const conclusionRe = /\n(## (?:Conclus[aã]o|Conclusion|Referências|References))/
+          if (conclusionRe.test(updated)) {
+            updated = updated.replace(conclusionRe, '\n\n' + faqBlock + '\n\n$1')
+          } else {
+            updated = updated.trimEnd() + '\n\n' + faqBlock + '\n'
+          }
+          fs.writeFileSync(result.filePath, updated, 'utf-8')
+          log('✅  V7: FAQ inserido no post — revalidando...')
+          schemaValid = validateSchema(result.filePath)
+        }
+      }
+
+      if (!schemaValid) {
+        log('❌  Abortando — post não satisfaz requisitos do schema declarado')
+        log('   O arquivo foi salvo em content/blog/ para correção manual')
+        logValidationFailure(result.slug, 'schema-validation', 'structuredData declaration not satisfied')
+        process.exit(1)
+      }
     }
   }
 

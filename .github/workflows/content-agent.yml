@@ -137,9 +137,10 @@ jobs:
           INPUT_PILLAR: ${{ github.event.inputs.pillar }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # A6: Salvar o MDX gerado como artifact (disponivel por 7 dias mesmo se commit falhar)
+      # A6: Salvar o MDX gerado como artifact — roda SEMPRE (even on failure) para
+      # permitir recuperação manual quando validação ou commit falham.
       - name: Save generated post as artifact
-        if: ${{ github.event.inputs.dry_run != 'true' }}
+        if: ${{ always() && github.event.inputs.dry_run != 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: dexter-post-${{ github.run_number }}
