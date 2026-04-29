@@ -63,3 +63,9 @@ Histórico de posts gerados pelo Dexter, agente de conteúdo autônomo do Chatti
 - Slug: tendencias-vendas-b2b-2026-o-que-muda-na-prospeccao
 - Palavras: ~2611
 - Backlinks: ia-para-prospeccao-no-linkedin, ai-sdr-vs-sdr-humano, como-personalizar-mensagens-linkedin-em-escala
+
+## 2026-04-29 — "Prospecção Ativa vs Inbound: Qual Usar no LinkedIn B2B em 2026?"
+- Keyword: prospecção ativa vs inbound: qual usar no LinkedIn B2B
+- Slug: prospeccao-ativa-vs-inbound-linkedin-b2b
+- Palavras: ~2780
+- Backlinks: linkedin-vs-email-prospeccao, pitch-de-prospeccao-linkedin, como-abordar-prospects-no-linkedin
