@@ -95,7 +95,7 @@
 |---------|----------|-----------|-----------|--------|
 | como otimizar perfil LinkedIn para vendas | Informacional | Alta | Média | pendente |
 | LinkedIn headline para vendas B2B | Informacional | Média | Alta | publicado (`/pt-br/blog/linkedin-headline-para-vendas-b2b`) |
-| foto de perfil LinkedIn profissional | Informacional | Alta | Baixa | pendente |
+| foto de perfil LinkedIn profissional | Informacional | Alta | Baixa | publicado (`/pt-br/blog/foto-de-perfil-linkedin-profissional`) |
 | LinkedIn about section exemplos para vendedores | Informacional | Baixa | Alta | publicado (`/pt-br/blog/linkedin-about-section-exemplos-para-vendedores`) |
 | banner LinkedIn perfil de vendas | Informacional | Baixa | Média | pendente |
 

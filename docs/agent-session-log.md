@@ -69,3 +69,9 @@ Histórico de posts gerados pelo Dexter, agente de conteúdo autônomo do Chatti
 - Slug: prospeccao-ativa-vs-inbound-linkedin-b2b
 - Palavras: ~2780
 - Backlinks: linkedin-vs-email-prospeccao, pitch-de-prospeccao-linkedin, como-abordar-prospects-no-linkedin
+
+## 2026-04-29 — "Foto de Perfil LinkedIn Profissional: o que realmente impacta sua prospecção B2B"
+- Keyword: foto de perfil LinkedIn profissional
+- Slug: foto-de-perfil-linkedin-profissional
+- Palavras: ~2346
+- Backlinks: cadencia-de-prospeccao-linkedin-b2b, icp-linkedin-como-definir-perfil-cliente-ideal, como-otimizar-perfil-linkedin-para-vendas-b2b
