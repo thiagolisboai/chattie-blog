@@ -376,6 +376,12 @@ const FAQ_DATA: Record<string, FaqItem[]> = {
       a: 'Depende do tipo de automação. Automação de volume sem personalização entrega resultados decrescentes e risco crescente de conta. Automação de inteligência — ferramentas que organizam contexto, qualificam leads e sugerem o momento certo para agir — entrega resultado crescente com risco baixo. A pergunta certa não é "devo automatizar?" mas "o que faz sentido automatizar e o que deve permanecer humano?".',
     },
   ],
+  'o-que-e-um-ai-sdr-linkedin': [
+    { q: 'O que é AI SDR LinkedIn?', a: 'AI SDR no LinkedIn é um sistema de inteligência artificial que executa as funções de um Sales Development Representative dentro da plataforma: identifica prospects no ICP, envia conexões, escreve mensagens personalizadas, faz follow-up e qualifica leads — tudo de forma automatizada e com adaptação baseada no comportamento do prospect.' },
+    { q: 'AI SDR pode banir minha conta do LinkedIn?', a: 'Pode, se mal configurado. AI SDRs que operam acima dos limites diários do LinkedIn, usam timing robótico ou acessam a plataforma via IP suspeito aumentam o risco de restrição. Sistemas bem construídos controlam esses parâmetros por design para minimizar o risco.' },
+    { q: 'Qual a diferença entre AI SDR e automação de LinkedIn?', a: 'Automação executa sequências fixas independente da resposta do prospect. AI SDR analisa o perfil, adapta a mensagem, interpreta respostas e toma decisões baseadas no comportamento do lead. A diferença prática: quando o prospect responde algo inesperado, a automação ignora; o AI SDR adapta.' },
+    { q: 'AI SDR substitui o SDR humano completamente?', a: 'Não, em vendas B2B complexas. AI SDR substitui o SDR humano nas etapas repetitivas do topo do funil: pesquisa, conexão, primeira mensagem, follow-up e qualificação básica. O humano ainda é necessário para conversas avançadas, objeções complexas e fechamento.' },
+  ],
   'o-que-e-um-ai-sdr': [
     {
       q: 'O que é um AI SDR e como ele funciona na prática?',
@@ -860,6 +866,11 @@ const DEFINED_TERMS: Record<string, { name: string; description: string }> = {
     name: 'CRM Social',
     description:
       'CRM social é uma categoria de ferramenta que organiza conversas, histórico de interações e sinais de interesse em ambientes digitais como o LinkedIn, permitindo follow-ups precisos e gestão de relacionamentos comerciais em canais onde os compradores já estão ativos.',
+  },
+  'o-que-e-um-ai-sdr-linkedin': {
+    name: 'AI SDR',
+    description:
+      'AI SDR LinkedIn é um sistema de inteligência artificial que executa as funções de um SDR dentro do LinkedIn: identifica prospects no ICP, envia conexões, escreve mensagens personalizadas, faz follow-up e qualifica leads — de forma automatizada e com adaptação baseada no comportamento do prospect.',
   },
   'o-que-e-um-ai-sdr': {
     name: 'AI SDR',
