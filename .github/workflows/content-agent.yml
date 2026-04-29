@@ -179,6 +179,13 @@ jobs:
           fi
 
           git commit -m "$MSG" -m "Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+
+          # V1-fix: rebase on top of any commits that landed since Dexter started
+          # (milestone-alert cron runs at 12h UTC, 1h after content-agent — GitHub
+          # queue delays can cause the two runs to overlap and reject each other's push)
+          git fetch origin main
+          git rebase origin/main
+
           git push origin main
           echo "Push concluido - Vercel deploying..."
 

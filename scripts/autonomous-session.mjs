@@ -786,12 +786,12 @@ function replenishBacklogFromCompetitors() {
 function validateSchema(filePath) {
   const content = fs.readFileSync(filePath, 'utf-8')
 
-  // Extract frontmatter
-  const fmMatch = content.match(/^---\n([\s\S]*?)\n---/)
+  // Extract frontmatter (CRLF-tolerant)
+  const fmMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/)
   if (!fmMatch) return true // no frontmatter, skip
 
   const fm = {}
-  fmMatch[1].split('\n').forEach(line => {
+  fmMatch[1].split(/\r?\n/).forEach(line => {
     const [k, ...v] = line.split(':')
     if (k && v.length) fm[k.trim()] = v.join(':').trim().replace(/^"|"$/g, '')
   })
@@ -1066,6 +1066,21 @@ async function main() {
   if (config.quality.internalLinkValidation) {
     log('\n🔗  Validando internal links...')
     validateInternalLinks(result.filePath) // always returns true now; logs warnings for broken links
+  }
+
+  // ── Phase 4b1.5: Normalize generated MDX (V4+V5 fix) ──
+  // Ensures LF line endings and fixes ---## FAQ (no newline between separator and heading)
+  // that trips the T2.9 schema validator and json-ld dynamic extractor.
+  try {
+    let raw = fs.readFileSync(result.filePath, 'utf-8')
+    // V5: normalize CRLF → LF
+    raw = raw.replace(/\r\n/g, '\n')
+    // V4: fix `---## ...` patterns (no newline after separator)
+    raw = raw.replace(/---\n(#{1,3}\s)/g, '---\n\n$1')
+    fs.writeFileSync(result.filePath, raw, 'utf-8')
+    log('✅  MDX normalizado (LF line endings, separator/heading separation)')
+  } catch (err) {
+    log(`⚠️  MDX normalization falhou (${err.message}) — continuando sem normalizar`)
   }
 
   // ── Phase 4b2: T2.9 — Schema validation gate ──
