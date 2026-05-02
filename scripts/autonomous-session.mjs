@@ -81,14 +81,13 @@ function log(msg) {
  *
  * Retorna: 'ok' | 'no-key' | 'rate-limit' | 'auth-error' | 'network-error' | 'degraded'
  *
- * Política:
- *   - 'ok'         → tudo certo, continua normalmente
- *   - 'no-key'     → BRAVE_API_KEY ausente; ABORTA se config.quality.groundingVerify=true,
- *                    pois grounding sem SERP não tem valor (claims não verificados)
- *   - 'rate-limit' → 429 da API; aborta para não gerar conteúdo sem análise competitiva
- *   - 'auth-error' → 401/403; key inválida ou expirada; aborta
- *   - 'network-error' → timeout/erro de rede; aborta por padrão
- *   - 'degraded'   → resposta inesperada mas não fatal
+ * Política (todas as falhas são DEGRADED — nunca bloqueiam o job):
+ *   - 'ok'         → tudo certo, continua normalmente com análise SERP completa
+ *   - 'no-key'     → BRAVE_API_KEY ausente; continua sem SERP (aviso no log)
+ *   - 'rate-limit' → 429 da API; continua sem SERP (aviso no log)
+ *   - 'auth-error' → 401/403; key inválida ou expirada; continua sem SERP (aviso no log)
+ *   - 'network-error' → timeout/erro de rede; continua sem SERP (aviso no log)
+ *   - 'degraded'   → resposta inesperada mas não fatal; continua com SERP parcial
  */
 async function checkBraveSearch() {
   const key = process.env.BRAVE_API_KEY
@@ -963,6 +962,30 @@ function logValidationFailure(slug, gate, detail) {
   } catch { /* não bloqueia o exit */ }
 }
 
+// ─── Fatal exit with logging (Fix 2 + Fix 3) ─────────────────────────────────
+// Garante que qualquer exit 1 — inclusive os que ocorrem antes da geração —
+// deixa rastro no session log E no GitHub Step Summary.
+
+function exitFatal(reason) {
+  const today = new Date().toISOString().split('T')[0]
+  const entry = `\n## FALHA-STARTUP ${today} — startup\n- Motivo: ${reason}\n`
+  try {
+    fs.appendFileSync(path.join(ROOT, 'docs', 'agent-session-log.md'), entry, 'utf-8')
+  } catch { /* silencioso */ }
+
+  // Escreve no GitHub Step Summary (disponível em GitHub Actions via GITHUB_STEP_SUMMARY)
+  const summaryFile = process.env.GITHUB_STEP_SUMMARY
+  if (summaryFile) {
+    try {
+      fs.appendFileSync(summaryFile,
+        `## ❌ Dexter — Falha de Startup\n\n**Motivo:** ${reason}\n\n` +
+        `Verifique os secrets do GitHub Actions e o log completo da run.\n`, 'utf-8')
+    } catch { /* silencioso */ }
+  }
+
+  process.exit(1)
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -972,22 +995,20 @@ async function main() {
 
   // Validate required env
   if (!process.env.ANTHROPIC_API_KEY) {
-    log('❌  ANTHROPIC_API_KEY não configurado. Abortando.')
-    process.exit(1)
+    exitFatal('ANTHROPIC_API_KEY não configurado — adicione o secret no GitHub Actions')
   }
 
   // ── Brave Search health check ──
   // Realiza uma query de teste ANTES de qualquer geração.
-  // Política de falha:
-  //   auth-error   → FATAL: key inválida ou expirada. Corrija antes de rodar.
-  //   rate-limit   → DEGRADED: cota esgotada. Continua sem SERP (sem qualidade de grounding).
+  // Política de falha (todas são DEGRADED — nunca bloqueiam o job):
+  //   auth-error   → DEGRADED: key inválida ou expirada. Avisa e continua sem SERP.
+  //   rate-limit   → DEGRADED: cota esgotada. Continua sem SERP.
   //   network-error→ DEGRADED: problema de rede transitório. Continua sem SERP.
-  //   no-key       → DEGRADED se groundingVerify=true; avisa e continua.
+  //   no-key       → DEGRADED: BRAVE_API_KEY ausente. Avisa e continua.
   const braveStatus = await checkBraveSearch()
   if (braveStatus === 'auth-error') {
-    log('❌  Abortando sessão — BRAVE_API_KEY inválida ou expirada (HTTP 401/403).')
-    log('    Verifique o secret BRAVE_API_KEY no GitHub Actions e renove se necessário.')
-    process.exit(1)
+    log('⚠️  Brave Search: autenticação falhou (HTTP 401/403) — BRAVE_API_KEY inválida ou expirada.')
+    log('    Continuando sem análise SERP. Renove o secret BRAVE_API_KEY no GitHub Actions.')
   }
   if (braveStatus === 'rate-limit') {
     log('⚠️  Brave Search: rate limit atingido (HTTP 429) — continuando sem análise SERP.')
@@ -1143,7 +1164,8 @@ async function main() {
     result = await generatePost(keyword, { dryRun: DRY_RUN, type: POST_TYPE })
   } catch (err) {
     log(`❌  Falha ao gerar post: ${err.message}`)
-    process.exit(1)
+    logValidationFailure(keyword, 'generate-post', err.message.slice(0, 200))
+    exitFatal(`Falha ao gerar post para keyword "${keyword}": ${err.message.slice(0, 120)}`)
   }
 
   if (DRY_RUN) {
@@ -1281,7 +1303,8 @@ async function main() {
       }
     } catch (err) {
       log(`❌  ${err.message}`)
-      process.exit(1)
+      logValidationFailure(result.slug, 'pr-creation', err.message.slice(0, 200))
+      exitFatal(`Falha ao criar PR para "${result.slug}": ${err.message.slice(0, 120)}`)
     }
     process.exit(0)
   }
@@ -1326,10 +1349,18 @@ async function main() {
 main().catch(err => {
   console.error(`\n❌  Erro fatal: ${err.message}`)
   console.error(err.stack)
-  // Persist error to log so failed sessions are traceable
+  const today = new Date().toISOString().split('T')[0]
   try {
-    const errorEntry = `\n## ERRO ${new Date().toISOString().split('T')[0]} — ${err.message.slice(0, 120)}\n- Stack: ${err.stack?.split('\n')[1]?.trim() || 'n/a'}\n`
+    const errorEntry = `\n## ERRO ${today} — ${err.message.slice(0, 120)}\n- Stack: ${err.stack?.split('\n')[1]?.trim() || 'n/a'}\n`
     fs.appendFileSync(path.join(ROOT, 'docs', 'agent-session-log.md'), errorEntry, 'utf-8')
   } catch { /* nao bloquear o exit */ }
+  try {
+    const summaryFile = process.env.GITHUB_STEP_SUMMARY
+    if (summaryFile) {
+      fs.appendFileSync(summaryFile,
+        `## ❌ Dexter — Erro Fatal\n\n**Mensagem:** ${err.message.slice(0, 200)}\n\n` +
+        `**Stack:** \`${err.stack?.split('\n')[1]?.trim() || 'n/a'}\`\n`, 'utf-8')
+    }
+  } catch { /* silencioso */ }
   process.exit(1)
 })
