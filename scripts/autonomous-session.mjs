@@ -1190,17 +1190,41 @@ async function main() {
     validateInternalLinks(result.filePath) // always returns true now; logs warnings for broken links
   }
 
-  // ── Phase 4b1.5: Normalize generated MDX (V4+V5 fix) ──
-  // Ensures LF line endings and fixes ---## FAQ (no newline between separator and heading)
-  // that trips the T2.9 schema validator and json-ld dynamic extractor.
+  // ── Phase 4b1.5: Normalize generated MDX (V4+V5+V8 fix) ──
+  // V4: fix `---## ...` (no newline after separator)
+  // V5: normalize CRLF → LF
+  // V8: escape bare `<digit` in prose/tables — MDX parser treats them as invalid JSX tags
   try {
     let raw = fs.readFileSync(result.filePath, 'utf-8')
     // V5: normalize CRLF → LF
     raw = raw.replace(/\r\n/g, '\n')
     // V4: fix `---## ...` patterns (no newline after separator)
     raw = raw.replace(/---\n(#{1,3}\s)/g, '---\n\n$1')
+
+    // V8: escape `<digit` sequences that break the MDX/JSX parser.
+    // Only applied to the body (after closing frontmatter ---), skipping
+    // fenced code blocks (``` ... ```) and inline code (` ... `).
+    const fmEnd = raw.indexOf('\n---\n', 4)
+    if (fmEnd !== -1) {
+      const frontmatter = raw.slice(0, fmEnd + 5)
+      let body = raw.slice(fmEnd + 5)
+      let inFence = false
+      let fixCount = 0
+      body = body.split('\n').map(line => {
+        if (/^```/.test(line)) { inFence = !inFence; return line }
+        if (inFence) return line
+        // Replace <digit (but not already-escaped &lt;digit)
+        return line.replace(/(?<!&lt;?)(?<!&amp|&gt)<(?=[0-9])/g, () => {
+          fixCount++
+          return '&lt;'
+        })
+      }).join('\n')
+      if (fixCount > 0) log(`✅  V8: ${fixCount} ocorrência(s) de <digit escapadas para &lt; (MDX JSX fix)`)
+      raw = frontmatter + body
+    }
+
     fs.writeFileSync(result.filePath, raw, 'utf-8')
-    log('✅  MDX normalizado (LF line endings, separator/heading separation)')
+    log('✅  MDX normalizado (LF line endings, separator/heading separation, JSX escape)')
   } catch (err) {
     log(`⚠️  MDX normalization falhou (${err.message}) — continuando sem normalizar`)
   }
