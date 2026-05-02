@@ -159,13 +159,16 @@ jobs:
         if: ${{ github.event.inputs.dry_run != 'true' && github.event.inputs.pr_mode != 'true' && steps.agent.outputs.mode != 'pr' }}
         run: |
           git add content/blog/
-          [ -f docs/keyword-backlog.md ]    && git add docs/keyword-backlog.md    || true
-          [ -f docs/gsc-insights.md ]       && git add docs/gsc-insights.md       || true
-          [ -f docs/gsc-history.jsonl ]     && git add docs/gsc-history.jsonl     || true
-          [ -f docs/agent-session-log.md ]  && git add docs/agent-session-log.md  || true
-          [ -f docs/dexter-dashboard.md ]   && git add docs/dexter-dashboard.md   || true
-          [ -d docs/linkedin-drafts ]       && git add docs/linkedin-drafts/      || true
-          [ -f docs/cost-log.jsonl ]        && git add docs/cost-log.jsonl        || true
+          [ -f docs/keyword-backlog.md ]       && git add docs/keyword-backlog.md       || true
+          [ -f docs/gsc-insights.md ]          && git add docs/gsc-insights.md          || true
+          [ -f docs/gsc-history.jsonl ]        && git add docs/gsc-history.jsonl        || true
+          [ -f docs/agent-session-log.md ]     && git add docs/agent-session-log.md     || true
+          [ -f docs/dexter-dashboard.md ]      && git add docs/dexter-dashboard.md      || true
+          [ -d docs/linkedin-drafts ]          && git add docs/linkedin-drafts/         || true
+          [ -f docs/cost-log.jsonl ]           && git add docs/cost-log.jsonl           || true
+          [ -f docs/quality-ratings.jsonl ]    && git add docs/quality-ratings.jsonl    || true
+          [ -f docs/ai-visibility-report.md ]  && git add docs/ai-visibility-report.md  || true
+          [ -f docs/feedback-queue.md ]        && git add docs/feedback-queue.md        || true
 
           if git diff --staged --quiet; then
             echo "Nada para commitar."
@@ -182,10 +185,10 @@ jobs:
           git commit -m "$MSG" -m "Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
 
           # V1-fix: rebase on top of any commits that landed since Dexter started
-          # (milestone-alert cron runs at 12h UTC, 1h after content-agent — GitHub
-          # queue delays can cause the two runs to overlap and reject each other's push)
+          # --autostash garante que unstaged changes (ex: quality-ratings.jsonl)
+          # não bloqueiem o rebase — são stashed antes e restaurados depois.
           git fetch origin main
-          git rebase origin/main
+          git rebase --autostash origin/main
 
           git push origin main
           echo "Push concluido - Vercel deploying..."
