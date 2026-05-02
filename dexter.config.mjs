@@ -332,7 +332,7 @@ export default {
      * (você já revisou e aprovou ≥8 PRs sem rejeições). Isso garante que os drafts
      * LinkedIn gerados serão de qualidade suficiente para revisar e postar.
      */
-    linkedinDraft: false,
+    linkedinDraft: true,
 
     /**
      * T2.7 — Gerar dashboard unificado após cada sessão.
